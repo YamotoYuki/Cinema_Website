@@ -3,9 +3,45 @@
 
 {% block title %}Home page{% endblock title %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <img src="{% static 'images/lithium.png' %}" class="img-fluid" alt="Lithium logo"/>
-  <p class="lead">A Django starter project with batteries.</p>
+ <section>
+        <h2>おすすめの映画</h2>
+        <div class="gallery">
+            {% for product in random_products %}
+            <div class="gallery-item">
+                <a href="{% url 'app:product_detail' product.id %}" class="product-link">
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="max-width: 100%;">
+                    <p>{{ product.title }}</p>
+                    <p class="product-price">¥{{ product.price }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p>ランダムに選ばれた映画ありません。</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section>
+        <h2>映画</h2>
+        <div class="gallery">
+            {% for product in new_products %}
+            <div class="gallery-item">
+                <a href="{% url 'app:product_detail' product.id %}" class="product-link">
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="max-width: 100%;">
+                    <p>{{ product.title }}</p>
+                    <p class="product-price">¥{{ product.price }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p>映画情報はありません。</p>
+            {% endfor %}
+        </div>
+    </section>
 </div>
+
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock content %}

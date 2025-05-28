@@ -4,10 +4,25 @@
 {% block title %}Log in{% endblock %}
 
 {% block content %}
-<h2>Log in</h2>
+<html lang="ja">
+
+<body>
+
+<div class="wrap">
+<h2 class="h2">Login</h2>
 <form method="post">
   {% csrf_token %}
   {{ form|crispy }}
-  <button class="btn btn-success" type="submit">Log in</button>
+<div class="remember-forgot">
+    <label><input type="checkbox" name="remember">保存</label>
+</div>
+<div class="register">
+    <p>アカウントは持っていますか？<a href="{% url 'account_signup' %}" class="">Sign up</a></p>
+</div>
+<button type="submit" class="btn">ログイン</button>
 </form>
+</div>
+
+</body>
+</html>
 {% endblock content %}
