@@ -1,11 +1,53 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}ホームページ{% endblock title %}
+{% block title %}サービス紹介{% endblock title %}
 
 {% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <img src="{% static 'images/lithium.png' %}" class="img-fluid" alt="Lithium logo"/>
-  <p class="lead">ホームページ</p>
+<style>
+  body {
+    background-color: #f0f0f0; /* グレー背景 */
+  }
+
+  .service-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 800px;
+    margin: 40px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .service-section h1 {
+    color: #405F3D;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+
+  .service-section p {
+    font-size: 1.2rem;
+    color: #333;
+    line-height: 1.8;
+  }
+
+  .service-logo {
+    width: 120px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="service-section">
+  <img src="{% static 'images/lithium.png' %}" alt="Lithium logo" class="service-logo">
+  <h1>サービス紹介</h1>
+  <p>
+    私たちの映画サイトでは、<strong>スムーズなチケット予約</strong>が可能です。<br>
+    お気に入りの映画を事前に選び、希望の座席を簡単に確保できます。<br><br>
+
+    また、<strong>劇場内の快適さ</strong>にもこだわっています。<br>
+    座席の広さや音響設備、清潔な空間で、最高の映画体験を提供します。<br><br>
+
+    映画の世界に没入できる、あなた専用の特別な空間をお楽しみください。
+  </p>
 </div>
 {% endblock content %}
