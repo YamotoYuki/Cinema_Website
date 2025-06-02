@@ -1,47 +1,168 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}Home page{% endblock title %}
+{% block title %}ホームページ{% endblock title %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
 {% endblock %}
 
 {% block content %}
- <section>
-        <h2>おすすめの映画</h2>
-        <div class="gallery">
-            {% for product in random_products %}
-            <div class="gallery-item">
-                <a href="{% url 'app:product_detail' product.id %}" class="product-link">
-                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="max-width: 100%;">
-                    <p>{{ product.title }}</p>
-                    <p class="product-price">¥{{ product.price }}</p>
-                </a>
-            </div>
-            {% empty %}
-            <p>ランダムに選ばれた映画ありません。</p>
-            {% endfor %}
-        </div>
-    </section>
+<main class="main">
+  <div class="card-body fade-in-text">
+    <div class="container py-5">
 
-    <section>
-        <h2>映画</h2>
-        <div class="gallery">
-            {% for product in new_products %}
-            <div class="gallery-item">
-                <a href="{% url 'app:product_detail' product.id %}" class="product-link">
-                    <img src="{{ product.image.url }}" alt="{{ product.title }}" style="max-width: 100%;">
-                    <p>{{ product.title }}</p>
-                    <p class="product-price">¥{{ product.price }}</p>
-                </a>
-            </div>
-            {% empty %}
-            <p>映画情報はありません。</p>
-            {% endfor %}
-        </div>
-    </section>
-</div>
+      <!-- ヒーローセクション -->
+      <div class="text-center card-body fade-in-text">
+        <h1 class="display-4 mb-4 h1 animated-login-title card-title"><strong>ようこそ、CinemaXXVへ!</strong></h1>
+        <p class="lead card-text"><strong>最高のアニメ映画体験を、最高の空間で。</strong></p>
+      </div>
 
-<script src="{% static 'js/home.js' %}"></script>
+      <!-- 特徴紹介 -->
+      <div class="main-div">
+        <div class="row mt-5">
+          <div class="col-md-4 text-center card-body fade-in-text">
+            <h5 class="card-title">最新設備</h5>
+            <p class="card-text">4Kプロジェクター、Virtual、Dolby Atmos対応の音響で臨場感あるアニメ映像体験を。</p>
+          </div>
+          <div class="col-md-4 text-center card-body fade-in-text">
+            <h5 class="card-title">快適な空間</h5>
+            <p class="card-text">リクライニングシートや空調完備で、長時間のアニメ鑑賞もストレスフリー。</p>
+          </div>
+          <div class="col-md-4 text-center card-body fade-in-text">
+            <h5 class="card-title">アニメ映画限定ラインナップ</h5>
+            <p class="card-text">国内外の人気アニメ映画や話題作を中心に上映中。</p>
+          </div>
+        </div>
+
+        <!-- 上映中の作品 -->
+        <section class="mt-5 card-body">
+          <h5 class="text-center mb-4 card-title fade-in-title"><strong>上映中の作品</strong></h5>
+          <div class="row">
+            <div class="col-md-3 text-center fade-in-text">
+              <img src="{% static 'images/onepiece.jpg' %}" alt="Film 1" class="img-fluid mb-2">
+              <p class="card-text"><strong>OnePiece Film Red</strong><br>上映時間：105分</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-text">
+              <img src="{% static 'images/kimetsu.jpg' %}" alt="Film 2" class="img-fluid mb-2">
+              <p class="card-text"><strong>鬼滅の刃 無限列車編</strong><br>上映時間：112分</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-text">
+              <img src="{% static 'images/gintama.jpg' %}" alt="Film 3" class="img-fluid mb-2">
+              <p class="card-text"><strong>銀魂 ザ・ファイナル</strong><br>上映時間：114分</p>
+            </div>
+            <div class="col-md-3 text-center fade-in-text">
+              <img src="{% static 'images/suzume.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+              <p class="card-text"><strong>すずめの戸締まり</strong><br>上映時間：115分</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- お客様の声 -->
+        <section class="mt-5 p-5 rounded-4 card-body fade-in-text" style="background-color: rgba(0, 0, 0, 0.5); color: #f0f0f0;">
+          <h4 class="text-center mb-5 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">お客様の声</h4>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="p-4 bg-white bg-opacity-10 rounded-3 shadow-sm h-100 d-flex flex-column">
+                <div style="font-size: 3rem; color: #4dabf7; line-height: 1;">&#8220;</div>
+                <p class="flex-grow-1 fst-italic card-text" style="font-size: 1.1rem; color: #e0e0e0;">
+                  音響がすごい！アニメの世界に引き込まれました！
+                </p>
+                <footer class="text-end fw-semibold card-text" style="color: #b0b0b0; font-size: 0.9rem;">大学生・さやかさん</footer>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-4 bg-white bg-opacity-10 rounded-3 shadow-sm h-100 d-flex flex-column">
+                <div style="font-size: 3rem; color: #4dabf7; line-height: 1;">&#8220;</div>
+                <p class="flex-grow-1 fst-italic card-text" style="font-size: 1.1rem; color: #e0e0e0;">
+                  座席の座り心地がよくて、最後まで快適でした。
+                </p>
+                <footer class="text-end fw-semibold card-text" style="color: #b0b0b0; font-size: 0.9rem;">社会人・たかしさん</footer>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="p-4 bg-white bg-opacity-10 rounded-3 shadow-sm h-100 d-flex flex-column">
+                <div style="font-size: 3rem; color: #4dabf7; line-height: 1;">&#8220;</div>
+                <p class="flex-grow-1 fst-italic card-text" style="font-size: 1.1rem; color: #e0e0e0;">
+                  子供と一緒に楽しめる映画館。スタッフも親切です。
+                </p>
+                <footer class="text-end fw-semibold card-text" style="color: #b0b0b0; font-size: 0.9rem;">主婦・えりさん</footer>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="mt-5 card-body fade-in-text">
+          <h4 class="text-center mb-4 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">よくある質問</h4>
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
+                  チケットの予約はどうすればいいですか？
+                </button>
+              </h2>
+              <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="headingOne">
+                <div class="accordion-body card-text">
+                  オンライン予約ページから、ご希望の作品と時間を選んでご購入いただけます。
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                  駐車場はありますか？
+                </button>
+              </h2>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion" aria-labelledby="headingTwo">
+                <div class="accordion-body card-text">
+                  近隣に提携のコインパーキングがございます。駐車券をご提示いただければ割引券を差し上げます。
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SNS・アプリ -->
+        <section class="mt-5 text-center card-body fade-in-text" style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 2rem 1rem; border-radius: 0.5rem;">
+          <h4 class="mb-3 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">公式SNS・アプリ</h4>
+          <p class="card-text">最新情報はSNSやアプリでチェック！限定キャンペーンも配信中！</p>
+          <a href="#" class="btn btn-outline-primary mx-1" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="#" class="btn btn-outline-info mx-1" target="_blank" rel="noopener noreferrer">Twitter</a>
+          <a href="#" class="btn btn-outline-success mx-1" target="_blank" rel="noopener noreferrer">アプリをダウンロード</a>
+        </section>
+
+        <!-- お知らせ -->
+        <section class="mt-5 card-body fade-in-text">
+          <h4 class="text-center mb-4 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">最新ニュース</h4>
+          <ul class="list-group list-group-flush shadow-sm rounded card-text">
+            <li class="list-group-item">テストテストテストテストテストテストテストテストテストテスト</li>
+            <li class="list-group-item">🎁テストテストテストテストテストテストテストテストテストテスト</li>
+            <li class="list-group-item">テストテストテストテストテストテストテストテストテストテスト</li>
+          </ul>
+        </section>
+
+        <!-- アクセス情報 -->
+        <section class="mt-5 text-center card-body fade-in-text" style="margin: 30rem 0 0 0;">
+          <h5 class="fw-bold mb-3 card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">アクセス情報</h5>
+          <p class="card-text custom-size">愛知県名古屋市中村区名駅南1丁目10-1 HAL名古屋</p>
+          <p class="card-text custom-size">営業時間：毎日 9:00 〜 23:00</p>
+          <p class="card-text custom-size">お問い合わせ：00-1234-5678</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+{% block javascript %}
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <!-- Project JS -->
+  <script src="{% static 'js/base.js' %}"></script>
+{% endblock javascript %}
+
 {% endblock content %}

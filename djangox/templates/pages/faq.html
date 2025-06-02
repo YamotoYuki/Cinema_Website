@@ -1,7 +1,167 @@
 {% extends '_base.html' %}
+{% load static %}
 
-{% block title %}映画情報{% endblock %}
+{% block title %}FAQ{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/faq.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>映画情報</h1>
-{% endblock content %}
+<h2>よくある質問</h2>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: チケットの払い戻しは可能ですか？</strong></p>
+    <p class="card-text">A: 原則として払い戻しはできません。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 子供連れでも入場できますか？</strong></p>
+    <p class="card-text">A: 3歳以下のお子様の入場はご遠慮いただいております。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 学割はありますか？</strong></p>
+    <p class="card-text">A: はい、学生証を提示いただければ学割価格で購入できます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 座席指定はできますか？</strong></p>
+    <p class="card-text">A: オンライン購入では座席を選択できます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 上映スケジュールはどこで確認できますか？</strong></p>
+    <p class="card-text">A: 当劇場の公式ウェブサイトで最新スケジュールをご確認いただけます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 飲食物の持ち込みは可能ですか？</strong></p>
+    <p class="card-text">A: 衛生管理の観点から、外部の飲食物の持ち込みはご遠慮ください。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 館内で食べ物は購入できますか？</strong></p>
+    <p class="card-text">A: はい、売店にて軽食やドリンクをご購入いただけます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: バリアフリー対応はしていますか？</strong></p>
+    <p class="card-text">A: はい、車椅子対応席や多目的トイレをご用意しています。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 忘れ物をした場合は？</strong></p>
+    <p class="card-text">A: サービスカウンターまでお問い合わせください。一定期間保管しております。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: ペットの同伴は可能ですか？</strong></p>
+    <p class="card-text">A: 申し訳ありませんが、介助犬を除きペットの同伴はできません。</p>
+  </div>
+</div>
+
+<!-- 追加の10項目 -->
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 上映中の途中入場はできますか？</strong></p>
+    <p class="card-text">A: はい、可能ですが、周囲のお客様のご迷惑にならないようご注意ください。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: クレジットカードは使えますか？</strong></p>
+    <p class="card-text">A: はい、主要なクレジットカードをご利用いただけます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 電子マネーやQRコード決済には対応していますか？</strong></p>
+    <p class="card-text">A: はい、交通系IC、PayPay、LINE Payなどに対応しています。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 駐車場はありますか？</strong></p>
+    <p class="card-text">A: はい、劇場併設の駐車場をご利用いただけます（有料）。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 車椅子の貸出はありますか？</strong></p>
+    <p class="card-text">A: はい、数に限りがありますが貸出可能です。スタッフにお声がけください。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 携帯電話の使用は可能ですか？</strong></p>
+    <p class="card-text">A: 上映中はマナーモードにし、通話・操作はお控えください。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 上映中に退場できますか？</strong></p>
+    <p class="card-text">A: はい、途中退場は可能ですが再入場はできません。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: 上映作品の年齢制限はどこで確認できますか？</strong></p>
+    <p class="card-text">A: 作品ごとの詳細ページにてご確認いただけます。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: チケットの予約確認メールが届きません。</strong></p>
+    <p class="card-text">A: 迷惑メールフォルダをご確認の上、届かない場合はお問い合わせください。</p>
+  </div>
+</div>
+
+<div class="card-body fade-in-text">
+  <div class="ticket-info">
+    <p class="card-title"><strong>Q: グッズ販売はありますか？</strong></p>
+    <p class="card-text">A: はい、一部作品ではオリジナルグッズの販売を行っております。</p>
+  </div>
+</div>
+
+
+  {% block javascript %}
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <!-- Project JS -->
+  <script src="{% static 'js/base.js' %}"></script>
+
+  {% endblock javascript %}
+  
+{% endblock %}

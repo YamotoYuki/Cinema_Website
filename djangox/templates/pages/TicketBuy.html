@@ -1,0 +1,22 @@
+{% load static %}
+
+{% block nav %}
+<!-- ナビ非表示のため、空にする -->
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/soudan.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>劇場窓口（当日券）</h2>
+<p>
+当日券は、各上映日の劇場オープン時から劇場窓口にてご購入いただけます。<br>
+お支払いは現金のほか、交通系ICカード（Suica・PASMOなど）や主要な電子マネー（iD・QUICPay・楽天Edy・WAONなど）、クレジットカードにも対応しております。<br>
+混雑時でもスムーズにご案内できるよう、スタッフが常駐しておりますので、はじめてご来場の方やご高齢の方、お子様連れでも安心してご利用いただけます。<br>
+事前予約が満席でも、キャンセル枠や当日分がある場合もございますので、お気軽にスタッフまでお声がけください。
+</p>
+
+
+<a href="{% url 'ticket' %}" class="btn btn-secondary mt-4">← 戻る</a>
+{% endblock %}

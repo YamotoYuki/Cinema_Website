@@ -4,10 +4,27 @@
 {% block title %}Sign up{% endblock %}
 
 {% block content %}
-<h2>Sign up</h2>
+
+<style>
+  .helptext,
+  .errorlist,
+  .invalid-feedback,
+  small,
+  .form-text,
+  .text-muted {
+    color: white !important;
+  }
+</style>
+
+<div class="wrap2">
+<h2 class="animated-login-title2" id="animated-title2">
+  <span>S</span><span>i</span><span>g</span><span>n</span><span>U</span><span>p</span>
+</h2>
+
 <form method="post">
   {% csrf_token %}
   {{ form|crispy }}
   <button class="btn btn-success" type="submit">Sign up</button>
 </form>
+</div>
 {% endblock content %}

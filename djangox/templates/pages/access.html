@@ -1,0 +1,48 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}交通案内{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/access.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 access-page">
+  <h1 class="mb-4 text-center">交通アクセス</h1>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h4>住所</h4>
+    <p>〒123-4567<br>
+      愛知県名古屋市中村区名駅南1丁目10-1 HAL名古屋</p>
+
+      <h4>電車でのアクセス</h4>
+      <ul>
+      <li>JR「名古屋駅」桜通口から徒歩約5分</li>
+      <li>地下鉄東山線・名城線「名古屋駅」から徒歩約5分</li>
+      <li>名鉄・近鉄「名古屋駅」から徒歩約5分</li>
+      </ul>
+
+      <h4>お車でのアクセス</h4>
+      <p>首都高速「名古屋出口」より約5分。専用駐車場あり（120台）。</p>
+    </div>
+
+<div class="col-md-6">
+  <h4>地図</h4>
+  <div>
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3261.538757295658!2d136.88305097561096!3d35.1681222727572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x600376de618547db%3A0x76435e49b7e59323!2zSEFM5ZCN5Y-k5bGL!5e0!3m2!1sja!2sjp!4v1748693031851!5m2!1sja!2sjp"
+      width="100%"
+      height="300px"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</div>
+
+</div>
+</div>
+{% endblock content %}

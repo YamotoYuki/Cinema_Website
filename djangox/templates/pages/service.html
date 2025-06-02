@@ -1,45 +1,20 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}サービス紹介{% endblock title %}
+{% block title %}サービス案内{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/service.css' %}">
+{% endblock %}
 
 {% block content %}
-<style>
-  body {
-    background-color: #f0f0f0; /* グレー背景 */
-  }
+<div class="container py-5">
 
-  .service-section {
-    background-color: white;
-    border-radius: 12px;
-    padding: 40px;
-    max-width: 800px;
-    margin: 40px auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
+  <div class="service-section">
+  <h1 class="h1">
+    <img src="{% static 'images/logo.png' %}" alt="CinemaXXV Logo" class="logo-img2">
+  </h1>
 
-  .service-section h1 {
-    color: #405F3D;
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-
-  .service-section p {
-    font-size: 1.2rem;
-    color: #333;
-    line-height: 1.8;
-  }
-
-  .service-logo {
-    width: 120px;
-    margin-bottom: 20px;
-  }
-</style>
-
-<div class="service-section">
-  <img src="{% static 'images/lithium.png' %}" alt="Lithium logo" class="service-logo">
-  <h1>サービス紹介</h1>
   <p>
     私たちの映画サイトでは、<strong>スムーズなチケット予約</strong>が可能です。<br>
     お気に入りの映画を事前に選び、希望の座席を簡単に確保できます。<br><br>
@@ -50,4 +25,59 @@
     映画の世界に没入できる、あなた専用の特別な空間をお楽しみください。
   </p>
 </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/food.jpg' %}" class="card-img-top fade-in-img" alt="スナック売店">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title">売店・フード</h5>
+          <p class="card-text">ポップコーンやドリンクはもちろん、ホットドッグや限定コラボ商品もご用意！</p>
+        </div>
+      </div>
+    </div>
+
+<div class="col">
+  <div class="card h-100 shadow-sm">
+    <img src="{% static 'images/lounge.jpg' %}" class="card-img-top fade-in-img" alt="ラウンジ">
+    <div class="card-body fade-in-text">
+      <h5 class="card-title">ラウンジ</h5>
+      <p class="card-text">待ち時間や映画後にリラックスできるラウンジスペースを完備。無料Wi-Fi付き。</p>
+    </div>
+  </div>
+</div>
+
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/kids.jpg' %}" class="card-img-top fade-in-img" alt="キッズサービス">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title">キッズ向けサービス</h5>
+          <p class="card-text">小さなお子様向けのシート、チャイルドヘッドホン、授乳室も完備しています。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5 text-center">
+    <h4>その他サービス</h4>
+    <p>モバイルオーダー、誕生日特典、会員ポイント制度など、便利でお得なサービスも充実！</p>
+  </div>
+</div>
+
+  {% block javascript %}
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <!-- Project JS -->
+  <script src="{% static 'js/base.js' %}"></script>
+
+  {% endblock javascript %}
+
 {% endblock content %}
+
+
+
+
+

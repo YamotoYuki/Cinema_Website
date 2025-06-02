@@ -1,0 +1,50 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}劇場案内{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/theater.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 theater-page">
+  <h1 class="mb-4 text-center">劇場案内</h1>
+
+  <div class="div1">
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <img src="{% static 'images/logo2.png' %}" alt="シアター写真" class="img-fluid rounded shadow theater-image">
+    </div>
+    <div class="col-md-6">
+      <h3>ようこそ、CinemaXXVへ！</h3>
+      <p>
+        当劇場は最新の設備と快適な座席で、映画鑑賞を最高の体験にします。
+        Dolby Atmos 音響や 4K デジタルプロジェクションなど、最新技術を導入しています。
+      </p>
+      <ul>
+        <li>全スクリーン対応のリクライニングシート</li>
+        <li>バリアフリー設計</li>
+        <li>館内無料Wi-Fi完備</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-md-4">
+      <h5>営業時間</h5>
+      <p>毎日 9:00 〜 23:00</p>
+    </div>
+    <div class="col-md-4">
+      <h5>座席数</h5>
+      <p>全7スクリーン / 820席</p>
+    </div>
+    <div class="col-md-4">
+      <h5>所在地</h5>
+      <p>名古屋</p>
+    </div>
+  </div>
+</div> 
+</div>
+{% endblock content %}
+

@@ -1,95 +1,73 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}ホームページ{% endblock title %}
+{% block title %}チケット案内{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/ticket.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-  <img src="{% static 'images/lithium.png' %}" class="img-fluid" alt="Lithium logo"/>
-  <p class="lead">ホームページ</p>
+<div class="container py-5">
+  <h1 class="mb-4 text-center">チケット案内</h1>
+
+<div class="div1">
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <h4>料金</h4>
+      <table class="table table-bordered mt-3">
+        <thead class="table-light">
+          <tr>
+            <th>種別</th>
+            <th>料金</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>一般</td>
+            <td>¥1,900</td>
+          </tr>
+          <tr>
+            <td>大学生・専門学生</td>
+            <td>¥1,500（学生証提示）</td>
+          </tr>
+          <tr>
+            <td>高校生以下</td>
+            <td>¥1,000</td>
+          </tr>
+          <tr>
+            <td>シニア（60歳以上）</td>
+            <td>¥1,200</td>
+          </tr>
+          <tr>
+            <td>障がい者割引</td>
+            <td>¥1,000（同伴者1名まで同額）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+<div class="col-md-6">
+  <h4>チケット購入方法</h4>
+  <ul class="list-group mt-3">
+    <li class="list-group-item">
+      <a href="{% url 'Online' %}" class="text-decoration-none">オンライン予約（Web・アプリ対応）</a>
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'TicketBuy' %}" class="text-decoration-none">劇場窓口（当日券）</a>
+    </li>
+    <li class="list-group-item">
+      <a href="{% url 'QR' %}" class="text-decoration-none">自動券売機（QRコード対応）</a>
+    </li>
+  </ul>
+  <h5 class="mt-4">決済方法</h5>
+  <p>
+      現金・各種クレジットカード・交通系IC・PayPayなどに対応
+    </a>
+  </p>
+</div>
+
+  </div>
+</div>
 </div>
 {% endblock content %}
-
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チケット購入案内</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            background-color:#ffffff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(246, 240, 240, 0.1);
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .ticket-info {
-            margin-bottom: 20px;
-        }
-        .ticket-info p {
-            margin: 10px 0;
-        }
-        .buy-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .buy-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>チケット購入案内</h1>
-    </header>
-    <div class="container">
-        <h2>購入手続きについて</h2>
-        <div class="ticket-info">
-            <p><strong>価格:</strong> 大人 ¥xxxx/ 子供 ¥xxxx</p>
-            <p><strong>購入方法:</strong> オンラインまたは劇場窓口</p>
-            <p><strong>支払い方法:</strong> クレジットカード、電子マネー、現金</p>
-            <p><strong>注意事項:</strong> チケットは購入後の変更・キャンセルはできませんのでご了承ください。</p>
-        </div>
-        
-        <h2>購入の流れ</h2>
-        <div class="ticket-info">
-            <p><strong>1:</strong> ご希望の上映日・時間・映画作品・枚数・座席を選ぶ</p>
-            <p><strong>2:</strong> 指定の支払い方法で決済</p>
-            <p><strong>3:</strong> 当日チケットを入場口にて提示</p>
-        </div>
-
-        <h2>よくある質問</h2>
-        <div class="ticket-info">
-            <p><strong>Q: 学割はありますか？</strong></p>
-            <p>A: はい、学生証を提示いただければ学割価格で購入できます。</p>
-            <p><strong>Q: 座席指定はできますか？</strong></p>
-            <p>A: オンライン購入では座席を選択できます。</p>
-        </div>
-
-        <a href="#" class="buy-button">チケットを購入する</a>
-    </div>
-</body>
-</html>

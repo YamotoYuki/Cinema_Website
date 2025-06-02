@@ -1,7 +1,244 @@
 {% extends '_base.html' %}
+{% load static %}
 
-{% block title %}About page{% endblock %}
+{% block title %}作品案内{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/about.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>About page</h1>
+<div class="container py-5">
+  <h1 class="mb-4 text-center">上映中の作品</h1>
+
+  <div class="div1">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+
+    <!-- 君の名は -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/kimi_no_nawa.jpg' %}" class="card-img-top fade-in-img" alt="君の名は">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">君の名は</h5>
+          <p class="card-text text-secondary">
+            田舎に暮らす女子高生・三葉と、東京に住む男子高校生・瀧。<br>
+            夢の中で入れ替わる不思議な体験を繰り返すうち、2人は時空を超えた奇跡の物語に巻き込まれていく。<br>
+            美しい風景描写とRADWIMPSによる音楽が印象的。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPY×FAMILY -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/spy_x_family.jpg' %}" class="card-img-top fade-in-img" alt="SPY×FAMILY">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">SPY×FAMILY CODE: White</h5>
+          <p class="card-text text-secondary">
+            スパイの父、殺し屋の母、超能力者の娘が織りなす、奇想天外な“偽装家族”。<br>
+            今回は世界を救うミッションと家族旅行が同時進行！？<br>
+            ギャグとアクションが絶妙に絡み合うスパイアニメ映画。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 鬼滅の刃 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/kimetsu.jpg' %}" class="card-img-top fade-in-img" alt="Kimetsu">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">鬼滅の刃 無限列車編</h5>
+          <p class="card-text text-secondary">
+            鬼殺隊の炭治郎たちが、無限列車で次々と失踪する人々の謎を追う。<br>
+            圧巻の作画と感動のドラマで大ヒットを記録した劇場版アニメ。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 銀魂 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/gintama.jpg' %}" class="card-img-top fade-in-img" alt="Gintama">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">銀魂 ザ・ファイナル</h5>
+          <p class="card-text text-secondary">
+            ついに迎える万事屋・銀時たちの最後の戦い。<br>
+            ギャグと感動、アクションが融合した、銀魂ファン必見の劇場版最終章。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- すずめ -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/suzume.jpg' %}" class="card-img-top fade-in-img" alt="suzume">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">すずめの戸締まり</h5>
+          <p class="card-text text-secondary">
+            九州の町に住む少女・すずめが、災いをもたらす“扉”を閉じて回る青年と出会い、不思議な旅に出る。<br>
+            新海誠監督が描く、美しい映像と切ない成長の物語。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ゆるキャン -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/yurucamp.jpg' %}" class="card-img-top fade-in-img" alt="ゆるキャン">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">ゆるキャン△</h5>
+          <p class="card-text text-secondary">
+            大人になったリンたちが再び集まり、キャンプ場を作るために奮闘する。<br>
+            癒しと感動が詰まった、ゆるキャン△の未来を描いた劇場版。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ワンピース -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/onepiece.jpg' %}" class="card-img-top fade-in-img" alt="OnePiece">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">OnePiece Film Red</h5>
+          <p class="card-text text-secondary">
+            世界的歌姫・ウタが登場するオリジナルストーリー。<br>
+            ルフィやシャンクスとの過去が明かされる感動と興奮の音楽×冒険アニメ映画。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 黒子のバスケ -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/kuroko.jpg' %}" class="card-img-top fade-in-img" alt="kuroko">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">くろこのバスケ ウィンターカップ総集編</h5>
+          <p class="card-text text-secondary">
+            キセキの世代が再集結し、最強のストリートバスケチームと激突する。<br>
+            最後の奇跡を描く、くろバス劇場版『LAST GAME』。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 魔法科高校の劣等生 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/mahouka.jpg' %}" class="card-img-top fade-in-img" alt="mahouka">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">魔法科高校の劣等生 星を呼ぶ少女</h5>
+          <p class="card-text text-secondary">
+            南の島を舞台に、司波兄妹が謎の少女と出会い新たな戦いに巻き込まれる。<br>
+            TVアニメのその後を描いた完全新作劇場版。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ヒロアカ -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/hiroaka.jpg' %}" class="card-img-top fade-in-img" alt="hiroaka">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">僕のヒーローアカデミア THE MOVIE</h5>
+          <p class="card-text text-secondary">
+            世界規模のテロ組織に立ち向かうヒーローたちの壮大な戦い。<br>
+            出久・爆豪・轟が新たな仲間と挑むシリーズ最大スケールの映画。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAO -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/sao.jpg' %}" class="card-img-top fade-in-img" alt="sao">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">劇場版 ソードアート・オンライン プログレッシブ 星なき夜のアリア</h5>
+          <p class="card-text text-secondary">
+            アスナ視点で描かれるSAO第1層攻略の物語。<br>
+            仮想世界の始まりを新たな視点で再構築した劇場版。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 天気の子 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/tenki_no_ko.jpg' %}" class="card-img-top fade-in-img" alt="天気の子">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">天気の子</h5>
+          <p class="card-text text-secondary">
+            家出少年・帆高と、祈るだけで空を晴れにできる“晴れ女”陽菜が出会う。<br>
+            異常気象の東京で、2人が選ぶ未来とは。<br>
+            『君の名は。』に続く新海誠監督の感動ファンタジー。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 聲の形 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/koe_no_katachi.jpg' %}" class="card-img-top fade-in-img" alt="聲の形">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">聲の形</h5>
+          <p class="card-text text-secondary">
+            耳が聞こえない少女・硝子と、かつて彼女をいじめた少年・将也の再会と成長の物語。<br>
+            京都アニメーション制作の、繊細で深い感動作。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 転生したらスライムだった件 -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/tensura.jpg' %}" class="card-img-top fade-in-img" alt="転生したらスライムだった件">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">劇場版 転生したらスライムだった件</h5>
+          <p class="card-text text-secondary">
+            現代日本で命を落としたサラリーマンが異世界でスライムに転生！<br>
+            仲間と共に国家を築く異世界ファンタジーの劇場版。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- オーバーロード -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{% static 'images/overlord.jpg' %}" class="card-img-top fade-in-img" alt="オーバーロード">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title text-primary fw-bold">劇場版 オーバーロード</h5>
+          <p class="card-text text-secondary">
+            ゲームの世界に取り残された最強のアンデッド魔法使い・アインズ。<br>
+            圧倒的な力と知略で世界を支配していく異世界ダークファンタジー。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  
+</div>
+
+  {% block javascript %}
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <!-- Project JS -->
+  <script src="{% static 'js/base.js' %}"></script>
+
+  {% endblock javascript %}
+
 {% endblock content %}
