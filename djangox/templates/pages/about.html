@@ -13,21 +13,22 @@
 
   <div class="div1">
   <div class="row row-cols-1 row-cols-md-3 g-4">
-
-    <!-- 君の名は -->
     <div class="col">
-      <div class="card h-100 shadow-sm">
-        <img src="{% static 'images/kimi_no_nawa.jpg' %}" class="card-img-top fade-in-img" alt="君の名は">
-        <div class="card-body fade-in-text">
-          <h5 class="card-title text-primary fw-bold">君の名は</h5>
-          <p class="card-text text-secondary">
-            田舎に暮らす女子高生・三葉と、東京に住む男子高校生・瀧。<br>
-            夢の中で入れ替わる不思議な体験を繰り返すうち、2人は時空を超えた奇跡の物語に巻き込まれていく。<br>
-            美しい風景描写とRADWIMPSによる音楽が印象的。
-          </p>
-        </div>
+  <a href="{% url 'purchase' 'kimi-no-nawa' %}" class="text-decoration-none text-dark">
+    <div class="card h-100 shadow-sm">
+      <img src="{% static 'images/kimi_no_nawa.jpg' %}" class="card-img-top fade-in-img" alt="君の名は">
+      <div class="card-body fade-in-text">
+        <h5 class="card-title text-primary fw-bold">君の名は</h5>
+        <p class="card-text text-secondary">
+          田舎に暮らす女子高生・三葉と、東京に住む男子高校生・瀧。<br>
+          夢の中で入れ替わる不思議な体験を繰り返すうち、2人は時空を超えた奇跡の物語に巻き込まれていく。<br>
+          美しい風景描写とRADWIMPSによる音楽が印象的。
+        </p>
       </div>
     </div>
+  </a>
+</div>
+
 
     <!-- SPY×FAMILY -->
     <div class="col">

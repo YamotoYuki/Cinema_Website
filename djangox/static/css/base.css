@@ -19,6 +19,8 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
 }
 nav {
   position: fixed;
@@ -92,7 +94,7 @@ nav {
 
 
 .roboto-slab-nav {
-  font-family: "Roboto Slab", serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;

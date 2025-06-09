@@ -82,15 +82,17 @@ nav {
 }
 
 body {
-    background-image: url('/static/images/wallpaper.jpg'); 
-    background-size: cover;          
-    background-position: center;    
-    background-repeat: no-repeat;    
-    background-attachment: fixed;  
-    color: #fff;                    
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  animation: fadeZoomIn 0.8s ease-out both;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .main {

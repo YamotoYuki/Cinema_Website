@@ -4,14 +4,39 @@
 {% block title %}チケット案内{% endblock title %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/app/ticket.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app/ticket.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="head">
   <h1 class="mb-4 text-center">チケット案内</h1>
 
-<div class="div1">
+  <!-- HalCinemaとは -->
+<h5 class="mt-4">ご利用の流れ</h5>
+<div class="flow-container">
+  <div class="flow-step">
+    <div class="icon">①</div>
+    <div class="text">
+      <h6>上映日・時間・映画作品・枚数・座席を選ぶ</h6>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="icon">②</div>
+    <div class="text">
+      <h6>オンライン決済</h6>
+    </div>
+  </div>
+  <div class="flow-step">
+    <div class="icon">③</div>
+    <div class="text">
+      <h6>QRコードで入場（スマホ・印刷・券売機対応）</h6>
+      <p>※印刷したQRコード、または自動券売機で発券したチケットのQRコードでも入場可能です。</p>
+    </div>
+  </div>
+</div>
+
+
+  <!-- 料金 & 購入方法 -->
   <div class="row mb-5">
     <div class="col-md-6">
       <h4>料金</h4>
@@ -23,51 +48,78 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>一般</td>
-            <td>¥1,900</td>
-          </tr>
-          <tr>
-            <td>大学生・専門学生</td>
-            <td>¥1,500（学生証提示）</td>
-          </tr>
-          <tr>
-            <td>高校生以下</td>
-            <td>¥1,000</td>
-          </tr>
-          <tr>
-            <td>シニア（60歳以上）</td>
-            <td>¥1,200</td>
-          </tr>
-          <tr>
-            <td>障がい者割引</td>
-            <td>¥1,000（同伴者1名まで同額）</td>
-          </tr>
+          <tr><td>一般</td><td>¥1,900</td></tr>
+          <tr><td>大学生・専門学生</td><td>¥1,500（学生証提示）</td></tr>
+          <tr><td>高校生以下</td><td>¥1,000</td></tr>
+          <tr><td>シニア（60歳以上）</td><td>¥1,200</td></tr>
+          <tr><td>障がい者割引</td><td>¥1,000（同伴者1名まで同額）</td></tr>
         </tbody>
       </table>
     </div>
 
-<div class="col-md-6">
-  <h4>チケット購入方法</h4>
-  <ul class="list-group mt-3">
-    <li class="list-group-item">
-      <a href="{% url 'Online' %}" class="text-decoration-none">オンライン予約（Web・アプリ対応）</a>
-    </li>
-    <li class="list-group-item">
-      <a href="{% url 'TicketBuy' %}" class="text-decoration-none">劇場窓口（当日券）</a>
-    </li>
-    <li class="list-group-item">
-      <a href="{% url 'QR' %}" class="text-decoration-none">自動券売機（QRコード対応）</a>
-    </li>
-  </ul>
-  <h5 class="mt-4">決済方法</h5>
-  <p>
-      現金・各種クレジットカード・交通系IC・PayPayなどに対応
-    </a>
-  </p>
-</div>
+    <div class="col-md-6">
+      <h4>購入方法</h4>
+      <ul class="list-group mt-3">
+        <li class="list-group-item">
+          <a href="{% url 'Online' %}" class="text-decoration-none">HalCinema（オンライン予約）</a>
+        </li>
+        <li class="list-group-item">
+          <a href="{% url 'TicketBuy' %}" class="text-decoration-none">劇場窓口（当日券）</a>
+        </li>
+        <li class="list-group-item">
+          <a href="{% url 'QR' %}" class="text-decoration-none">自動券売機（QRコード対応）</a>
+        </li>
+      </ul>
 
+      <h5 class="mt-4">決済方法</h5>
+      <p>現金・各種クレジットカード・交通系IC・PayPayなどに対応</p>
+    </div>
   </div>
-</div>
+
+  <hr>
+
+  <!-- その他の情報 -->
+  <div class="row">
+    <div class="col-12">
+      <h5 class="mt-4">アイコンの意味</h5>
+      <ul class="list-group">
+        <li class="list-group-item">✅ 販売中</li>
+        <li class="list-group-item">⚠️ 残りわずか</li>
+        <li class="list-group-item">⏳ 販売開始前</li>
+        <li class="list-group-item">❌ 満席／販売終了</li>
+      </ul>
+
+      <h5 class="mt-4">年齢制限区分</h5>
+      <ul>
+        <li><strong>PG-12：</strong>12歳未満は保護者の同伴が望ましい</li>
+        <li><strong>R15+：</strong>15歳以上（中学生は証明書要）</li>
+        <li><strong>R18+：</strong>18歳以上</li>
+      </ul>
+
+      <h5 class="mt-4">注意事項</h5>
+      <ul>
+        <li>購入確認メールは「HalCinema@example.com」から届きます</li>
+        <li>迷惑メール対策設定をご確認ください</li>
+        <li>入場には予約番号と電話番号が必要です</li>
+      </ul>
+
+      <h5 class="mt-4">対応環境</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <strong>PC</strong>
+          <ul>
+            <li>Edge / Safari / Chrome / Firefox：最新版</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <strong>スマートフォン</strong>
+          <ul>
+            <li>iOS 13以上：MobileSafari最新版</li>
+            <li>Android 4.3以上：Chrome最新版</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}

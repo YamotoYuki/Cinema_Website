@@ -25,5 +25,7 @@ urlpatterns = [
     path("QR/", QRPageView.as_view(), name="QR"),
     path("TicketBuy/", TicketBuyPageView.as_view(), name="TicketBuy"),
     path("Online/", OnlinePageView.as_view(), name="Online")
+    path('purchase/<str:movie_slug>/', views.purchase, name='purchase')
+
 
 ]

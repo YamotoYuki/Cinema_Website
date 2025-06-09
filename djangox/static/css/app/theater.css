@@ -9,6 +9,7 @@ body {
   padding: 0;
   min-height: 100vh;
   animation: fadeZoomIn 0.8s ease-out both;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .div1 {
@@ -28,7 +29,6 @@ body {
   max-width: 960px;
   margin: 20px auto;
   padding: 0 15px;
-  font-family: 'Noto Sans JP', sans-serif;
   color: #fff;
   background-color: rgba(30, 30, 30, 0.5);
   border-radius: 12px;

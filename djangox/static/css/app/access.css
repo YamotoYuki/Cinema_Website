@@ -10,6 +10,7 @@ body {
   min-height: 100vh;
   font-family: 'Noto Sans JP', sans-serif;
   animation: fadeZoomIn 0.9s ease-out both;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
@@ -23,7 +24,6 @@ body {
 }
 
 .access-page {
-  font-family: 'Noto Sans JP', sans-serif;
   color: #fff;
   animation: fadeZoomIn 1.4s ease-out both;
 }
