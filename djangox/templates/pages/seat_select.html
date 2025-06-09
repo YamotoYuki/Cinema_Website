@@ -1,0 +1,127 @@
+{% extends '_base.html' %}
+{% block content %}
+<h2 class="text-center mt-4">{{ movie_title }} - 座席選択</h2>
+
+<div class="screen mx-auto">スクリーン</div>
+
+<form method="post" id="seatForm">
+  {% csrf_token %}
+  <div class="seating-area">
+    <div class="seating" id="seating"></div>
+  </div>
+
+  <input type="hidden" name="seat" id="seatInput">
+
+  <div class="selection-info mt-3">
+    選択された座席: <span id="selected-seats">なし</span>
+  </div>
+
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary">確認画面へ</button>
+  </div>
+</form>
+
+<style>
+.screen {
+  background-color: #ccc;
+  color: #333;
+  padding: 10px;
+  margin: 20px auto;
+  width: 300px;
+  border-radius: 5px;
+  text-align: center;
+}
+.seating-area {
+  display: flex;
+  justify-content: center;
+}
+.seating {
+  display: grid;
+  grid-template-columns: 
+    40px           /* 左ラベル */
+    repeat(15, 40px) /* 1〜15 */
+    40px           /* 真ん中ラベル（15の右） */
+    repeat(5, 40px)  /* 16〜20 */
+    40px;          /* 右端ラベル */
+  grid-gap: 6px;
+}
+.seat {
+  width: 40px;
+  height: 40px;
+  background-color: #90caf9;
+  border-radius: 5px;
+  line-height: 40px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+.seat.selected {
+  background-color: #66bb6a;
+  color: #fff;
+}
+.seat.label {
+  background-color: transparent;
+  font-weight: bold;
+  pointer-events: none;
+}
+.selection-info {
+  text-align: center;
+  font-size: 16px;
+}
+</style>
+
+<script>
+const seatingDiv = document.getElementById('seating');
+const selectedSeatsSpan = document.getElementById('selected-seats');
+const seatInput = document.getElementById('seatInput');
+
+const rows = ['A','B','C','D','E','F','G','H','I','J'];
+const leftCols = Array.from({length: 15}, (_, i) => i + 1);  // 1〜15
+const rightCols = Array.from({length: 5}, (_, i) => i + 16); // 16〜20
+
+let selectedSeats = [];
+
+rows.forEach(row => {
+  seatingDiv.appendChild(makeLabel(row)); // 左ラベル
+
+  leftCols.forEach(num => seatingDiv.appendChild(makeSeat(row, num)));
+
+  seatingDiv.appendChild(makeLabel(row)); // 中央ラベル（15の右）
+
+  rightCols.forEach(num => seatingDiv.appendChild(makeSeat(row, num)));
+
+  seatingDiv.appendChild(makeLabel(row)); // 右ラベル
+});
+
+function makeSeat(row, num) {
+  const seat = document.createElement('div');
+  const seatId = `${row}${num}`;
+  seat.className = 'seat';
+  seat.textContent = num;
+  seat.dataset.seatId = seatId;
+  seat.addEventListener('click', () => {
+    seat.classList.toggle('selected');
+    if (selectedSeats.includes(seatId)) {
+      selectedSeats = selectedSeats.filter(s => s !== seatId);
+    } else {
+      selectedSeats.push(seatId);
+    }
+    updateSelectedSeats();
+  });
+  return seat;
+}
+
+function makeLabel(row) {
+  const div = document.createElement('div');
+  div.className = 'seat label';
+  div.textContent = row;
+  return div;
+}
+
+function updateSelectedSeats() {
+  selectedSeatsSpan.textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : 'なし';
+  seatInput.value = selectedSeats.join(',');
+}
+</script>
+{% endblock %}

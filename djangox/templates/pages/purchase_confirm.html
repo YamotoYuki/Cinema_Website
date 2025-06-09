@@ -1,0 +1,12 @@
+{% extends '_base.html' %}
+{% block content %}
+<div class="container">
+  <h2>購入確認</h2>
+  <p><strong>映画:</strong> {{ movie_title }}</p>
+  <p><strong>座席:</strong> {{ seat }}</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">購入を確定する</button>
+  </form>
+</div>
+{% endblock %}

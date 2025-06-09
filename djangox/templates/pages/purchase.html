@@ -1,0 +1,9 @@
+{% extends '_base.html' %}
+{% block content %}
+<div class="container">
+  <h2>{{ movie_title }} のチケット購入</h2>
+  <form method="get" action="{% url 'seat_select' movie_id %}">
+    <button type="submit" class="btn btn-primary">座席を選ぶ</button>
+  </form>
+</div>
+{% endblock %}
