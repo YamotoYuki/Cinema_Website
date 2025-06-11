@@ -1,0 +1,195 @@
+body {
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Noto Sans JP', sans-serif;
+  animation: fadeZoomIn 0.9s ease-out both;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+  .movie-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 60px;
+  }
+
+  .movie-poster {
+    flex: 1 1 300px;
+    max-width: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+
+  .movie-info {
+    flex: 2 1 400px;
+  }
+
+  .movie-info h2 {
+    font-size: 2.4rem;
+    font-weight: bold;
+    color: #ff3d3d;
+    margin-bottom: 20px;
+  }
+
+  .movie-info p {
+    line-height: 1.6;
+    color: #ccc;
+  }
+
+  .info-label {
+    font-weight: bold;
+    color: #888;
+    margin-top: 10px;
+  }
+
+  .btn-ticket {
+    background: linear-gradient(135deg, #ff3d3d, #ff7e5f);
+    border: none;
+    padding: 12px 32px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 40px;
+    color: white;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-ticket:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 61, 61, 0.4);
+  }
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  margin: 0 70px 0 0;
+  transform: scale(2);
+  transform-origin: left center;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  animation: slideIn 1s ease-out forwards;
+}
+
+.custom-navbar {
+  background-color: #135034; 
+  color: #fff;
+}
+
+.nav-item,
+.nav-link {
+  display: flex;
+}
+
+.nav-item {
+  position: relative;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.custom-navbar .navbar-brand {
+  color: #fff !important;
+  text-shadow: 0 0 10px #ffffff88;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.custom-navbar .navbar-brand:hover {
+  color: #b7b7b7;
+}
+
+.nav-link {
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 10px 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: #fff;
+  box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+  transition: width 0.4s ease;
+}
+
+.nav-link:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+/* アニメーション定義 */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.footer {
+  margin-top: 153px;
+  padding: 5px 0 5px;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  background-color: rgba(8, 96, 33, 0.533);
+  color: #ffffff;
+  box-sizing: border-box;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.footer a {
+  color: #ffffff;
+  text-decoration: none;
+}

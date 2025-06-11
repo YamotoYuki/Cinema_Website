@@ -1,6 +1,14 @@
 {% extends '_base.html' %}
+
+{% load static %}
+
+{% block title %}座席選択{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
   <h2>購入確認</h2>
   <p><strong>映画:</strong> {{ movie_title }}</p>
   <p><strong>座席:</strong> {{ seat }}</p>
@@ -8,5 +16,4 @@
     {% csrf_token %}
     <button type="submit" class="btn btn-success">購入を確定する</button>
   </form>
-</div>
 {% endblock %}

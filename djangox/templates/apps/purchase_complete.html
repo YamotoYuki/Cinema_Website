@@ -1,0 +1,14 @@
+{% extends '_base.html' %}
+
+{% load static %}
+
+{% block title %}座席選択{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/app/purchase_complete.css' %}">
+{% endblock %}
+
+{% block content %}
+  <h2>購入完了</h2>
+  <p>チケットの購入が完了しました。ありがとうございました！</p>
+{% endblock %}

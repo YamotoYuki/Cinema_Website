@@ -1,0 +1,32 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}{{ movie_title }}｜チケット購入{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app/purchase.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="movie-section">
+    <!-- 映画ポスター -->
+    <div class="movie-poster">
+      <img src="{{ movie_poster_url }}" alt="{{ movie_title }}" class="img-fluid">
+    </div>
+
+    <!-- 映画情報 -->
+    <div class="movie-info">
+      <h2>{{ movie_title }}</h2>
+      <p><span class="info-label">ジャンル:</span> {{ genre }}</p>
+      <p><span class="info-label">上映時間:</span> {{ duration }}分</p>
+      <p><span class="info-label">公開日:</span> {{ release_date }}</p>
+      <p><span class="info-label">あらすじ:</span><br>{{ description }}</p>
+
+      <form method="get" action="{% url 'seat_select' movie_id %}">
+        <button type="submit" class="btn btn-ticket">座席を選ぶ</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

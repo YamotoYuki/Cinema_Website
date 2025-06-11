@@ -1,0 +1,50 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}座席選択{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app/seat.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mt-4">{{ movie_title }} - 座席選択</h2>
+
+<div class="screen mx-auto">スクリーン</div>
+
+<form method="post" id="seatForm">
+  {% csrf_token %}
+  <div class="seating-area">
+    <div class="seating" id="seating"></div>
+  </div>
+
+  <input type="hidden" name="seat" id="seatInput">
+
+  <div class="selection-info mt-3">
+    選択された座席: <span id="selected-seats">なし</span>
+  </div>
+
+  <div class="legend text-left mt-3">
+    <span class="legend-item available">空席</span>
+    <span class="legend-item selected">選択中</span>
+    <span class="legend-item reserved">予約済</span>
+    <span class="legend-item wheelchair">車椅子席</span>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{% url 'purchase' movie_id %}" class="btn btn-secondary me-3">戻る</a>
+    <button type="submit" class="btn" style="background-color: #28a745; color: white;">確認画面へ</button>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block javascript %}
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <!-- Project JS -->
+  <script src="{% static 'js/apps.js' %}"></script>
+{% endblock javascript %}
