@@ -1,52 +1,41 @@
 {% extends '_base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Log in{% endblock %}
 
 {% block content %}
 
-<style>
-  .helptext,
-  .form-text,
-  .text-muted,
-  .wrap a {
-    color: white !important;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 
 <html lang="ja">
-
 <body>
+  <div class="wrap">
+    <h2 class="animated-login-title" id="animated-title">
+      <span>L</span><span>o</span><span>g</span><span>i</span><span>n</span>
+    </h2>
 
-<div class="wrap">
-<h2 class="animated-login-title" id="animated-title">
-  <span>L</span><span>o</span><span>g</span><span>i</span><span>n</span>
-</h2>
-
-<form method="post">
-  {% csrf_token %}
-  {{ form|crispy }}
-<div class="remember-forgot">
-    <label><input type="checkbox" name="remember">保存</label>
-</div>
-<div class="register">
-    <p>アカウントは持っていますか？<a href="{% url 'account_signup' %}" class="">Sign up</a></p>
-</div>
-<button type="submit" class="btn">ログイン</button>
-</form>
-</div>
-
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <div class="remember-forgot">
+        <label><input type="checkbox" name="remember">保存</label>
+      </div>
+      <div class="register">
+        <p>アカウントは持っていますか？<a href="{% url 'account_signup' %}">Sign up</a></p>
+      </div>
+      <button type="submit" class="btn">ログイン</button>
+    </form>
+  </div>
 </body>
 </html>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const letters = document.querySelectorAll('.animated-login-title span');
-
     letters.forEach(letter => {
       letter.addEventListener('mouseenter', () => {
         letter.classList.add('hover-animate');
-
         letter.addEventListener('animationend', () => {
           letter.classList.remove('hover-animate');
         }, { once: true });
@@ -54,6 +43,5 @@
     });
   });
 </script>
-
 
 {% endblock content %}
