@@ -14,65 +14,108 @@ body {
 }
 
 .container {
+  max-width: 960px;
+  margin: 60px auto;
+  padding: 0 15px;
   color: #fff;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   animation: fadeZoomIn 0.9s ease-out both;
 }
+.movie-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 40px;
+}
 
+/* 映画ポスター */
+.movie-poster {
+  flex: 1 1 300px;
+  max-width: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.movie-poster img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+/* 映画情報 */
+.movie-info {
+  flex: 2 1 400px;
+}
+
+.movie-info h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff; 
+  margin-bottom: 20px;
+}
+
+.movie-info p {
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  display: inline-block;
+  font-weight: 600;
+  color: #888;
+  font-size: 0.95rem;
+  margin-right: 5px;
+}
+
+/* ボタン */
+.btn-ticket {
+  display: inline-block;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4); 
+  border: none;
+  padding: 14px 36px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 40px;
+  color: white;
+  margin-top: 30px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-ticket:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.6);
+}
+
+@keyframes fadeZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
   .movie-section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-top: 60px;
-  }
-
-  .movie-poster {
-    flex: 1 1 300px;
-    max-width: 300px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(255,255,255,0.1);
-  }
-
-  .movie-info {
-    flex: 2 1 400px;
+    flex-direction: column;
+    padding: 20px;
   }
 
   .movie-info h2 {
-    font-size: 2.4rem;
-    font-weight: bold;
-    color: #ff3d3d;
-    margin-bottom: 20px;
-  }
-
-  .movie-info p {
-    line-height: 1.6;
-    color: #ccc;
-  }
-
-  .info-label {
-    font-weight: bold;
-    color: #888;
-    margin-top: 10px;
+    font-size: 2rem;
   }
 
   .btn-ticket {
-    background: linear-gradient(135deg, #ff3d3d, #ff7e5f);
-    border: none;
-    padding: 12px 32px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 40px;
-    color: white;
-    margin-top: 30px;
-    transition: all 0.3s ease;
+    font-size: 1rem;
+    padding: 12px 28px;
   }
-
-  .btn-ticket:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255, 61, 61, 0.4);
-  }
+}
 
 .logo-img {
   height: 40px;

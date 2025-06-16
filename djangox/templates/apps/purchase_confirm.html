@@ -1,19 +1,41 @@
 {% extends '_base.html' %}
-
 {% load static %}
 
-{% block title %}座席選択{% endblock title %}
+{% block title %}購入確認{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
 {% endblock %}
 
 {% block content %}
-  <h2>購入確認</h2>
-  <p><strong>映画:</strong> {{ movie_title }}</p>
+<div class="purchase-confirm-container">
+  <h2>ご購入内容の確認</h2>
+  <p><strong>映画タイトル:</strong> {{ movie_title }}</p>
+  <p><strong>上映時間:</strong> {{ showtime }}</p>
   <p><strong>座席:</strong> {{ seat }}</p>
+  <p><strong>料金:</strong> {{ price }}円</p>
+  <p><strong>シアター:</strong> {{ theater_name }}</p>
+
   <form method="post">
     {% csrf_token %}
+
+    {% if form %}
+      <div class="form-group">
+        {% for field in form %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="form-error">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>お支払い方法のフォームがありません。</p>
+    {% endif %}
+
     <button type="submit" class="btn btn-success">購入を確定する</button>
   </form>
+</div>
 {% endblock %}

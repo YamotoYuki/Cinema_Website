@@ -21,6 +21,9 @@
       <p><span class="info-label">ジャンル:</span> {{ genre }}</p>
       <p><span class="info-label">上映時間:</span> {{ duration }}分</p>
       <p><span class="info-label">公開日:</span> {{ release_date }}</p>
+      <p><span class="info-label">上映開始:</span> {{ showtime }}</p>
+      <p><span class="info-label">金額:</span> {{ price }}円</p>
+      <p><span class="info-label">シアター:</span> {{ theater_name }}</p>
       <p><span class="info-label">あらすじ:</span><br>{{ description }}</p>
 
       <form method="get" action="{% url 'seat_select' movie_id %}">
