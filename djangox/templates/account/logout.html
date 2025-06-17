@@ -13,7 +13,7 @@
 <main class="main">
   <div class="container">
     <h1>Sign Out</h1>
-    <p>サインアウトしてもよろしいですか？</p>
+    <p><strong>サインアウトしてもよろしいですか？</strong></p>
     <form method="post" action="{% url 'account_logout' %}">
       {% csrf_token %}
       {{ form|crispy }}
