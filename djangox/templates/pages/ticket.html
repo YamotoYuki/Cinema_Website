@@ -71,10 +71,18 @@
         </li>
       </ul>
 
-      <h5 class="mt-4">決済方法</h5>
-      <p>現金・各種クレジットカード・交通系IC・PayPayなどに対応</p>
-    </div>
+<h5 class="mt-4">決済方法</h5>
+      <div class="d-flex flex-wrap gap-3 align-items-center">
+        <img src="{% static 'logo/genkin.png' %}" alt="現金" height="32" width="32" class="payment-icon">
+        <img src="{% static 'logo/visa.png' %}" alt="クレジットカード" height="32" class="payment-icon">
+        <img src="{% static 'logo/paypal.png' %}" alt="PayPal" height="32" class="payment-icon">
+        <img src="{% static 'logo/merpay.png' %}" alt="MeruPay" height="32" class="payment-icon">
+        <img src="{% static 'logo/paypay.png' %}" alt="PayPay" height="32" class="payment-icon">
+      </div>
+<h5 class="mt-4">コンビニ払い</h5>
+    <img src="{% static 'logo/konbini.png' %}" alt="コンビニ払い" height="80" width="180" style="margin: 6px 0 0 -15px;">
   </div>
+</div>
 
   <hr>
 

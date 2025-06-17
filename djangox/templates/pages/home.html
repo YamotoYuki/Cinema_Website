@@ -38,27 +38,78 @@
         </div>
 
         <!-- 上映中の作品 -->
-        <section class="mt-5 card-body">
-          <h5 class="text-center mb-4 card-title fade-in-title"><strong>上映中の作品</strong></h5>
-          <div class="row">
-            <div class="col-md-3 text-center fade-in-text">
-              <img src="{% static 'images/onepiece.jpg' %}" alt="Film 1" class="img-fluid mb-2">
-              <p class="card-text"><strong>OnePiece Film Red</strong><br>上映時間：105分</p>
-            </div>
-            <div class="col-md-3 text-center fade-in-text">
-              <img src="{% static 'images/kimetsu.jpg' %}" alt="Film 2" class="img-fluid mb-2">
-              <p class="card-text"><strong>鬼滅の刃 無限列車編</strong><br>上映時間：112分</p>
-            </div>
-            <div class="col-md-3 text-center fade-in-text">
-              <img src="{% static 'images/gintama.jpg' %}" alt="Film 3" class="img-fluid mb-2">
-              <p class="card-text"><strong>銀魂 ザ・ファイナル</strong><br>上映時間：114分</p>
-            </div>
-            <div class="col-md-3 text-center fade-in-text">
-              <img src="{% static 'images/suzume.jpg' %}" alt="Film 4" class="img-fluid mb-2">
-              <p class="card-text"><strong>すずめの戸締まり</strong><br>上映時間：115分</p>
-            </div>
-          </div>
-        </section>
+<section class="mt-5 card-body">
+  <h5 class="text-center mb-4 card-title fade-in-title">
+    <strong>上映中</strong>
+  </h5>
+
+<div class="movie-carousel-wrapper">
+      <!-- 左ボタン -->
+    <button class="slide-btn left" onclick="slideMovies(-1)">&#8249;</button>
+
+    <div class="movie-carousel d-flex overflow-hidden">
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/onepiece.jpg' %}" alt="Film 1" class="img-fluid mb-2">
+        <p><strong>OnePiece Film Red</strong><br>上映時間：115分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/kimetsu.jpg' %}" alt="Film 2" class="img-fluid mb-2">
+        <p><strong>鬼滅の刃 無限列車編</strong><br>上映時間：112分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/gintama.jpg' %}" alt="Film 3" class="img-fluid mb-2">
+        <p><strong>銀魂 ザ・ファイナル</strong><br>上映時間：117分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/suzume.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>すずめの戸締まり</strong><br>上映時間：104分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/kimi_no_nawa.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>君の名は</strong><br>上映時間：106分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/spy_x_family.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>SPYxFAMILY CODE: White</strong><br>上映時間：120分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/kuroko.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>くろこのバスケ ウィンターカップ総集</strong><br>上映時間：89分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/mahouka.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>魔法科高校の劣等生 星を呼ぶ少女</strong><br>上映時間：90分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/hiroaka.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>僕のヒーローアカデミア THE MOVIE</strong><br>上映時間：96分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/sao.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>劇場版 ソードアート・オンライン プログレッシブ 星なき夜のアリア</strong><br>上映時間：97分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/tenki_no_ko.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>天気の子</strong><br>上映時間：112分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/koe_no_katachi.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>聲の形</strong><br>上映時間：129分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/tensura.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>劇場版 転生したらスライムだった件</strong><br>上映時間：108分</p>
+      </div>
+      <div class="movie-item text-center fade-in-text">
+        <img src="{% static 'images/overlord.jpg' %}" alt="Film 4" class="img-fluid mb-2">
+        <p><strong>劇場版 オーバーロード</strong><br>上映時間：103分</p>
+      </div>
+    </div>
+
+    <!-- 右ボタン -->
+    <button class="slide-btn right" onclick="slideMovies(1)">&#8250;</button>
+  </div>
+</section>
 
         <!-- お客様の声 -->
         <section class="mt-5 p-5 rounded-4 card-body fade-in-text" style="background-color: rgba(0, 0, 0, 0.5); color: #f0f0f0;">
