@@ -23,14 +23,6 @@ body {
   margin-top: 60px;
 }
 
-.logo-img {
-  height: 40px;
-  width: auto;
-  margin: 0 70px 0 0;
-  transform: scale(2);
-  transform-origin: left center;
-}
-
 nav {
   position: fixed;
   top: 0;
@@ -71,17 +63,18 @@ nav {
   text-decoration: none;
   font-weight: 500;
   position: relative;
-  padding: 10px 0;
+  padding: 8px 5px 0 0;
   transition: color 0.3s ease;
 }
 
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -8px;
   left: 0;
-  height: 2px;
+  height: 3px;
   width: 0;
+  border-radius: 8px;
   background: #fff;
   box-shadow: 0 0 10px #fff, 0 0 20px #fff;
   transition: width 0.4s ease;
@@ -99,6 +92,22 @@ nav {
 .navbar-nav {
   display: flex;
   align-items: center;
+}
+
+
+.roboto-slab-nav {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  margin: 0 70px 2px 0;
+  transform: scale(2);
+  transform-origin: left center;
 }
 
 @keyframes slideIn {

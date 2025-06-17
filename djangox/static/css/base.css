@@ -22,6 +22,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
 }
+
 nav {
   position: fixed;
   top: 0;
@@ -62,7 +63,7 @@ nav {
   text-decoration: none;
   font-weight: 500;
   position: relative;
-  padding: 10px 0;
+  padding: 8px 8px 0 0;
   transition: color 0.3s ease;
 }
 
@@ -92,12 +93,19 @@ nav {
   align-items: center;
 }
 
-
 .roboto-slab-nav {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  margin: 0 70px 0 0;
+  transform: scale(2);
+  transform-origin: left center;
 }
 
 .container-fluid{
@@ -143,14 +151,6 @@ nav {
   justify-content: center;
   align-items: center;
   margin: 100px 0 0 140px;
-}
-
-.logo-img {
-  height: 40px;
-  width: auto;
-  margin: 0 70px 0 0;
-  transform: scale(2);
-  transform-origin: left center;
 }
 
 .h2 {
