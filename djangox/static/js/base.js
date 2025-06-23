@@ -91,4 +91,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // 外部からも呼び出せるように
   window.slideMovies = manualScroll;
   window.scrollCarousel = manualScroll;
+
+  const btn = document.querySelector(".openbtn");
+  const nav = document.getElementById("g-nav");
+
+  btn?.addEventListener("click", () => {
+    btn.classList.toggle("active");
+    nav.classList.toggle("panelactive");
+  });
 });
+

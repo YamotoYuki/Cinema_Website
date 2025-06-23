@@ -13,7 +13,7 @@ body {
 }
 
 .screen {
-  background-color: #a2a2a2;
+  background: rgba(144, 145, 145, 0.481);
   color: #fff;
   padding: 10px;
   margin: 20px auto;
@@ -24,56 +24,105 @@ body {
 
 .seating-area {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
-.seating {
+.row-block {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.block {
   display: grid;
-  grid-template-columns:
-    40px
-    repeat(4, 40px)
-    40px
-    repeat(12, 40px)
-    40px
-    repeat(4, 40px)
-    40px;
-  grid-gap: 6px;
+  gap: 6px;
 }
 
-.seat {
+.left-block,
+.right-block {
+  grid-template-columns: repeat(4, 40px);
+}
+
+.center-block {
+  grid-template-columns: repeat(12, 40px);
+  margin: 0 30px;
+}
+
+.seat-label {
+  display: inline-block;
   width: 40px;
   height: 40px;
-  background-color:rgb(119, 173, 218);
-  border-radius: 5px;
   line-height: 40px;
   text-align: center;
-  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   cursor: pointer;
   user-select: none;
-}
-
-.seat.selected {
-  background-color: #66bb6a;
-  color: #fff;
-}
-
-.seat.reserved {
-  background-color: rgb(255, 0, 0);
-  cursor: not-allowed;
-  color: #fff;
-}
-
-.seat.wheelchair {
-  background-color:rgb(21, 6, 139);
-  color: #fff;
-}
-
-.seat.label {
-  background-color: transparent;
+  transition: background-color 0.3s ease;
   font-weight: bold;
-  pointer-events: none;
-  text-align: center;
+  font-size: 14px;
+  color: #fff;
 }
+
+.seat-label input[type="checkbox"] {
+  display: none;
+}
+
+.seat-label:hover {
+  background-color: #676e71;
+}
+
+.seat-label.reserved {
+  background-color: rgb(255, 0, 0);
+  color: #fff;
+  cursor: not-allowed;
+  border-color: #f5c6cb;
+}
+
+.seat-label.selected {
+  background-color: #66bb6a !important;
+  color: white;
+  border-color: #28a745;
+}
+
+.seat-label.wheelchair {
+  background-color: rgb(21, 6, 139);
+  color: #fff;
+}
+
+.seat-label input[type="checkbox"]:checked {
+  background-color: #66bb6a;
+  color: white;
+  border-color: #28a745;
+}
+
+.legend-item {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+
+.legend-item.available {
+  background-color: #a3d9a5;
+}
+
+.legend-item.selected {
+  background-color: #28a745;
+  color: white;
+}
+
+.legend-item.reserved {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.legend-item.wheelchair {
+  background-color: #f5a623;
+  color: white;
+}
+
 
 .selection-info {
   text-align: center;
@@ -93,8 +142,9 @@ body {
 }
 
 .legend-item.available {
-  background-color:rgb(119, 173, 218);
-  color: #fff;  
+  background: rgba(0, 0, 0, 0.7); 
+  color: #fff;                  
+  border: 1px solid #fff;       
 }
 
 .legend-item.selected {

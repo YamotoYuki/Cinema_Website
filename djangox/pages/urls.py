@@ -1,32 +1,28 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
-from .views import (
-    HomePageView,
-    AboutPageView,
-    TheaterPageView,
-    TicketPageView,
-    ServicePageView,
-    AccessPageView,
-    FAQPageView,
-    QRPageView,
-    TicketBuyPageView,
-    OnlinePageView,
-)
 
 urlpatterns = [
-    path("", HomePageView.as_view(), name="home"),
-    path("About/", AboutPageView.as_view(), name="about"),
-    path("Theater/", TheaterPageView.as_view(), name="theater"),
-    path("Ticket/", TicketPageView.as_view(), name="ticket"),
-    path("Service/", ServicePageView.as_view(), name="service"),
-    path("Access/", AccessPageView.as_view(), name="access"),
-    path("FAQ/", FAQPageView.as_view(), name="faq"),
-    path("QR/", QRPageView.as_view(), name="QR"),
-    path("TicketBuy/", TicketBuyPageView.as_view(), name="TicketBuy"),
-    path("Online/", OnlinePageView.as_view(), name="Online"), 
-    path('purchase/<str:movie_id>/', views.purchase, name='purchase'),
-    path('seat_select/<str:movie_id>/', views.seat_select, name='seat_select'),
-    path('purchase_confirm/<str:movie_id>/', views.purchase_confirm, name='purchase_confirm'),
-    path('purchase_complete/', views.purchase_complete, name='purchase_complete'),
+    path("", views.home_page, name="home"),
+    path("Theater/", views.theater_page, name="theater"),
+    path("Ticket/", views.ticket_page, name="ticket"),
+    path("Service/", views.service_page, name="service"),
+    path("Access/", views.access_page, name="access"),
+    path("FAQ/", views.faq_page, name="faq"),
+    path("QR/", views.qr_page, name="QR"),
+    path("TicketBuy/", views.ticket_buy_page, name="TicketBuy"),
+    path("Online/", views.online_page, name="Online"),
+
+    # 残りの機能
+    path('movielist/', views.movie_list, name='movie_list'),
+    path('movie/<int:movie_id>/', views.movie_detail, name='movie_detail'),
+    path('movie/<str:movie_id>/seats/', views.seat_select, name='seat_select'),
+    path('confirm/', views.purchase_confirm, name='purchase_confirm'),
+    path('complete/', views.purchase_complete, name='purchase_complete'),
+    path('my_reservations/', views.my_reservations, name='my_reservations'),
+    path('reservation/<int:reservation_id>/cancel/', views.cancel_reservation, name='cancel_reservation'),
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,14 +1,18 @@
 {% extends '_base.html' %}
-
 {% load static %}
-
-{% block title %}座席選択{% endblock title %}
+{% block title %}購入完了{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/app/purchase_complete.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app/purchase_complete.css' %}">
 {% endblock %}
 
 {% block content %}
-  <h2>購入完了</h2>
-  <p>チケットの購入が完了しました。ありがとうございました！</p>
+  <div class="card bg-dark bg-opacity-75 text-white p-5 shadow-lg" style="max-width: 480px; width: 100%; border-radius: 1rem;">
+    <div class="text-center">
+  <h2 class="mb-4 text-white"><i class="bi bi-check-circle-fill"></i> 購入が完了しました！</h2>
+      <p>予約内容はこちらからご確認いただけます。</p>
+        <a href="{% url 'movie_list' %}" class="btn btn-outline-info fw-bold px-4">映画一覧に戻る</a>
+        <a href="{% url 'my_reservations' %}" class="btn btn-info fw-bold px-4">予約一覧を見る</a>
+    </div>
+  </div>
 {% endblock %}

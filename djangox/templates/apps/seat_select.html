@@ -8,23 +8,93 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="text-center mt-4">{{ movie_title }} - 座席選択</h2>
+<h2 class="text-center mt-4">{{ movie.title }} - 座席選択</h2>
 
-<div class="screen mx-auto"><strong>スクリーン</strong></div>
+<div class="screen mx-auto text-center mb-4">
+  <strong>スクリーン</strong>
+</div>
 
 <form method="post" id="seatForm">
   {% csrf_token %}
-  <div class="seating-area">
-    <div class="seating" id="seating"></div>
+
+  <div class="seating-area text-center">
+
+    {% for row in rows %}
+      <div class="row-block d-flex justify-content-center align-items-center mb-2">
+
+        <!-- 左ブロック -->
+        <div class="block left-block me-3">
+          {% for col in left_cols %}
+            {% with seat_num=row|stringformat:"s"|add:col %}
+              {% for seat in seats %}
+                {% if seat.seat_number == seat_num %}
+                  <label class="seat-label
+                    {% if seat.seat_number in reserved_seat_numbers %} reserved{% endif %}
+                    {% if seat.seat_number in wheelchair_seat_numbers %} wheelchair{% endif %}
+                  ">
+                    <input type="checkbox" name="seats" value="{{ seat.id }}" class="seat-checkbox"
+                      {% if seat.seat_number in reserved_seat_numbers %}disabled{% endif %}
+                    >
+                    {{ seat.seat_number }}
+                  </label>
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+
+        <!-- 中央ブロック -->
+        <div class="block center-block mx-4">
+          {% for col in center_cols %}
+            {% with seat_num=row|stringformat:"s"|add:col %}
+              {% for seat in seats %}
+                {% if seat.seat_number == seat_num %}
+                  <label class="seat-label
+                    {% if seat.seat_number in reserved_seat_numbers %} reserved{% endif %}
+                    {% if seat.seat_number in wheelchair_seat_numbers %} wheelchair{% endif %}
+                  ">
+                    <input type="checkbox" name="seats" value="{{ seat.id }}" class="seat-checkbox"
+                      {% if seat.seat_number in reserved_seat_numbers %}disabled{% endif %}
+                    >
+                    {{ seat.seat_number }}
+                  </label>
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+
+        <!-- 右ブロック -->
+        <div class="block right-block ms-3">
+          {% for col in right_cols %}
+            {% with seat_num=row|stringformat:"s"|add:col %}
+              {% for seat in seats %}
+                {% if seat.seat_number == seat_num %}
+                  <label class="seat-label
+                    {% if seat.seat_number in reserved_seat_numbers %} reserved{% endif %}
+                    {% if seat.seat_number in wheelchair_seat_numbers %} wheelchair{% endif %}
+                  ">
+                    <input type="checkbox" name="seats" value="{{ seat.id }}" class="seat-checkbox"
+                      {% if seat.seat_number in reserved_seat_numbers %}disabled{% endif %}
+                    >
+                    {{ seat.seat_number }}
+                  </label>
+                {% endif %}
+              {% endfor %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+
+      </div>
+    {% endfor %}
+
   </div>
 
-  <input type="hidden" name="seat" id="seatInput">
-
-  <div class="selection-info mt-3">
+  <div class="selection-info text-center mt-3">
     選択された座席: <span id="selected-seats">なし</span>
   </div>
 
-  <div class="legend text-left mt-3">
+  <div class="legend text-center mt-4">
     <span class="legend-item available">空席</span>
     <span class="legend-item selected">選択中</span>
     <span class="legend-item reserved">予約済</span>
@@ -32,19 +102,61 @@
   </div>
 
   <div class="text-center mt-4">
-    <a href="{% url 'purchase' movie_id %}" class="btn btn-secondary me-3">戻る</a>
-    <button type="submit" class="btn" style="background-color: #28a745; color: white;">確認画面へ</button>
+    <a href="{% url 'movie_detail' movie.id %}" class="btn btn-secondary me-3">戻る</a>
+    <button type="submit" class="btn btn-success">確認画面へ</button>
   </div>
 </form>
-
 {% endblock %}
 
 {% block javascript %}
-  <!-- Bootstrap JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const seatCheckboxes = document.querySelectorAll(".seat-checkbox");
+  const selectedSeatsSpan = document.getElementById("selected-seats");
+  const seatForm = document.getElementById("seatForm");
 
-  <!-- Project JS -->
-  <script src="{% static 'js/apps.js' %}"></script>
+  function updateSelectedSeats() {
+    const selected = [];
+
+    seatCheckboxes.forEach(seat => {
+      const label = seat.parentElement;
+      if (seat.checked) {
+        label.classList.add("selected");
+        selected.push(label.textContent.trim());
+      } else {
+        label.classList.remove("selected");
+      }
+    });
+
+    selectedSeatsSpan.textContent = selected.length > 0 ? selected.join(', ') : 'なし';
+  }
+
+  seatCheckboxes.forEach(seat => {
+    seat.addEventListener("change", updateSelectedSeats);
+  });
+
+  updateSelectedSeats();
+
+  seatForm.addEventListener("submit", function (event) {
+    const wheelchairSelected = Array.from(seatCheckboxes).some(seat => {
+      return seat.checked && seat.parentElement.classList.contains("wheelchair");
+    });
+
+    if (wheelchairSelected) {
+      const confirmed = confirm("車椅子の席ですが予約しますか？");
+      if (!confirmed) {
+        event.preventDefault(); 
+      }
+    }
+  });
+});
+</script>
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+  crossorigin="anonymous"></script>
+
+<!-- Project JS -->
+<script src="{% static 'js/apps.js' %}"></script>
 {% endblock javascript %}

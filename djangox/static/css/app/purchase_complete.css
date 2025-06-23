@@ -1,25 +1,108 @@
 body {
-  background-image: url('/static/images/wallpaper.jpg'); 
-  background-size: cover;          
-  background-position: center;    
-  background-repeat: no-repeat;    
-  background-attachment: fixed;  
-  color: #fff;                    
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  animation: fadeZoomIn 0.8s ease-out both;
+  position: relative;
+  background-image: url('/static/images/wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #f0fdf4;
 }
 
-
 .container {
-  max-width: 900px;
-  margin-top: 50px;
-  padding: 3rem 2rem;
-  background: rgba(0, 0, 0, 0.7); 
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(237, 237, 237, 0.7);
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  min-height: 70vh; 
+  padding: 0 15px;
+  color: #fff;
+  border-radius: 12px;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 12px 40px rgba(0, 160, 80, 0.9),
+    inset 0 0 30px rgba(15, 45, 15, 0.9);
+}
+
+h2 {
+  font-weight: 700;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.btn {
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.6rem 1.8rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 200, 100, 0.6);
+}
+
+.btn-outline-info {
+  color: #fff;
+  border-color: #9ef298;
+  background-color: transparent;
+  text-shadow: 0 0 5px #9ef298aa;
+}
+
+.btn-outline-info:hover {
+  background-color: #fff;
+  color: #033b00;
+  box-shadow: 0 6px 20px #9ef298cc;
+  border-color: #7bcc77;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #3ecf8e, #2aa85a);
+  border: none;
+  color: #fff;
+  box-shadow: 0 5px 15px #29b65acc;
+  text-shadow: 0 0 8px #24a855;
+}
+
+.btn-info:hover {
+  background: linear-gradient(135deg, #2aa85a, #1f6f3f);
+  box-shadow: 0 8px 25px #1f6f3fcc;
+  color: #fff;
+}
+
+.btn + .btn {
+  margin-left: 15px;
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding: 2rem 1.5rem;
+    max-width: 95vw;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin: 0 0 12px 0 !important;
+  }
+
+  .btn + .btn {
+    margin-left: 0 !important;
+  }
 }
 
 nav {

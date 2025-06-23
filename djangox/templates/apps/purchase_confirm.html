@@ -4,38 +4,38 @@
 {% block title %}購入確認{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+<link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="purchase-confirm-container">
-  <h2>ご購入内容の確認</h2>
-  <p><strong>映画タイトル:</strong> {{ movie_title }}</p>
-  <p><strong>上映時間:</strong> {{ showtime }}</p>
-  <p><strong>座席:</strong> {{ seat }}</p>
-  <p><strong>料金:</strong> {{ price }}円</p>
-  <p><strong>シアター:</strong> {{ theater_name }}</p>
+<div class="container py-5">
+  <h2 class="mb-4 text-center">購入内容の確認</h2>
 
-  <form method="post">
-    {% csrf_token %}
+  <div class="card p-4 shadow-sm">
+    <h4>{{ movie.title }}</h4>
+    <p><strong>上映日時:</strong> {{ selected_datetime }}</p>
+    <p><strong>シアター:</strong> {{ movie.theater }}</p>
+    <p><strong>上映時間:</strong> {{ movie.duration }}分</p>
 
-    {% if form %}
-      <div class="form-group">
-        {% for field in form %}
-          <div class="form-field">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
-              <div class="form-error">{{ field.errors }}</div>
-            {% endif %}
-          </div>
+    <hr>
+
+    <p><strong>選択された座席:</strong> {{ selected_seat_numbers|join:", " }}</p>
+    <p><strong>座席数:</strong> {{ selected_seat_count }} 席</p>
+    <p><strong>金額:</strong> ¥{{ movie.price|floatformat:"0" }}</p>
+    <p class="fs-5 fw-bold text-success">合計金額: ¥{{ total_price|floatformat:"0" }}</p>
+
+    <div class="mt-4">
+      <a href="{% url 'seat_select' movie.id %}" class="btn btn-secondary me-3">座席を選び直す</a>
+
+      <form method="post" action="{% url 'purchase_complete' %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="movie_id" value="{{ movie.id }}">
+        {% for seat_id in selected_seat_ids %}
+          <input type="hidden" name="seats" value="{{ seat_id }}">
         {% endfor %}
-      </div>
-    {% else %}
-      <p>お支払い方法のフォームがありません。</p>
-    {% endif %}
-
-    <button type="submit" class="btn btn-success">購入を確定する</button>
-  </form>
+        <button type="submit" class="btn btn-success">購入を確定する</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

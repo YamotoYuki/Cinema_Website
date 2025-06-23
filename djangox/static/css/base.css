@@ -24,12 +24,13 @@ body {
 }
 
 nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  animation: slideIn 1s ease-out forwards;
+  height: 60px;
+  line-height: 40px; 
+  padding: 0 10px;
+  background-color: #135034; 
+  box-sizing: border-box;
+  display: flex;
+  align-items: center; 
 }
 
 .custom-navbar {

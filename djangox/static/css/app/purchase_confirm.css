@@ -12,14 +12,12 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
 .container {
   max-width: 900px;
   margin-top: 50px;
   padding: 3rem 2rem;
   background: rgba(0, 0, 0, 0.7); 
   border-radius: 20px;
-  box-shadow: 0 0 30px rgba(237, 237, 237, 0.7);
 }
 
 nav {

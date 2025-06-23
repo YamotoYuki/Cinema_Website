@@ -1,0 +1,36 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}映画一覧｜チケット購入{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/movie_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <h1 class="mb-4 text-center">上映中</h1>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for movie in movies %}
+      <div class="col">
+        <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm">
+            {% if movie.image %}
+              <img src="{{ movie.image.url }}" class="card-img-top fade-in-img" alt="{{ movie.title }}">
+            {% else %}
+              <img src="{% static 'images/noimage.jpg' %}" class="card-img-top" alt="画像なし">
+            {% endif %}
+            <div class="card-body fade-in-text">
+              <h5 class="card-title text-primary fw-bold">{{ movie.title }}</h5>
+              <p class="card-text text-secondary">{{ movie.description|truncatewords:30 }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <p class="text-center">該当する映画が見つかりません。</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
