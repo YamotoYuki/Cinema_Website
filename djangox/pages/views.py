@@ -42,7 +42,7 @@ def movie_detail(request, movie_id):
     return render(request, 'apps/movie_detail.html', {
         'movie': movie,
         'show_dates': show_dates,
-        'time_slots': ["13:00～15:00", "16:00～18:00", "19:00～21:00"]
+        'time_slots': ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00","19:00～21:00","21:00～23:00"]
     })
 
 @login_required

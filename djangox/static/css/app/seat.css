@@ -91,6 +91,11 @@ body {
   color: #fff;
 }
 
+.seat-label.reserved.wheelchair {
+  background-color: rgb(255, 0, 0) !important;
+  color: #fff !important;
+}
+
 .seat-label input[type="checkbox"]:checked {
   background-color: #66bb6a;
   color: white;

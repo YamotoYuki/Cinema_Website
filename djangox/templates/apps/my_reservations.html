@@ -39,7 +39,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="qrModalLabel{{ r.id }}">QRコード（{{ r.movie.title }}）</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body text-center">
                   <img src="{{ r.qr_code_image.url }}" alt="QRコード" class="img-fluid">

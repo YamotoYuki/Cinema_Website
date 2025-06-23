@@ -373,6 +373,10 @@ h2{
   right: 1rem;
 }
 
+.modal-title{
+  color: #fff;
+}
+
 
 @keyframes fadeInUp {
   to {

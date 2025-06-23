@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const timeSlotContainer = document.getElementById('time-slot-container');
 
   const timeSlotMap = {
-    "月": ["13:00～15:00", "16:00～18:00"],
-    "火": ["13:00～15:00", "19:00～21:00"],
-    "水": ["16:00～18:00", "19:00～21:00"],
-    "木": ["13:00～15:00", "16:00～18:00", "19:00～21:00"],
-    "金": ["13:00～15:00", "16:00～18:00", "19:00～21:00"],
-    "土": ["13:00～15:00", "16:00～18:00", "19:00～21:00"],
-    "日": ["13:00～15:00", "16:00～18:00", "19:00～21:00"]
+    "月": ["09:00～11:00","11:00～13:00","15:00～17:00", "17:00～19:00","19:00～21:00","21:00～23:00"],
+    "火": ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00","19:00～21:00"],
+    "水": ["09:00～11:00","13:00～15:00","15:00～17:00", "17:00～19:00","19:00～21:00","21:00～23:00"],
+    "木": ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00"],
+    "金": ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00"],
+    "土": ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00","19:00～21:00","21:00～23:00"],
+    "日": ["09:00～11:00","11:00～13:00","13:00～15:00", "15:00～17:00", "17:00～19:00","19:00～21:00","21:00～23:00"]
   };
 
   function updateTimeSlots(weekday) {
@@ -34,18 +34,15 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // 初期化
   const selected = document.querySelector('input[name="date"]:checked');
   if (selected) updateTimeSlots(selected.dataset.weekday);
 
-  // 日付選択変更時
   dateRadios.forEach(radio => {
     radio.addEventListener('change', () => {
       updateTimeSlots(radio.dataset.weekday);
     });
   });
 
-  // キャンセルモーダル制御
   const cancelButtons = document.querySelectorAll(".open-cancel-modal");
   const cancelForm = document.getElementById("cancelForm");
   const cancelModal = new bootstrap.Modal(document.getElementById("cancelModal"));

@@ -50,8 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const rightCols = Array.from({length: 4}, (_, i) => i + 17);
 
   let selectedSeats = [];
-  const reservedSeats = ['C7', 'C8', 'D10', 'E15']; // 仮の予約済み座席
-  const wheelchairSeats = ['A5', 'A6', 'A15', 'A16']; // 車椅子席
+  const reservedSeats = ['C7', 'C8', 'D10', 'E15']; 
+  const wheelchairSeats = ['A5', 'A6', 'A15', 'A16']; 
 
 rows.forEach(row => {
   seatingDiv.appendChild(makeLabel(row, 'left')); 
