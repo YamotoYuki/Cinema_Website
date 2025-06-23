@@ -106,6 +106,26 @@
     <button type="submit" class="btn btn-success">確認画面へ</button>
   </div>
 </form>
+
+<!-- 車椅子席予約確認モーダル -->
+<div class="modal fade" id="wheelchairConfirmModal" tabindex="-1" aria-labelledby="wheelchairConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title text-center" id="wheelchairConfirmModalLabel" style="color: white;">確認</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
+      </div>
+      <div class="modal-body text-center" style="color: #000;">
+        車椅子の席ですが予約しますか？
+      </div>
+        <div class="modal-footer justify-content-center">
+<button type="submit" class="btn custom-OK-btn">OK</button>
+<button type="button" class="btn custom-cancel-btn" data-bs-dismiss="modal">戻る</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block javascript %}
@@ -137,16 +157,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
   updateSelectedSeats();
 
+  const wheelchairConfirmModalEl = document.getElementById('wheelchairConfirmModal');
+  const wheelchairConfirmModal = new bootstrap.Modal(wheelchairConfirmModalEl);
+  const wheelchairConfirmOkBtn = document.getElementById('wheelchairConfirmOkBtn');
+
   seatForm.addEventListener("submit", function (event) {
+    event.preventDefault(); 
     const wheelchairSelected = Array.from(seatCheckboxes).some(seat => {
       return seat.checked && seat.parentElement.classList.contains("wheelchair");
     });
 
     if (wheelchairSelected) {
-      const confirmed = confirm("車椅子の席ですが予約しますか？");
-      if (!confirmed) {
-        event.preventDefault(); 
-      }
+      wheelchairConfirmModal.show();
+
+      wheelchairConfirmOkBtn.onclick = function () {
+        wheelchairConfirmModal.hide();
+        seatForm.submit();
+      };
+    } else {
+      seatForm.submit();
     }
   });
 });
@@ -159,4 +188,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <!-- Project JS -->
 <script src="{% static 'js/apps.js' %}"></script>
-{% endblock javascript %}
+{% endblock %}

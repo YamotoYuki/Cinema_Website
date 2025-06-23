@@ -30,9 +30,10 @@
           {% if r.qr_code_image %}
           <div class="qr-code">
             <img src="{{ r.qr_code_image.url }}" alt="QRコード" class="qr-thumbnail" data-bs-toggle="modal" data-bs-target="#qrModal{{ r.id }}">
-            <p class="small text-white" style="font-size: 0.6rem; ">※当日このQRコードを受付に提示</p>
+            <p class="small text-white" style="font-size: 0.6rem;">※当日このQRコードを受付に提示</p>
           </div>
 
+          <!-- QRコードモーダル -->
           <div class="modal fade" id="qrModal{{ r.id }}" tabindex="-1" aria-labelledby="qrModalLabel{{ r.id }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
@@ -48,10 +49,11 @@
           </div>
           {% endif %}
 
-          <form action="{% url 'cancel_reservation' r.id %}" method="post" class="mt-2">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">キャンセル</button>
-          </form>
+          <button type="button"
+                  class="btn btn-danger btn-sm open-cancel-modal mt-2"
+                  data-reservation-id="{{ r.id }}">
+            キャンセル
+          </button>
         </div>
       </div>
     {% endfor %}
@@ -64,14 +66,37 @@
     <a href="{% url 'movie_list' %}" class="btn btn-primary">映画一覧へ戻る</a>
   </div>
 </div>
+
+<!-- キャンセル確認モーダル -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <div class="modal-header bg-danger text-white">
+       <h5 class="modal-title text-center" id="cancelModalLabel" style="color: white;">確認</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
+      </div>
+      <div class="modal-body text-center" style="color: #000;">
+        本当にキャンセルしますか？
+      </div>
+      <div class="modal-footer justify-content-center">
+        <form id="cancelForm" action="" method="post" class="mt-2">
+          {% csrf_token %}
+          <button type="submit" class="btn custom-OK-btn">OK</button>
+          <button type="button" class="btn custom-cancel-btn" data-bs-dismiss="modal">戻る</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block javascript %}
-<!-- Bootstrap JavaScript -->
+<!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
   crossorigin="anonymous"></script>
 
-<!-- Project JS -->
+<!-- 独自JS -->
 <script src="{% static 'js/movie.js' %}"></script>
-{% endblock javascript %}
+{% endblock %}
