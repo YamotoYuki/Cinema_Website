@@ -5,6 +5,38 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+<style>
+.payment-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+}
+.payment-option input[type="radio"] {
+  margin-right: 0.6rem;
+  cursor: pointer;
+}
+.payment-option img {
+  width: 30px;
+  margin-right: 0.6rem;
+  user-select: none;
+}
+.convenience-options {
+  margin-left: 2.5rem;
+  margin-top: 0.4rem;
+}
+.convenience-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+.convenience-option img {
+  width: 25px;
+  margin-right: 0.5rem;
+  user-select: none;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -24,18 +56,109 @@
     <p><strong>金額:</strong> ¥{{ movie.price|floatformat:"0" }}</p>
     <p class="fs-5 fw-bold text-success">合計金額: ¥{{ total_price|floatformat:"0" }}</p>
 
-    <div class="mt-4">
-      <a href="{% url 'seat_select' movie.id %}" class="btn btn-secondary me-3">座席を選び直す</a>
+    <hr>
 
-      <form method="post" action="{% url 'purchase_complete' %}" style="display: inline;">
-        {% csrf_token %}
-        <input type="hidden" name="movie_id" value="{{ movie.id }}">
-        {% for seat_id in selected_seat_ids %}
-          <input type="hidden" name="seats" value="{{ seat_id }}">
-        {% endfor %}
-        <button type="submit" class="btn btn-success">購入を確定する</button>
-      </form>
+    <form method="post" action="{% url 'purchase_complete' %}">
+      {% csrf_token %}
+      <input type="hidden" name="movie_id" value="{{ movie.id }}">
+      {% for seat_id in selected_seat_ids %}
+        <input type="hidden" name="seats" value="{{ seat_id }}">
+      {% endfor %}
+
+      <label class="form-label fw-bold mb-3">決済方法を選択してください</label>
+
+      <label class="payment-option" for="payment_cash">
+        <input type="radio" name="payment_method" id="payment_cash" value="cash" checked>
+        <img src="{% static 'logo/genkin.png' %}" alt="現金アイコン">
+        現金
+      </label>
+
+      <label class="payment-option" for="payment_credit">
+        <input type="radio" name="payment_method" id="payment_credit" value="credit_card">
+        <img src="{% static 'logo/visa.png' %}" alt="クレジットカードアイコン">
+        クレジットカード
+      </label>
+
+      <label class="payment-option" for="payment_paypal">
+        <input type="radio" name="payment_method" id="payment_paypal" value="paypal">
+        <img src="{% static 'logo/paypal.png' %}" alt="PayPalアイコン">
+        PayPal
+      </label>
+
+      <label class="payment-option" for="payment_merpay">
+        <input type="radio" name="payment_method" id="payment_merpay" value="merpay">
+        <img src="{% static 'logo/merpay.png' %}" alt="メルペイアイコン">
+        メルペイ
+      </label>
+
+      <label class="payment-option" for="payment_paypay">
+        <input type="radio" name="payment_method" id="payment_paypay" value="paypay">
+        <img src="{% static 'logo/paypay.png' %}" alt="PayPayアイコン">
+        PayPay
+      </label>
+
+      <label class="payment-option" for="payment_convenience">
+        <input type="radio" name="payment_method" id="payment_convenience" value="convenience_store">
+        <img src="{% static 'logo/konbini2.jpg' %}" alt="コンビニ払いアイコン">
+        コンビニ払い
+      </label>
+
+      <div class="convenience-options">
+        <label class="convenience-option" for="conbini_7eleven">
+          <input type="radio" name="convenience_type" id="conbini_7eleven" value="7eleven">
+          <img src="{% static 'logo/7eleven.png' %}" alt="セブンイレブンアイコン">
+          セブンイレブン
+        </label>
+        <label class="convenience-option" for="conbini_famima">
+          <input type="radio" name="convenience_type" id="conbini_famima" value="famima">
+          <img src="{% static 'logo/family-mart.jpeg' %}" alt="ファミリーマートアイコン">
+          ファミリーマート
+        </label>
+        <label class="convenience-option" for="conbini_daily">
+          <input type="radio" name="convenience_type" id="conbini_daily" value="daily">
+          <img src="{% static 'logo/daily.jpeg' %}" alt="デイリーヤマザキアイコン">
+          デイリーヤマザキ
+        </label>
+        <label class="convenience-option" for="conbini_ministop">
+          <input type="radio" name="convenience_type" id="conbini_ministop" value="ministop">
+          <img src="{% static 'logo/mini.jpeg' %}" alt="ミニストップアイコン">
+          ミニストップ
+        </label>
+        <label class="convenience-option" for="conbini_lawson">
+          <input type="radio" name="convenience_type" id="conbini_lawson" value="lawson">
+          <img src="{% static 'logo/lawson.jpg' %}" alt="ローソンアイコン">
+          ローソン
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-success mt-3">購入を確定する</button>
+    </form>
+
+    <div class="mt-3">
+      <a href="{% url 'seat_select' movie.id %}" class="btn btn-secondary">座席を選び直す</a>
     </div>
   </div>
 </div>
+
+<script>
+  // コンビニ払い以外が選択されたらコンビニチェーンの選択肢を非活性化
+  const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+  const convenienceOptions = document.querySelectorAll('input[name="convenience_type"]');
+
+  function toggleConvenienceOptions() {
+    const selected = document.querySelector('input[name="payment_method"]:checked').value;
+    const enabled = (selected === 'convenience_store');
+    convenienceOptions.forEach(input => {
+      input.disabled = !enabled;
+      if (!enabled) input.checked = false;
+    });
+  }
+
+  paymentRadios.forEach(radio => {
+    radio.addEventListener('change', toggleConvenienceOptions);
+  });
+
+  toggleConvenienceOptions();  // 初期呼び出し
+</script>
+
 {% endblock %}

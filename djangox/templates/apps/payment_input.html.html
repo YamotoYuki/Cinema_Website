@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+{% block title %}お支払い情報{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/app/payment_input.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="text-center mb-4">クレジットカード情報入力</h2>
+
+  <form method="post" action="{% url 'purchase_complete' %}">
+    {% csrf_token %}
+
+    <!-- 座席・日時を保持 -->
+    <input type="hidden" name="movie_id" value="{{ movie.id }}">
+    {% for seat_id in selected_seat_ids %}
+      <input type="hidden" name="seats" value="{{ seat_id }}">
+    {% endfor %}
+    <input type="hidden" name="selected_datetime" value="{{ selected_datetime }}">
+
+    <div class="mb-3">
+      <label class="form-label">カード番号</label>
+      <input type="text" name="card_number" class="form-control" required maxlength="19" placeholder="1234 5678 9012 3456">
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">有効期限 (MM/YY)</label>
+        <input type="text" name="expiry" class="form-control" required placeholder="08/28">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">セキュリティコード (CVV)</label>
+        <input type="password" name="cvv" class="form-control" required maxlength="4">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label">カード名義（ローマ字）</label>
+      <input type="text" name="card_name" class="form-control" required placeholder="TARO YAMADA">
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">購入を確定する</button>
+  </form>
+</div>
+{% endblock %}

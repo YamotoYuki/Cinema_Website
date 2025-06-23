@@ -11,6 +11,10 @@ class Movie(models.Model):
     image = models.ImageField(upload_to='movie_images/', blank=True, null=True)
     duration = models.PositiveIntegerField(null=True, blank=True, help_text="上映時間（分）")
     theater = models.CharField(max_length=100, null=True, blank=True, help_text="シアター名")
+    
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    convenience_type = models.CharField(max_length=50, blank=True, null=True)
+
 
     def __str__(self):
         return self.title
@@ -30,4 +34,14 @@ class Reservation(models.Model):
     qr_code_image = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
     class Meta:
-        unique_together = ('movie', 'seat') 
+        unique_together = ('movie', 'seat')
+
+# ここに追加
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.user}: {self.message}"

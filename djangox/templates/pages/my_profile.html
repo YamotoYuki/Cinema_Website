@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}マイプロフィール - HALCinema{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">マイプロフィール</h2>
+  
+  <dl class="row">
+    <dt class="col-sm-3">メールアドレス</dt>
+    <dd class="col-sm-9">{{ user.email }}</dd>
+    
+    <dt class="col-sm-3">ユーザー名</dt>
+    <dd class="col-sm-9">{{ user.username }}</dd>
+  </dl>
+
+  <div class="mt-4">
+    <a href="{% url 'account_edit' %}" class="btn btn-primary me-2">アカウント編集</a>
+    <a href="{% url 'account_delete' %}" class="btn btn-danger">アカウント削除</a>
+  </div>
+</div>
+{% endblock %}

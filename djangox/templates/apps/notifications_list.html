@@ -1,0 +1,45 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}お知らせ一覧{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/notif.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4 text-center" style="font-family: 'Orbitron', sans-serif; color:#4dabf7;">お知らせ</h2>
+
+  {% if notifications %}
+    <form action="{% url 'delete_all_notifications' %}" method="post" class="text-end mb-4">
+      {% csrf_token %}
+      <button class="btn btn-danger" onclick="return confirm('すべての通知を本当に削除しますか？');">
+        すべて削除
+      </button>
+    </form>
+
+    {% for notification in notifications %}
+      <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+        <div class="notification-content d-flex justify-content-between align-items-start">
+          <div>
+            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-timestamp">{{ notification.created_at|date:"Y年m月d日 H:i" }}</div>
+          </div>
+          <div class="text-end">
+            {% if not notification.is_read %}
+              <a href="{% url 'mark_notification_read' notification.id %}" class="btn btn-sm btn-outline-primary">既読にする</a>
+            {% endif %}
+            <form action="{% url 'delete_notification' notification.id %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger ms-2">削除</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center" style="color:#888;">通知はありません。</p>
+  {% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}アカウント編集{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/account.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4">アカウント編集</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label class="form-label">ユーザー名</label>
+      {{ form.username }}
+      {{ form.username.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">メールアドレス</label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">プロフィール画像</label><br>
+      {% if user.profile_image %}
+        <img src="{{ user.profile_image.url }}" alt="プロフィール画像" style="width:100px; height:100px; object-fit:cover; border-radius:50%;"><br>
+      {% endif %}
+      {{ form.profile_image }}
+      {{ form.profile_image.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">保存する</button>
+  </form>
+</div>
+{% endblock %}

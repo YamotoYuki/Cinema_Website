@@ -26,6 +26,14 @@ urlpatterns = [
     path('complete/', views.purchase_complete, name='purchase_complete'),
     path('my_reservations/', views.my_reservations, name='my_reservations'),
     path('reservation/<int:reservation_id>/cancel/', views.cancel_reservation, name='cancel_reservation'),
+    path('account/edit/', views.account_edit, name='account_edit'),
+    path('account/delete/', views.account_delete, name='account_delete'),
+    path('notifications/', views.notifications_list, name='notifications_list'),
+    path('notifications/read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
+    path('notifications/delete_all/', views.delete_all_notifications, name='delete_all_notifications'),
+    path('payment/', views.payment_input, name='payment_input'),
+
 ]
 
 if settings.DEBUG:

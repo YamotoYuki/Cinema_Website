@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}アカウント削除{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/account.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>アカウント削除確認</h2>
+  <p>本当にアカウントを削除しますか？この操作は元に戻せません。</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">削除する</button>
+    <a href="{% url 'home' %}">キャンセル</a>
+  </form>
+</div>
+{% endblock %}
