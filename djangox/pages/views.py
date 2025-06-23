@@ -199,3 +199,18 @@ def ticket_buy_page(request):
 @login_required
 def online_page(request):
     return render(request, 'apps/Online.html')
+
+class IndexPageView(TemplateView):
+    template_name = "pages/index.html"
+ 
+class RulePageView(TemplateView):
+    template_name = "pages/rule.html"
+    
+class PolicyPageView(TemplateView):
+    template_name = "pages/policy.html"
+    
+class InquiryPageView(TemplateView):
+    template_name = "pages/inquiry.html"
+    
+class GuidePageView(TemplateView):
+    template_name = "pages/guide.html"

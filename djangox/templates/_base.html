@@ -104,11 +104,11 @@
 
   <div class="footer">
     <ul class="list-inline">
-      <li class="list-inline-item"><a href="#">利用規約</a></li>
-      <li class="list-inline-item"><a href="#">プライバシーポリシー</a></li>
-      <li class="list-inline-item"><a href="#">サービス総合ガイド</a></li>
-      <li class="list-inline-item"><a href="#">サービスについて</a></li>
-      <li class="list-inline-item"><a href="#">お問い合わせ</a></li><br>
+      <li class="list-inline-item"><a href="{% url 'rule' %}">利用規約</a></li>
+      <li class="list-inline-item"><a href="{% url 'policy' %}">プライバシーポリシー</a></li>
+      <li class="list-inline-item"><a href="{% url 'guide' %}">サービス総合ガイド</a></li>
+      <li class="list-inline-item"><a href="{% url 'service' %}">サービスについて</a></li>
+      <li class="list-inline-item"><a href="{% url 'inquiry' %}">お問い合わせ</a></li><br>
       <li class="list-inline-item">
         <span>Copyright &copy;
           <script>document.write(new Date().getFullYear());</script>
