@@ -72,3 +72,11 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user}: {self.message}"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15, blank=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username

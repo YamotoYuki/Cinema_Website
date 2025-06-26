@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 {% load static %}
 
-{% block title %}アカウント削除{% endblock title %}
+{% block title %}アカウント削除{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/app/account.css' %}">
@@ -11,10 +11,31 @@
 <div class="container">
   <h2>アカウント削除確認</h2>
   <p>本当にアカウントを削除しますか？この操作は元に戻せません。</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">削除する</button>
-    <a href="{% url 'home' %}">キャンセル</a>
-  </form>
+
+  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+    削除する
+  </button>
+  <a href="{% url 'home' %}" class="btn btn-secondary ms-2">キャンセル</a>
+</div>
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">アカウント削除</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
+      </div>
+      <div class="modal-body text-center text-dark fw-bold">
+        本当にアカウントを削除しますか？<br>このアカウントは元に戻せません。
+      </div>
+      <div class="modal-footer justify-content-center">
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn custom-OK-btn">OK</button>
+          <button type="button" class="btn custom-cancel-btn" data-bs-dismiss="modal">戻る</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

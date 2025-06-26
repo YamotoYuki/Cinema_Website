@@ -71,8 +71,8 @@
         <div class="ms-auto d-flex align-items-center gap-2">
 
           <div class="icon-wrapper">
-            {% if user.profile_image %}
-              <img src="{{ user.profile_image.url }}" alt="プロフィール画像" class="profile-image">
+            {% if user.userprofile.profile_image %}
+              <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-image">
             {% else %}
               <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-image">
             {% endif %}
@@ -137,8 +137,8 @@
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'my_reservations' %}">予約一覧</a></li>
                 <li><a class="dropdown-item" href="{% url 'account_edit' %}">アカウント編集</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_delete' %}">アカウント削除</a></li>
                 <li><a class="dropdown-item" href="{% url 'account_change_password' %}">パスワード変更</a></li>
+                <li><a class="dropdown-item" href="{% url 'account_delete' %}">アカウント削除</a></li>                
                 <li><a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a></li>
               </ul>
             </li>
