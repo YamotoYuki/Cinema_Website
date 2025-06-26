@@ -25,38 +25,9 @@
             <strong>上映日時:</strong> {{ r.show_time }}<br>
             <strong>予約日時:</strong> {{ r.reserved_at|date:"Y/m/d H:i" }}<br>
             <strong>金額:</strong> ¥{{ r.movie.price|floatformat:"0" }}<br>
-            <strong>支払い方法:</strong>
-            {% if r.payment_method == 'cash' %}
-              現金払い
-            {% elif r.payment_method == 'credit_card' %}
-              クレジットカード
-            {% elif r.payment_method == 'paypal' %}
-              PayPal
-            {% elif r.payment_method == 'merpay' %}
-              メルペイ
-            {% elif r.payment_method == 'paypay' %}
-              PayPay
-            {% elif r.payment_method == 'convenience_store' %}
-              コンビニ払い<br>
-              {% if r.convenience_type %}
-                (
-                {% if r.convenience_type == '7eleven' %}
-                  セブンイレブン
-                {% elif r.convenience_type == 'famima' %}
-                  ファミリーマート
-                {% elif r.convenience_type == 'daily' %}
-                  デイリーヤマザキ
-                {% elif r.convenience_type == 'ministop' %}
-                  ミニストップ
-                {% elif r.convenience_type == 'lawson' %}
-                  ローソン
-                {% else %}
-                  {{ r.convenience_type }}
-                {% endif %}
-                )
-              {% endif %}
-            {% else %}
-              未設定
+            <strong>支払い方法:</strong> {{ r.get_payment_method_display }}<br>
+            {% if r.payment_method == 'convenience_store' and r.convenience_type %}
+            ({{ r.get_convenience_type_display }})
             {% endif %}
           </p>
 
@@ -100,7 +71,6 @@
   </div>
 </div>
 
-<!-- キャンセル確認モーダル -->
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
@@ -121,7 +91,6 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block javascript %}

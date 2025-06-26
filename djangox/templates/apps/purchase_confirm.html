@@ -119,10 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!selected) return;
     const isConvenience = (selected.value === 'convenience_store');
 
-    // コンビニ選択肢の表示・非表示
     convenienceOptionsContainer.style.display = isConvenience ? 'block' : 'none';
 
-    // コンビニ種別ラジオの disabled 制御とチェック解除
     convenienceOptionsInputs.forEach(input => {
       if (isConvenience) {
         input.disabled = false;
@@ -137,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     radio.addEventListener('change', toggleConvenienceOptions);
   });
 
-  toggleConvenienceOptions(); // 初期表示制御
+  toggleConvenienceOptions();
 });
 </script>
 

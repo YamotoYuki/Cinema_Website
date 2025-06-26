@@ -296,7 +296,6 @@ h2{
   display: flex;
   justify-content: center;
   align-items: center;
-  /* 既存のbackgroundやbox-shadowは残す */
   background: linear-gradient(135deg, #4b6cb7, #182848);
   box-shadow: 0 0 20px #4b6cb7aa, inset 0 0 10px #18284888;
   color: white;

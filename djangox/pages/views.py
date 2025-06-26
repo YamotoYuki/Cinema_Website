@@ -47,28 +47,41 @@ def movie_detail(request, movie_id):
 
 @login_required
 def seat_select(request, movie_id):
-    selected_date = request.GET.get('date')
-    time_slot = request.GET.get('time_slot')
+    selected_date = request.GET.get('date')  # '2025-06-26'
+    time_slot = request.GET.get('time_slot')  # '13:00〜15:00'
+
     movie = get_object_or_404(Movie, pk=movie_id)
     seats = Seat.objects.all()
-    reserved_seats = Reservation.objects.filter(movie=movie).values_list('seat__id', flat=True)
 
-    rows = ['A','B','C','D','E','F','G','H','I','J']
-    left_cols = [str(i) for i in range(1,5)]
-    center_cols = [str(i) for i in range(5,17)]
-    right_cols = [str(i) for i in range(17,21)]
-    reserved_seat_numbers = set(r.seat.seat_number for r in Reservation.objects.filter(movie=movie))
+    if not selected_date or not time_slot:
+        messages.error(request, "上映日または時間帯の情報がありません。")
+        return redirect('movie_detail', movie_id=movie.id)
+
+    show_time_str = f"{selected_date} {time_slot}"
+
+    reserved_seats = Reservation.objects.filter(
+        movie=movie,
+        show_time=show_time_str
+    ).values_list('seat__id', flat=True)
+
+    reserved_seat_numbers = set(
+        r.seat.seat_number for r in Reservation.objects.filter(
+            movie=movie,
+            show_time=show_time_str
+        )
+    )
+
+    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    left_cols = [str(i) for i in range(1, 5)]
+    center_cols = [str(i) for i in range(5, 17)]
+    right_cols = [str(i) for i in range(17, 21)]
     wheelchair_seat_numbers = {'A5', 'A6', 'A15', 'A16'}
 
     if request.method == 'POST':
         selected_seat_ids = request.POST.getlist('seats')
-        if not selected_date or not time_slot:
-            messages.error(request, "上映日または時間帯の情報がありません。")
-            return redirect('movie_detail', movie_id=movie.id)
 
-        show_datetime_str = f'{selected_date} {time_slot}'
         request.session['selected_seats'] = selected_seat_ids
-        request.session['selected_datetime'] = show_datetime_str
+        request.session['selected_datetime'] = show_time_str
         request.session['movie_id'] = movie.id
 
         return redirect('purchase_confirm')
@@ -131,10 +144,21 @@ def purchase_confirm(request):
                 )
 
         request.session.pop('selected_seats', None)
-        request.session.pop('selected_datetime', None)
-        request.session.pop('movie_id', None)
+        
+@login_required
+def purchase_confirm(request):
+    selected_seat_ids = request.session.get('selected_seats', [])
+    selected_datetime = request.session.get('selected_datetime')
+    movie_id = request.session.get('movie_id')
 
-        return redirect('purchase_complete')
+    if not selected_seat_ids or not selected_datetime or not movie_id:
+        messages.error(request, "選択された座席または日時の情報がありません。")
+        return redirect('movie_list')
+
+    seats = Seat.objects.filter(id__in=selected_seat_ids)
+    seat_numbers = [seat.seat_number for seat in seats]
+    movie = get_object_or_404(Movie, id=movie_id)
+    total_price = movie.price * len(seats)
 
     return render(request, 'apps/purchase_confirm.html', {
         'movie': movie,
@@ -143,7 +167,7 @@ def purchase_confirm(request):
         'total_price': total_price,
         'selected_seat_ids': selected_seat_ids,
         'selected_datetime': selected_datetime,
-})
+    })
     
 @login_required
 @require_POST

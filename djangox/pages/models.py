@@ -30,10 +30,9 @@ class Reservation(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
     reserved_at = models.DateTimeField(auto_now_add=True)
-    show_time = models.CharField(max_length=50, default='未設定')
+    show_time = models.CharField(max_length=50)
     qr_code_image = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
-    # ここから追加
     PAYMENT_METHOD_CHOICES = [
         ('cash', '現金'),
         ('credit_card', 'クレジットカード'),
@@ -61,13 +60,10 @@ class Reservation(models.Model):
         blank=True,
         null=True,
     )
-    # ここまで追加
 
     class Meta:
-        unique_together = ('movie', 'seat')
+        unique_together = ('movie', 'seat', 'show_time')
 
-
-# ここに追加
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.CharField(max_length=255)
