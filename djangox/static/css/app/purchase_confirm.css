@@ -117,6 +117,112 @@ nav {
   }
 }
 
+.convenience-options {
+  display: none;
+  margin-left: 2.5rem;
+  margin-top: 0.4rem;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.6rem 1rem;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  background-color: #fafafa;
+}
+
+.payment-option:hover {
+  border-color: #007bff;
+  background-color: #e6f0ff;
+}
+
+.payment-option input[type="radio"] {
+  margin-right: 0.8rem;
+  cursor: pointer;
+}
+
+.payment-option img {
+  width: 36px;
+  height: 36px;
+  margin-right: 0.8rem;
+  object-fit: contain;
+  user-select: none;
+}
+
+.payment-option input[type="radio"]:checked + img,
+.payment-option input[type="radio"]:checked ~ img {
+  filter: drop-shadow(0 0 3px #007bff);
+}
+
+.payment-option input[type="radio"]:checked + img,
+.payment-option input[type="radio"]:checked ~ img,
+.payment-option input[type="radio"]:checked {
+  border-color: #007bff;
+}
+
+.payment-option input[type="radio"]:checked {
+  accent-color: #007bff;
+}
+
+/* コンビニ払いの店舗選択肢 */
+.convenience-options {
+  margin-left: 3rem;
+  margin-top: 0.6rem;
+}
+
+.convenience-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.7rem;
+  padding: 0.5rem 1rem;
+  border: 1.8px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  user-select: none;
+  background-color: #fff;
+}
+
+.convenience-option:hover {
+  border-color: #28a745;
+  background-color: #e6ffe6;
+}
+
+.convenience-option img {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.7rem;
+  object-fit: contain;
+  user-select: none;
+}
+
+.convenience-option input[type="radio"] {
+  margin-right: 0.7rem;
+  cursor: pointer;
+  accent-color: #28a745;
+}
+
+.convenience-option input[type="radio"]:checked + img,
+.convenience-option input[type="radio"]:checked ~ img {
+  filter: drop-shadow(0 0 3px #28a745);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  .payment-option, .convenience-option {
+    flex-wrap: wrap;
+  }
+  .payment-option img, .convenience-option img {
+    margin-bottom: 0.4rem;
+  }
+}
+
+
 .footer {
   margin-top: 100px;
   padding: 5px 0 5px;

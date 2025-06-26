@@ -96,8 +96,8 @@
                 {% for notif in unread_notifications %}
                   <li>
                     <a class="dropdown-item small" href="{% url 'mark_notification_read' notif.id %}">
-                      {{ notif.message }}<br>
-                      <small class="text-muted">{{ notif.created_at|date:"Y/m/d H:i" }}</small>
+                    {{ notif.message }}<br>
+                    <small class="text-muted">{{ notif.created_at|date:"Y/m/d H:i" }}</small>
                     </a>
                   </li>
                 {% endfor %}

@@ -24,7 +24,40 @@
             <strong>座席:</strong> {{ r.seat.seat_number }}<br>
             <strong>上映日時:</strong> {{ r.show_time }}<br>
             <strong>予約日時:</strong> {{ r.reserved_at|date:"Y/m/d H:i" }}<br>
-            <strong>金額:</strong> ¥{{ r.movie.price|floatformat:"0" }}
+            <strong>金額:</strong> ¥{{ r.movie.price|floatformat:"0" }}<br>
+            <strong>支払い方法:</strong>
+            {% if r.payment_method == 'cash' %}
+              現金払い
+            {% elif r.payment_method == 'credit_card' %}
+              クレジットカード
+            {% elif r.payment_method == 'paypal' %}
+              PayPal
+            {% elif r.payment_method == 'merpay' %}
+              メルペイ
+            {% elif r.payment_method == 'paypay' %}
+              PayPay
+            {% elif r.payment_method == 'convenience_store' %}
+              コンビニ払い<br>
+              {% if r.convenience_type %}
+                (
+                {% if r.convenience_type == '7eleven' %}
+                  セブンイレブン
+                {% elif r.convenience_type == 'famima' %}
+                  ファミリーマート
+                {% elif r.convenience_type == 'daily' %}
+                  デイリーヤマザキ
+                {% elif r.convenience_type == 'ministop' %}
+                  ミニストップ
+                {% elif r.convenience_type == 'lawson' %}
+                  ローソン
+                {% else %}
+                  {{ r.convenience_type }}
+                {% endif %}
+                )
+              {% endif %}
+            {% else %}
+              未設定
+            {% endif %}
           </p>
 
           {% if r.qr_code_image %}
@@ -39,7 +72,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="qrModalLabel{{ r.id }}">QRコード（{{ r.movie.title }}）</h5>
-                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="閉じる"></button>
+                  <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body text-center">
                   <img src="{{ r.qr_code_image.url }}" alt="QRコード" class="img-fluid">
@@ -72,7 +105,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
       <div class="modal-header bg-danger text-white">
-       <h5 class="modal-title text-center" id="cancelModalLabel" style="color: white;">確認</h5>
+        <h5 class="modal-title text-center" id="cancelModalLabel" style="color: white;">確認</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
       </div>
       <div class="modal-body text-center" style="color: #000;">

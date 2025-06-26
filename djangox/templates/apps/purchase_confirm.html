@@ -5,38 +5,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
-<style>
-.payment-option {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.8rem;
-  cursor: pointer;
-}
-.payment-option input[type="radio"] {
-  margin-right: 0.6rem;
-  cursor: pointer;
-}
-.payment-option img {
-  width: 30px;
-  margin-right: 0.6rem;
-  user-select: none;
-}
-.convenience-options {
-  margin-left: 2.5rem;
-  margin-top: 0.4rem;
-}
-.convenience-option {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  cursor: pointer;
-}
-.convenience-option img {
-  width: 25px;
-  margin-right: 0.5rem;
-  user-select: none;
-}
-</style>
 {% endblock %}
 
 {% block content %}
@@ -103,7 +71,7 @@
         コンビニ払い
       </label>
 
-      <div class="convenience-options">
+      <div class="convenience-options" id="convenienceOptions">
         <label class="convenience-option" for="conbini_7eleven">
           <input type="radio" name="convenience_type" id="conbini_7eleven" value="7eleven">
           <img src="{% static 'logo/7eleven.png' %}" alt="セブンイレブンアイコン">
@@ -141,16 +109,27 @@
 </div>
 
 <script>
-  // コンビニ払い以外が選択されたらコンビニチェーンの選択肢を非活性化
+document.addEventListener('DOMContentLoaded', () => {
   const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
-  const convenienceOptions = document.querySelectorAll('input[name="convenience_type"]');
+  const convenienceOptionsContainer = document.getElementById('convenienceOptions');
+  const convenienceOptionsInputs = convenienceOptionsContainer.querySelectorAll('input[name="convenience_type"]');
 
   function toggleConvenienceOptions() {
-    const selected = document.querySelector('input[name="payment_method"]:checked').value;
-    const enabled = (selected === 'convenience_store');
-    convenienceOptions.forEach(input => {
-      input.disabled = !enabled;
-      if (!enabled) input.checked = false;
+    const selected = document.querySelector('input[name="payment_method"]:checked');
+    if (!selected) return;
+    const isConvenience = (selected.value === 'convenience_store');
+
+    // コンビニ選択肢の表示・非表示
+    convenienceOptionsContainer.style.display = isConvenience ? 'block' : 'none';
+
+    // コンビニ種別ラジオの disabled 制御とチェック解除
+    convenienceOptionsInputs.forEach(input => {
+      if (isConvenience) {
+        input.disabled = false;
+      } else {
+        input.checked = false;
+        input.disabled = true;
+      }
     });
   }
 
@@ -158,7 +137,9 @@
     radio.addEventListener('change', toggleConvenienceOptions);
   });
 
-  toggleConvenienceOptions();  // 初期呼び出し
+  toggleConvenienceOptions(); // 初期表示制御
+});
 </script>
+
 
 {% endblock %}

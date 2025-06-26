@@ -60,10 +60,18 @@ html,body {
   align-items: flex-start;
 }
 
+.notification-dropdown {
+  max-height: 100px; /* 高さ制限を設定 */
+  width: 350px;      /* 横幅も適度に調整 */
+  overflow-y: auto;  /* スクロール可能にする */
+  font-size: 14px;   /* 文字サイズも調整可能 */
+}
+
+
 .btn-mark-read {
-  background: transparent;
-  border: 2px solid #4dabf7;
-  color: #fff;
+  background: #fff;        
+  border: 2px solid #ffffff;
+  color: #fff;             
   border-radius: 30px;
   padding: 0.25rem 1rem;
   font-weight: 700;
@@ -72,6 +80,7 @@ html,body {
   transition: all 0.3s ease;
   white-space: nowrap;
 }
+
 .btn-mark-read:hover {
   background: #4dabf7;
   color: #fff;

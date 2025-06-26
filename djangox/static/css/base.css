@@ -465,6 +465,14 @@ small,
   font-size: 0.65rem;
 }
 
+.notification-dropdown {
+  max-height: 400px;
+  width: 350px;
+  overflow-y: auto;
+  font-size: 14px; 
+}
+
+
 .footer {
   margin-top: 77.5px;
   padding: 5px 0 5px;

@@ -143,7 +143,7 @@ def purchase_confirm(request):
         'total_price': total_price,
         'selected_seat_ids': selected_seat_ids,
         'selected_datetime': selected_datetime,
-    })
+})
     
 @login_required
 @require_POST
@@ -154,20 +154,28 @@ def purchase_complete(request):
     movie = get_object_or_404(Movie, id=movie_id)
     seats = Seat.objects.filter(id__in=selected_seat_ids)
 
+    payment_method = request.POST.get('payment_method', 'cash')
+    convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
+
     seat_numbers = []
     for seat in seats:
-
         if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
             reservation = Reservation.objects.create(
                 user=request.user,
                 movie=movie,
                 seat=seat,
-                show_time=selected_datetime
+                show_time=selected_datetime,
+                payment_method=payment_method,
+                convenience_type=convenience_type
             )
             generate_qr_code(reservation)
             Notification.objects.create(
                 user=request.user,
-                message=f"映画「{movie.title}」のチケットを購入しました。座席: {seat.seat_number}、上映日時: {selected_datetime}"
+                message=(
+                    f"映画「{movie.title}」のチケットを購入しました。"
+                    f"座席: {seat.seat_number}、上映日時: {selected_datetime}、"
+                    f"支払方法: {payment_method} {convenience_type or ''}"
+                )
             )
             seat_numbers.append(seat.seat_number)
 
@@ -178,7 +186,6 @@ def purchase_complete(request):
         'selected_seat_numbers': seat_numbers,
         'total_price': total_price
     })
-
 
 @login_required
 def my_reservations(request):

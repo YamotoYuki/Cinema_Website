@@ -33,8 +33,39 @@ class Reservation(models.Model):
     show_time = models.CharField(max_length=50, default='未設定')
     qr_code_image = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
+    # ここから追加
+    PAYMENT_METHOD_CHOICES = [
+        ('cash', '現金'),
+        ('credit_card', 'クレジットカード'),
+        ('paypal', 'PayPal'),
+        ('merpay', 'メルペイ'),
+        ('paypay', 'PayPay'),
+        ('convenience_store', 'コンビニ払い'),
+    ]
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHOD_CHOICES,
+        default='cash',
+    )
+
+    CONVENIENCE_TYPE_CHOICES = [
+        ('7eleven', 'セブンイレブン'),
+        ('famima', 'ファミリーマート'),
+        ('daily', 'デイリーヤマザキ'),
+        ('ministop', 'ミニストップ'),
+        ('lawson', 'ローソン'),
+    ]
+    convenience_type = models.CharField(
+        max_length=20,
+        choices=CONVENIENCE_TYPE_CHOICES,
+        blank=True,
+        null=True,
+    )
+    # ここまで追加
+
     class Meta:
         unique_together = ('movie', 'seat')
+
 
 # ここに追加
 class Notification(models.Model):
