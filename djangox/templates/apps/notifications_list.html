@@ -8,11 +8,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2 class="mb-4 text-center" style="font-family: 'Orbitron', sans-serif; color:#4dabf7;">お知らせ</h2>
+<div class="cont">
+  <h2 class="mb-4 text-center" style="font-family: 'Orbitron', sans-serif; color:#fff;">お知らせ</h2>
 
   {% if notifications %}
-    <!-- 「すべて削除」ボタン（モーダル起動用） -->
     <div class="text-end mb-4">
       <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllModal">
         すべて削除
@@ -41,7 +40,7 @@
       </div>
     {% endfor %}
   {% else %}
-    <p class="text-center" style="color:#888;">通知はありません。</p>
+    <p class="text-center">通知はありません。</p>
   {% endif %}
 </div>
 

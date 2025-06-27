@@ -17,6 +17,8 @@ body {
   margin-top: 50px;
   padding: 3rem 2rem;
   background: rgba(0, 0, 0, 0.7); 
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.523), 0 0 10px rgba(255, 255, 255, 0.589);
+  border: 3px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
 }
 
@@ -107,14 +109,8 @@ nav {
   transform-origin: left center;
 }
 
-@media (max-width: 768px) {
-  .card-img-top {
-    height: 150px;
-  }
-
-  .container {
-    padding: 10px;
-  }
+#h4{
+  font-size: 2rem !important;
 }
 
 .convenience-options {
@@ -169,7 +165,6 @@ nav {
   accent-color: #007bff;
 }
 
-/* コンビニ払いの店舗選択肢 */
 .convenience-options {
   margin-left: 3rem;
   margin-top: 0.6rem;
@@ -212,7 +207,6 @@ nav {
   filter: drop-shadow(0 0 3px #28a745);
 }
 
-/* レスポンシブ対応 */
 @media (max-width: 600px) {
   .payment-option, .convenience-option {
     flex-wrap: wrap;
@@ -241,7 +235,6 @@ nav {
   text-decoration: none;
 }
 
-/* アニメーション定義 */
 @keyframes slideIn {
   from {
     transform: translateY(-100px);

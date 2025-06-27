@@ -33,6 +33,7 @@ urlpatterns = [
     path('notifications/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
     path('notifications/delete_all/', views.delete_all_notifications, name='delete_all_notifications'),
     path('payment/', views.payment_input, name='payment_input'),
+    path('profile/select/', views.profile_select, name='profile_select'),
 
 ]
 

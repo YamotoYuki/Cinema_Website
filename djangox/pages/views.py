@@ -8,6 +8,16 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.contrib import messages
 from django.views.decorators.http import require_POST
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+from pages.models import UserProfile
+from accounts.forms import CustomUserChangeForm  
+from pages.forms import UserProfileForm
+from pages.models import UserProfile
+from django.db import IntegrityError
+User = get_user_model()
+
 
 def generate_qr_code(reservation):
     qr_data = (
@@ -248,7 +258,7 @@ def account_edit(request):
             user.set_password(password)
         user.save()
         messages.success(request, 'アカウント情報を更新しました。')
-        return redirect('account_edit')
+        return redirect('home')
     return render(request, 'pages/account_edit.html')
 
 @login_required
@@ -320,15 +330,65 @@ from .forms import ProfileEditForm
 @login_required
 def account_edit(request):
     user = request.user
-    if request.method == 'POST':
-        form = ProfileEditForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('account_edit') 
-    else:
-        form = ProfileEditForm(instance=user)
-    return render(request, 'pages/account_edit.html', {'form': form})
+    profile, _ = UserProfile.objects.get_or_create(user=user)
 
+    if request.method == 'POST':
+        user_form    = CustomUserChangeForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "アカウント情報を更新しました。")
+            return redirect('account_edit')
+        else:
+            messages.error(request, "入力に誤りがあります。")
+    else:
+        user_form    = CustomUserChangeForm(instance=user)
+        profile_form = UserProfileForm(instance=profile)
+
+    return render(request, 'pages/account_edit.html', {
+        'user_form':    user_form,
+        'profile_form': profile_form,
+    })
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    else:
+        instance.userprofile.save()
+        
+from django.contrib import messages
+
+def profile_select(request):
+    if request.method == 'POST':
+        user = request.user
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+
+        new_username = request.POST.get('username', '').strip()
+        if new_username and new_username != user.username:
+            from accounts.models import CustomUser
+            if CustomUser.objects.filter(username=new_username).exclude(pk=user.pk).exists():
+                messages.error(request, "そのユーザー名は既に使われています。")
+                return render(request, 'pages/profile_select.html')
+
+            user.username = new_username
+            try:
+                user.save()
+            except IntegrityError:
+                messages.error(request, "ユーザー名保存時にエラーが発生しました。")
+                return render(request, 'pages/profile_select.html')
+
+        user_profile.phone_number = request.POST.get('phone_number', '')
+        if 'profile_image' in request.FILES:
+            user_profile.profile_image = request.FILES['profile_image']
+        user_profile.save()
+
+        return redirect('home')  # ←ここが正しく設定されていること！
+
+    return render(request, 'pages/profile_select.html')
 
 
 @login_required

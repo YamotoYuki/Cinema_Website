@@ -11,11 +11,17 @@ body {
   min-height: 100vh;
 }
 
-.container {
+.div {
+  position: relative;
+  background-color: rgba(30, 30, 30, 0.841);
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 3rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 1rem;
-  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.523), 0 0 10px rgba(255, 255, 255, 0.589);
+  animation: fadeZoomIn 0.8s ease-out both;
+  flex: 1;
 }
 
 nav {
@@ -185,6 +191,14 @@ h2{
   color: #d0eaff;
 }
 
+.no-reservations {
+  color: #ffffff;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+
 .card-left {
   flex: 0 0 140px;
 }
@@ -325,7 +339,7 @@ h2{
   text-align: center;
   font-size: 1.1rem;
   padding: 2rem;
-  color: #000;
+  color: #fff;
 }
 
 .custom-cancel-btn {
@@ -375,7 +389,6 @@ h2{
 .modal-title{
   color: #fff;
 }
-
 
 @keyframes fadeInUp {
   to {

@@ -18,7 +18,9 @@ html,body {
   margin: 50px auto;
   padding: 0 15px;
   color: #fff;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(30, 30, 30, 0.841);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.523), 0 0 10px rgba(255, 255, 255, 0.589); 
+  border: 3px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   flex: 1;
   animation: fadeZoomIn 0.9s ease-out both;

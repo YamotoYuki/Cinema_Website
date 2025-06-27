@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="div mt-5">
   <h2 class="mb-4 text-center">予約一覧</h2>
 
   {% if reservations %}
@@ -66,9 +66,12 @@
     <p class="no-reservations">予約履歴がありません。</p>
   {% endif %}
 
-  <div class="text-center mt-4">
+<div class="row mt-4">
+  <div class="col text-center">
     <a href="{% url 'movie_list' %}" class="btn btn-primary">映画一覧へ戻る</a>
   </div>
+</div>
+
 </div>
 
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
