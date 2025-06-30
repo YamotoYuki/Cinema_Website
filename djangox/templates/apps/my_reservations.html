@@ -22,6 +22,7 @@
           <h5 class="card-title">{{ r.movie.title }}</h5>
           <p class="card-text">
             <strong>座席:</strong> {{ r.seat.seat_number }}<br>
+            <strong>スクリーン:</strong> {{ r.movie.theater }}<br>
             <strong>上映日時:</strong> {{ r.show_time }}<br>
             <strong>予約日時:</strong> {{ r.reserved_at|date:"Y/m/d H:i" }}<br>
             <strong>金額:</strong> ¥{{ r.movie.price|floatformat:"0" }}<br>
