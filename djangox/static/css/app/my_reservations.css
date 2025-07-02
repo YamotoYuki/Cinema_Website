@@ -13,13 +13,13 @@ body {
 
 .div {
   position: relative;
-  background-color: rgba(30, 30, 30, 0.841);
+  background-color: rgba(30, 30, 30, 0.695);
   border: 3px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px #4b6cb7aa, inset 0 0 10px #18284888;
   border-radius: 18px;
   padding: 3rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.523), 0 0 10px rgba(255, 255, 255, 0.589);
   animation: fadeZoomIn 0.8s ease-out both;
   flex: 1;
 }
