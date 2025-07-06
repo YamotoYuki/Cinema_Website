@@ -1,24 +1,78 @@
 {% load static %}
 
-{% block nav %}
-<!-- ナビ非表示のため、空にする -->
-{% endblock %}
-
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/app/soudan.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>自動券売機（QRコード対応）</h2>
-<p>
-自動券売機は、館内のロビーに複数台設置しており、スムーズにチケットの発券が可能です。<br>
-事前にWEB予約された方は、予約完了メールやマイページに表示されるQRコードをかざすだけで、数秒でチケットが発券されます。<br>
-混雑時でも行列を避けられ、非接触で安心・衛生的にご利用いただけます。<br>
-日本語・英語・中国語など多言語対応の画面で、初めての方や外国人のお客様にもわかりやすい操作設計となっています。<br>
-また、券売機では座席の選択や変更、当日券の購入も可能です（一部作品・時間帯を除く）。<br>
-操作にご不安のある方は、近くのスタッフがお手伝いいたしますので、お気軽にお声がけください。
-</p>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オンライン予約 - HalCinema</title>
+  <style>
+
+    .section {
+      background: rgba(0, 50, 0, 0.7);
+      margin: 60px auto;
+      padding: 70px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    .section h2 {
+      font-size: 1.8em;
+      border-bottom: 2px solid #f0c471;
+      padding-bottom: 10px;
+    }
+
+    .flow-box {
+      margin: 20px 0;
+      padding: 20px;
+      background: #004d26;
+      border-left: 10px solid #ffcc00;
+      border-radius: 10px;
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 2.5;
+      font-size: 1.0em;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 30px;
+      color: #d99aff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a.back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+
+  <section class="section">
+    <h2>自動券売機（QRコード対応）</h2>
+    <p>
+    自動券売機は、館内のロビーに複数台設置しており、スムーズにチケットの発券が可能です。<br>
+    事前にWEB予約された方は、予約完了メールやマイページに表示されるQRコードをかざすだけで、数秒でチケットが発券されます。<br>
+    混雑時でも行列を避けられ、非接触で安心・衛生的にご利用いただけます。<br>
+    日本語・英語・中国語など多言語対応の画面で、初めての方や外国人のお客様にもわかりやすい操作設計となっています。<br>
+    また、券売機では座席の選択や変更、当日券の購入も可能です（一部作品・時間帯を除く）。<br>
+    操作にご不安のある方は、近くのスタッフがお手伝いいたしますので、お気軽にお声がけください。
+    </p>
+  </section>
+</body>
+</html>
 
 
 <a href="{% url 'ticket' %}" class="btn btn-secondary mt-4">← 戻る</a>
 {% endblock %}
+

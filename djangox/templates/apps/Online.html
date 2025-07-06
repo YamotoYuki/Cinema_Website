@@ -5,15 +5,74 @@
 {% endblock %}
 
 {% block content %}
-<h2>オンライン予約（Web・アプリ対応）</h2>
-<p>
-オンライン予約サービスでは、スマートフォン・タブレット・パソコンから24時間いつでもご希望の上映作品・日時・座席を選んで予約できます。<br>
-決済方法はクレジットカードのほか、一部QRコード決済や電子マネーにも対応しており、スムーズなお支払いが可能です。<br>
-予約完了後は、マイページやアプリ上に発行されるQRコードを劇場の自動券売機にかざすだけで、簡単にチケットが発券されます。<br>
-さらに、アプリをご利用いただくと、上映スケジュールや残席状況の確認、キャンペーン情報の受け取りもでき、便利さがさらにアップします。<br>
-事前に座席を確保できるため、混雑時でも安心してご来場いただけます。<br>
-会員登録をしていただくと、ポイント付与や割引などのお得な特典もございます。
-</p>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オンライン予約 - HalCinema</title>
+  <style>
+
+    .section {
+      background: rgba(0, 50, 0, 0.7);
+      margin: 60px auto;
+      padding: 70px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    .section h2 {
+      font-size: 1.8em;
+      border-bottom: 2px solid #f0c471;
+      padding-bottom: 10px;
+    }
+
+    .flow-box {
+      margin: 20px 0;
+      padding: 20px;
+      background: #004d26;
+      border-left: 10px solid #ffcc00;
+      border-radius: 10px;
+      font-size: 1.1em;
+    }
+
+    p {
+      line-height: 2.5;
+      font-size: 1.0em;
+    }
+
+    a.back {
+      display: inline-block;
+      margin-top: 30px;
+      color: #d99aff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a.back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+
+  <section class="section">
+    <h2>オンライン予約（Web・アプリ対応）</h2>
+    <p>
+      オンライン予約サービスでは、スマートフォン・タブレット・パソコンから24時間いつでもご希望の上映作品・日時・座席を選んで予約できます。<br>
+      決済方法はクレジットカードのほか、一部QRコード決済や電子マネーにも対応しており、スムーズなお支払いが可能です。<br>
+      予約完了後は、マイページやアプリ上に発行されるQRコードを劇場の自動券売機にかざすだけで、簡単にチケットが発券されます。<br>
+      さらに、アプリをご利用いただくと、上映スケジュールや混雑状況の確認や最新情報の受け取りまでもっと便利にアップします。<br>
+      事前に座席を確保できるため、混雑時でも安心してご来場いただけます。<br>
+      会員登録をしていただくと、ポイント付与や割引などのうれしい特典もございます。
+    </p>
+  </section>
+</body>
+</html>
+
 
 <a href="{% url 'ticket' %}" class="btn btn-secondary mt-4">← 戻る</a>
 {% endblock %}
+
