@@ -1,32 +1,30 @@
-/* faq.css */
-
 body {
-    background-image: url('/static/images/wallpaper.jpg'); 
-    background-size: cover;          
-    background-position: center;    
-    background-repeat: no-repeat;    
-    background-attachment: fixed;  
-    color: #fff;                    
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    animation: fadeZoomIn 0.9s ease-out both;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  animation: fadeZoomIn 0.9s ease-out both;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
   max-width: 960px;
   margin: 50px auto;
   padding: 30px 15px;;
-  color: #333;
-  background-color: #ececec;
+  color: #fff;
+  background: rgba(12, 12, 12, 0.781);
   border-radius: 12px;
   animation: fadeZoomIn 0.9s ease-out both;
 }
 
 h2 {
   text-align: center;
-  color: #135034;
+  color: #ffcc00;
   margin-bottom: 2rem;
   font-weight: 700;
   font-size: 2rem;
@@ -54,14 +52,14 @@ h2 {
 
 
 .ticket-info {
-  background-color: #f9f9f9;
-  border-left: 5px solid #135034;
+  background: rgba(0, 50, 0, 0.7);
+  border-left: 5px solid #f0c471;
   padding: 1.5rem 1.5rem 1.5rem 1rem;
   margin-bottom: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   font-family: 'Noto Sans JP', sans-serif;
-  color: #444;
+  color: #fff;
   animation: fadeZoomIn 0.9s ease-out both;
 }
 
@@ -72,7 +70,7 @@ h2 {
 }
 
 .ticket-info p strong {
-  color: #135034;
+  color: #ffcc00;
   font-weight: 700;
 }
 
