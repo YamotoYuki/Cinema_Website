@@ -44,19 +44,30 @@
 
     a.back {
       display: inline-block;
-      margin-top: 30px;
-      color: #d99aff;
+      margin: 30px auto 0;
+      padding: 12px 24px;
+      background-color:rgb(77, 7, 121);
+      color: #fff;
       text-decoration: none;
       font-weight: bold;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
     }
 
     a.back:hover {
-      text-decoration: underline;
+      background-color:rgb(129, 43, 179);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .back-wrapper {
+      text-align: right;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-
 
   <section class="section">
     <h2>自動券売機（QRコード対応）</h2>
@@ -68,11 +79,12 @@
     また、券売機では座席の選択や変更、当日券の購入も可能です（一部作品・時間帯を除く）。<br>
     操作にご不安のある方は、近くのスタッフがお手伝いいたしますので、お気軽にお声がけください。
     </p>
+
+    <div class="back-wrapper">
+      <a href="{% url 'ticket' %}" class="back">← 戻る</a>
+    </div>
   </section>
+
 </body>
 </html>
-
-
-<a href="{% url 'ticket' %}" class="btn btn-secondary mt-4">← 戻る</a>
 {% endblock %}
-
