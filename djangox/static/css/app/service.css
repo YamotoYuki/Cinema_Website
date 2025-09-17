@@ -9,14 +9,13 @@ body {
   padding: 0;
   min-height: 100vh;
   animation: fadeZoomIn 0.8s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .container {
   max-width: 960px;
   margin: 50px auto;
   padding: 0 15px;
-  font-family: 'Noto Sans JP', sans-serif;
   color: #fff;
   background-color: rgba(30, 30, 30, 0.841);
   border: 3px solid rgba(255, 255, 255, 0.08);

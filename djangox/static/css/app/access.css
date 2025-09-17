@@ -9,14 +9,14 @@ body {
   padding: 0;
   min-height: 100vh;
   animation: fadeZoomIn 0.9s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .container {
   max-width: 960px;
   margin: 20px auto;
   padding: 0 15px;
-  color: #fff;
+  color: #ffcc00;
   background: rgba(12, 12, 12, 0.781);
   border: 3px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.523), 0 0 10px rgba(255, 255, 255, 0.589);
@@ -27,6 +27,10 @@ body {
 .access-page {
   color: #fff;
   animation: fadeZoomIn 1.4s ease-out both;
+}
+
+h1{
+  color: #ffcc00;
 }
 
 .access-page .col-md-6 {
@@ -40,7 +44,7 @@ body {
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: #f0c471;
   animation: fadeZoomIn 0.9s ease-out both;
 }
 
@@ -48,7 +52,7 @@ body {
   padding-left: 1.2rem;
   margin-bottom: 1rem;
   list-style-type: disc;
-  color: #eee;
+  color: #fff;
   animation: fadeZoomIn 0.9s ease-out both;
 }
 

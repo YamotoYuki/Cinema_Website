@@ -359,14 +359,17 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
     else:
         instance.userprofile.save()
-        
-from django.contrib import messages
 
+@login_required
 def profile_select(request):
-    if request.method == 'POST':
-        user = request.user
-        user_profile, created = UserProfile.objects.get_or_create(user=user)
+    user = request.user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
 
+    # すでにプロフィール登録済みならホームへリダイレクト
+    if user_profile.is_completed:
+        return redirect('home')
+
+    if request.method == 'POST':
         new_username = request.POST.get('username', '').strip()
         if new_username and new_username != user.username:
             from accounts.models import CustomUser
@@ -384,9 +387,12 @@ def profile_select(request):
         user_profile.phone_number = request.POST.get('phone_number', '')
         if 'profile_image' in request.FILES:
             user_profile.profile_image = request.FILES['profile_image']
+
+        # 登録完了フラグを更新
+        user_profile.is_completed = True
         user_profile.save()
 
-        return redirect('home')  # ←ここが正しく設定されていること！
+        return redirect('home')
 
     return render(request, 'pages/profile_select.html')
 

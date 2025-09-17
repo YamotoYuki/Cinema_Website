@@ -19,8 +19,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
+    font-family: 'Cinzel', serif;
 }
 
 nav {
@@ -128,7 +127,7 @@ nav {
 
 .wrap {
   position: relative;
-  width: 500px;
+  width: 550px;
   height: 440px;
   background: transparent;
   border: 2px solid #ffffff;
@@ -143,7 +142,7 @@ nav {
  
 .wrap2 {
   position: relative;
-  width: 670px;
+  width: 690px;
   height: 440px;
   background: transparent;
   border: 2px solid #fff;
@@ -160,13 +159,13 @@ nav {
   margin: 0 55px 0 20px;
   padding: 0 5px 0 -40px;
   font-size: 3em;
-  color: #ffffff;
+  color: #ffcc00;
 }
 
 .h3 {
   margin: 0 5px 0 45px;
   font-size: 3em;
-  color: #ffffff;
+  color: #ffcc00;
 }
  
 .btn {
@@ -243,14 +242,14 @@ nav {
 
 .animated-login-title span {
   display: inline-block;
-  font-size: 2.8rem;
+  font-size: 2.7rem;
   color: #fff;
   animation-duration: 2.8s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  text-shadow: 0 0 6px rgba(255,255,255,0.6);
   transform-origin: center;
   cursor: default;
+  padding: 0 0 5px 0;
 }
 
 .animated-login-title span:nth-child(odd) {

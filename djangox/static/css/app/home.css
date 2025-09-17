@@ -71,7 +71,7 @@ nav {
 
 
 .roboto-slab-nav {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
@@ -86,7 +86,7 @@ nav {
 }
 
 .roboto-slab-nav {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
@@ -108,7 +108,7 @@ body {
   padding: 0;
   min-height: 100vh;
   animation: fadeZoomIn 0.8s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .main {

@@ -10,7 +10,7 @@ html,body {
   display: flex;
   flex-direction: column;
   animation: fadeZoomIn 0.9s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   text-align: center;
 }
 

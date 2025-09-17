@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Log in{% endblock %}
+{% block title %}ログイン{% endblock %}
 
 {% block content %}
 
@@ -12,19 +12,19 @@
 <body>
   <div class="wrap">
     <h2 class="animated-login-title" id="animated-title">
-      <span>L</span><span>o</span><span>g</span><span>i</span><span>n</span>
+      <span>ロ</span><span>グ</span><span>イ</span><span>ン</span>
     </h2>
 
     <form method="post">
       {% csrf_token %}
       {{ form|crispy }}
       <div class="remember-forgot">
-        <label><input type="checkbox" name="remember">保存</label>
+        <label><input type="checkbox" name="remember">ログイン情報を保存する</label>
       </div>
       <div class="register">
-        <p>アカウントは持っていますか？<a href="{% url 'account_signup' %}">Sign up</a></p>
+        <p>アカウントをお持ちでない方は <a href="{% url 'account_signup' %}">新規登録</a> へ</p>
       </div>
-      <button type="submit" class="btn">ログイン</button>
+      <button type="submit" class="btn">ログインする</button>
     </form>
   </div>
 </body>

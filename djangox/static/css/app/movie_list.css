@@ -10,7 +10,7 @@ html,body {
   display: flex;
   flex-direction: column;
   animation: fadeZoomIn 0.9s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .container {
@@ -28,6 +28,11 @@ html,body {
 
 .div1{
   margin-top: 60px;
+}
+
+h1{
+  color: #ffcc00;
+  padding: 0 0 50px 0;
 }
 
 nav {

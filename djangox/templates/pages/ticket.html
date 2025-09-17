@@ -5,6 +5,7 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/app/ticket.css' %}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -84,14 +85,22 @@
 
   <hr>
   <div class="row">
-    <div class="col-12">
-      <h5 class="mt-4">アイコンの意味</h5>
-      <ul class="list-group">
-        <li class="list-group-item">✅ 販売中</li>
-        <li class="list-group-item">⚠️ 残りわずか</li>
-        <li class="list-group-item">⏳ 販売開始前</li>
-        <li class="list-group-item">❌ 満席／販売終了</li>
-      </ul>
+<div class="col-12">
+  <h5 class="mt-4">アイコンの意味</h5>
+  <ul class="list-group">
+    <li class="list-group-item">
+      <i class="fa-solid fa-check text-success me-2"></i> 販売中
+    </li>
+    <li class="list-group-item">
+      <i class="fa-solid fa-triangle-exclamation text-warning me-2"></i> 残りわずか
+    </li>
+    <li class="list-group-item">
+      <i class="fa-solid fa-hourglass text-primary me-2"></i> 販売開始前
+    </li>
+    <li class="list-group-item">
+      <i class="fa-solid fa-circle-xmark text-danger me-2"></i> 満席／販売終了
+    </li>
+  </ul>
 
       <h5 class="mt-4">年齢制限区分</h5>
       <ul>
@@ -112,14 +121,14 @@
         <div class="col-md-6">
           <strong>PC</strong>
           <ul>
-            <li>Edge / Safari / Chrome / Firefox：最新版</li>
+            <li>Edge / Safari / Chrome / Firefox</li>
           </ul>
         </div>
         <div class="col-md-6">
           <strong>スマートフォン</strong>
           <ul>
-            <li>iOS 13以上：MobileSafari最新版</li>
-            <li>Android 4.3以上：Chrome最新版</li>
+            <li>iOS 13以上：MobileSafari</li>
+            <li>Android 4.3以上：Chrome</li>
           </ul>
         </div>
       </div>

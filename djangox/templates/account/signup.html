@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Sign up{% endblock %}
+{% block title %}新規登録{% endblock %}
 
 {% block content %}
 
@@ -10,13 +10,13 @@
 
 <div class="wrap2">
   <h2 class="animated-login-title2" id="animated-title2">
-    <span>S</span><span>i</span><span>g</span><span>n</span><span>U</span><span>p</span>
+    <span>新</span><span>規</span><span>登</span><span>録</span>
   </h2>
 
   <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <button class="btn btn-success" type="submit">Sign up</button>
+    <button class="btn btn-success" type="submit">登録する</button>
   </form>
 </div>
 

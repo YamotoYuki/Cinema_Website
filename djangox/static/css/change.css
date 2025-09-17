@@ -8,7 +8,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .div1 {
@@ -125,10 +125,10 @@ main {
   text-align: center;
 }
 
-h1 {
+h2 {
   font-size: 2.2rem;
   margin-bottom: 1.5rem;
-  color: #ffffff;
+  color: #ffcc00;
 }
 
 p {

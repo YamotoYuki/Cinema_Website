@@ -9,7 +9,7 @@ body {
   padding: 0;
   min-height: 100vh;
   animation: fadeZoomIn 0.8s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .div1 {
@@ -61,19 +61,19 @@ body {
 
 .theater-page h1 {
   font-weight: 700;
-  color: #fff;
+  color: #ffcc00;
   margin-bottom: 2rem;
 }
 
 .theater-page h3 {
   font-weight: 600;
-  color: #fff;
+  color: #f0c471;
   margin-bottom: 1rem;
 }
 
 .theater-page h5 {
   font-weight: 600;
-  color: #2980b9;
+  color: #f0c471;
   margin-bottom: 0.8rem;
 }
 
