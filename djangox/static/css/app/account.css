@@ -317,7 +317,12 @@ nav {
   }
 
 h2{
-    padding: 12px 0;
+  padding: 12px 0;
+  color: #ffcc00;
+}
+
+.account-delete-container h2 {
+  color: #f0c471;  /* 好きな色コードに変更してください */
 }
 
 .card-img-top {
