@@ -33,7 +33,7 @@ nav .navbar-nav > li.nav-item {
 h2 {
   text-align: center;
   font-size: 1.8rem;
-  color: #f8fafc;
+  color: #ffcc00;
   margin-bottom: 2rem;
   font-weight: 600;
   letter-spacing: 1px;
@@ -69,8 +69,10 @@ button.btn-primary {
   font-size: 1rem;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background-color: #29b65acc;
   color: #fff;
+  box-shadow: 0 6px 20px #9ef298cc;
+  border-color: #7bcc77;
   font-weight: 600;
   letter-spacing: 0.5px;
   transition: background 0.3s ease;
@@ -78,8 +80,9 @@ button.btn-primary {
 }
 
 button.btn-primary:hover {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  box-shadow: 0 0 10px #3b82f6;
+  background: linear-gradient(135deg, #1f6f3f, #1f6f3f);
+  box-shadow: 0 8px 25px #1f6f3fcc;
+  color: #fff;
 }
 
 input[type="file"]::file-selector-button {
