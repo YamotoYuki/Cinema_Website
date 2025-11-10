@@ -1,14 +1,15 @@
 body {
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
   margin: 0;
   padding: 0;
-  position: relative;
-  background-image: url('/static/images/wallpaper.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  min-height: 100vh;
+  animation: fadeZoomIn 0.8s ease-out both;
   font-family: 'Cinzel', serif;
-  color: #f0fdf4;
 }
 
 .container {
@@ -17,7 +18,7 @@ body {
   align-items: center;
   min-height: 70vh; 
   padding: 0 15px;
-  color: #fff;
+  color: #ffcc00;
   border-radius: 12px;
   animation: fadeZoomIn 0.9s ease-out both;
 }
@@ -41,7 +42,7 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #fff;
+  color: #ffcc00;
 }
 
 .btn {
@@ -54,31 +55,31 @@ h2 {
 }
 
 .btn-outline-info {
-  color: #fff;
+  color: #ffcc00;
   border-color: #9ef298;
   background-color: transparent;
   text-shadow: 0 0 5px #9ef298aa;
 }
 
 .btn-outline-info:hover {
-  background-color: #fff;
-  color: #033b00;
+  background-color: #29b65acc;
+  color: #f0c471;
   box-shadow: 0 6px 20px #9ef298cc;
   border-color: #7bcc77;
 }
 
 .btn-info {
-  background: linear-gradient(135deg, #3ecf8e, #2aa85a);
+  background: linear-gradient(135deg, #1f6f3f, #1f6f3f);
   border: none;
-  color: #fff;
+  color: #ffcc00;
   box-shadow: 0 5px 15px #29b65acc;
   text-shadow: 0 0 8px #24a855;
 }
 
 .btn-info:hover {
-  background: linear-gradient(135deg, #2aa85a, #1f6f3f);
+  background: linear-gradient(135deg, #1f6f3f, #1f6f3f);
   box-shadow: 0 8px 25px #1f6f3fcc;
-  color: #fff;
+  color: #f0c471;
 }
 
 .btn + .btn {
