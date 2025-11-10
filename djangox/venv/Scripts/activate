@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Cinema_Website\djangox\venv"
+VIRTUAL_ENV="C:\Users\jun11\OneDrive\ドキュメント\GitHub\Cinema_Website\djangox\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

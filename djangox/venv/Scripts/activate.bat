@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Cinema_Website\djangox\venv
+set VIRTUAL_ENV=C:\Users\jun11\OneDrive\ドキュメント\GitHub\Cinema_Website\djangox\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
