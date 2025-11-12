@@ -151,17 +151,9 @@
     <p class="card-text">A: はい、一部作品ではオリジナルグッズの販売を行っております。</p>
   </div>
 </div>
+{% endblock content %}
 
 
   {% block javascript %}
-  <!-- Bootstrap JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
-
-  <!-- Project JS -->
-  <script src="{% static 'js/base.js' %}"></script>
-
+ {{ block.super }}
   {% endblock javascript %}
-  
-{% endblock %}
