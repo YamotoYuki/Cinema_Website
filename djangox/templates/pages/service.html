@@ -11,48 +11,51 @@
 <div class="div py-5">
 
   <div class="service-section">
-  <h1 class="h1">
-    <img src="{% static 'images/logo_service.png' %}" alt="CinemaXXV Logo" class="logo-img2">
-  </h1>
+    <h1 class="h1">
+      <img src="{% static 'images/logo_service.png' %}" alt="CinemaXXV Logo" class="logo-img2">
+    </h1>
 
-  <p>
-    私たちの映画サイトでは、<strong>スムーズなチケット予約</strong>が可能です。<br>
-    お気に入りの映画を事前に選び、希望の座席を簡単に確保できます。<br><br>
+    <p>
+      私たちの映画サイトでは、<strong>スムーズなチケット予約</strong>が可能です。<br>
+      お気に入りの映画を事前に選び、希望の座席を簡単に確保できます。<br><br>
 
-    また、<strong>劇場内の快適さ</strong>にもこだわっています。<br>
-    座席の広さや音響設備、清潔な空間で、最高の映画体験を提供します。<br><br>
+      また、<strong>劇場内の快適さ</strong>にもこだわっています。<br>
+      座席の広さや音響設備、清潔な空間で、最高の映画体験を提供します。<br><br>
 
-    映画の世界に没入できる、あなた専用の特別な空間をお楽しみください。
-  </p>
-</div>
+      映画の世界に没入できる、あなた専用の特別な空間をお楽しみください。
+    </p>
+  </div>
 
   <div class="row row-cols-1 row-cols-md-3 g-4">
     <div class="col">
-      <div class="card h-100 shadow-sm">
+      <div class="card service-card h-100" data-bs-toggle="modal" data-bs-target="#foodModal">
         <img src="{% static 'images/food.jpg' %}" class="card-img-top fade-in-img" alt="スナック売店">
         <div class="card-body fade-in-text">
-          <h5 class="card-title">売店・フード</h5>
+          <h5 class="card-title" style="color: #ffcc00; font-weight: bold;">売店・フード</h5>
           <p class="card-text">ポップコーンやドリンクはもちろん、ホットドッグや限定コラボ商品もご用意！</p>
+          <span class="click-hint">メニューを見る</span>
         </div>
       </div>
     </div>
 
-<div class="col">
-  <div class="card h-100 shadow-sm">
-    <img src="{% static 'images/lounge.jpg' %}" class="card-img-top fade-in-img" alt="ラウンジ">
-    <div class="card-body fade-in-text">
-      <h5 class="card-title">ラウンジ</h5>
-      <p class="card-text">待ち時間や映画後にリラックスできるラウンジスペースを完備。無料Wi-Fi付き。</p>
+    <div class="col">
+      <div class="card service-card h-100" data-bs-toggle="modal" data-bs-target="#loungeModal">
+        <img src="{% static 'images/lounge.jpg' %}" class="card-img-top fade-in-img" alt="ラウンジ">
+        <div class="card-body fade-in-text">
+          <h5 class="card-title" style="color: #ffcc00; font-weight: bold;">ラウンジ</h5>
+          <p class="card-text">待ち時間や映画後にリラックスできるラウンジスペースを完備。無料Wi-Fi付き。</p>
+          <span class="click-hint">詳細を見る</span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     <div class="col">
-      <div class="card h-100 shadow-sm">
+      <div class="card service-card h-100" data-bs-toggle="modal" data-bs-target="#kidsModal">
         <img src="{% static 'images/kids.jpg' %}" class="card-img-top fade-in-img" alt="キッズサービス">
         <div class="card-body fade-in-text">
-          <h5 class="card-title">キッズ向けサービス</h5>
+          <h5 class="card-title" style="color: #ffcc00; font-weight: bold;">キッズ向けサービス</h5>
           <p class="card-text">小さなお子様向けのシート、チャイルドヘッドホン、授乳室も完備しています。</p>
+          <span class="click-hint">詳細を見る</span>
         </div>
       </div>
     </div>
@@ -63,13 +66,278 @@
     <p>モバイルオーダー、誕生日特典、会員ポイント制度など、便利でお得なサービスも充実！</p>
   </div>
 </div>
+
+<div class="modal fade" id="foodModal" tabindex="-1" aria-labelledby="foodModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="foodModalLabel">売店・フードメニュー</h5>
+        <button type="button" class="btn-close btn-close-white btn-close-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="menu-section">
+          <div class="section-title">
+            ポップコーン
+          </div>
+          <div class="menu-item">
+            <h6>塩味ポップコーン</h6>
+            <p class="description">定番の塩味。映画のお供にぴったり！サクサクの食感がクセになります。</p>
+            <span class="price-tag">S: ¥400 / M: ¥500 / L: ¥600</span>
+          </div>
+          <div class="menu-item">
+            <h6>キャラメルポップコーン</h6>
+            <p class="description">甘くて香ばしいキャラメル味。一粒一粒が幸せの味。</p>
+            <span class="price-tag">S: ¥450 / M: ¥550 / L: ¥650</span>
+          </div>
+          <div class="menu-item">
+            <h6>ハーフ&ハーフ</h6>
+            <p class="description">塩味とキャラメルの両方を楽しめる！2つの味を一度に。</p>
+            <span class="price-tag">M: ¥600 / L: ¥700</span>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="section-title">
+            ドリンク
+          </div>
+          <div class="menu-item">
+            <h6>コーラ / ジンジャーエール</h6>
+            <p class="description">爽快な炭酸飲料。喉を潤す定番ドリンク。</p>
+            <span class="price-tag">S: ¥300 / M: ¥400 / L: ¥500</span>
+          </div>
+          <div class="menu-item">
+            <h6>オレンジジュース / メロンソーダ</h6>
+            <p class="description">フレッシュなフルーツの風味が広がる。</p>
+            <span class="price-tag">S: ¥300 / M: ¥400 / L: ¥500</span>
+          </div>
+          <div class="menu-item">
+            <h6>アイスコーヒー / アイスティー</h6>
+            <p class="description">すっきりとした味わい。リラックスタイムに最適。</p>
+            <span class="price-tag">M: ¥400 / L: ¥500</span>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="section-title">
+            フード
+          </div>
+          <div class="menu-item">
+            <h6>ホットドッグ</h6>
+            <p class="description">ジューシーなソーセージとふわふわバンズの絶妙なハーモニー。</p>
+            <span class="price-tag">¥500</span>
+          </div>
+          <div class="menu-item">
+            <h6>ナチョス&チーズ</h6>
+            <p class="description">サクサクナチョスにとろーりチーズがたまらない！</p>
+            <span class="price-tag">¥600</span>
+          </div>
+          <div class="menu-item">
+            <h6>チキンナゲット(5個)</h6>
+            <p class="description">外はサクサク、中はジューシー。特製ソース付き。</p>
+            <span class="price-tag">¥450</span>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="section-title">
+            スイーツ
+          </div>
+          <div class="menu-item">
+            <h6>アイスクリーム</h6>
+            <p class="description">バニラ / チョコレート / ストロベリーからお選びいただけます。</p>
+            <span class="price-tag">¥350</span>
+          </div>
+          <div class="menu-item">
+            <h6>限定コラボスイーツ</h6>
+            <p class="description">映画公開記念の特別スイーツ。この機会をお見逃しなく！</p>
+            <span class="price-tag">¥800</span>
+          </div>
+        </div>
+
+        <div class="info-box success">
+          <h6 style="color: #28a745; margin-bottom: 10px;"><strong>お得なセット情報</strong></h6>
+          <p style="margin: 0;"><strong>レギュラーセット:</strong> ポップコーン(M) + ドリンク(M) = <span style="font-size: 1.2rem; color: #28a745;"><strong>¥800</strong></span> <small>(通常¥900)</small></p>
+          <p style="margin: 10px 0 0 0;"><strong>ラージセット:</strong> ポップコーン(L) + ドリンク(L) = <span style="font-size: 1.2rem; color: #28a745;"><strong>¥1,000</strong></span> <small>(通常¥1,100)</small></p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 30px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="loungeModal" tabindex="-1" aria-labelledby="loungeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loungeModalLabel">ラウンジサービス</h5>
+        <button type="button" class="btn-close btn-close-white btn-close-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5 style="color: #ffcc00; margin-bottom: 20px;">快適なラウンジ空間</h5>
+        <p style="font-size: 1.1rem; line-height: 1.8;">上映前後のひとときを、ゆったりとお過ごしいただけるラウンジスペースをご用意しております。</p>
+        
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>無料Wi-Fi完備</h6>
+          <p>高速インターネットが無料でご利用いただけます。待ち時間にSNSやメールチェックも快適です。パスワード不要で簡単接続！</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>充電スポット</h6>
+          <p>各座席に電源コンセントとUSBポートを完備。スマートフォンやタブレットの充電も可能です。USB-CとLightningの両方に対応。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>カフェコーナー</h6>
+          <p>本格コーヒーマシンを設置。淹れたてのコーヒーやカプチーノをお楽しみいただけます。<br><small>（エスプレッソ ¥300 / カプチーノ ¥400 / カフェラテ ¥400）</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>映画雑誌・書籍コーナー</h6>
+          <p>最新の映画雑誌や関連書籍を自由にお読みいただけます。映画の予習や復習にどうぞ。月刊誌から専門誌まで充実のラインナップ。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>快適な空調システム</h6>
+          <p>季節を問わず快適な温度を保っています。夏は涼しく、冬は暖かく。リラックスしてお過ごしください。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>多様な座席タイプ</h6>
+          <p>ソファ席、テーブル席、カウンター席など、お好みのスタイルでおくつろぎいただけます。一人でも、グループでも快適。</p>
+        </div>
+
+        <div class="info-box">
+          <h6 style="color: #ffcc00;"><strong>ロケーション</strong></h6>
+          <ul style="margin: 10px 0 0 20px; line-height: 2;">
+            <li><strong>2階ロビー:</strong> メインラウンジ（座席数: 50席）</li>
+            <li><strong>3階:</strong> プレミアムラウンジ（会員専用・座席数: 20席）</li>
+          </ul>
+        </div>
+
+        <div class="info-box">
+          <h6 style="color: #ffcc00;"><strong>営業時間</strong></h6>
+          <p style="margin: 10px 0 0 0; line-height: 2;">
+            <strong>平日:</strong> 10:00 - 23:00<br>
+            <strong>土日祝:</strong> 9:00 - 24:00<br>
+            <small>※劇場営業時間中は常時ご利用いただけます</small>
+          </p>
+        </div>
+
+        <div class="info-box success">
+          <h6 style="color: #28a745;"><strong>プレミアム会員特典</strong></h6>
+          <p style="margin: 10px 0 0 0;">会員の方は3階プレミアムラウンジをご利用いただけます。より静かで落ち着いた空間で、特別なひとときをお過ごしください。無料ドリンクサービスもご利用いただけます。</p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 30px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="kidsModal" tabindex="-1" aria-labelledby="kidsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="kidsModalLabel">キッズ向けサービス</h5>
+        <button type="button" class="btn-close btn-close-white btn-close-custom" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5 style="color: #ffcc00; margin-bottom: 20px;">お子様連れのお客様へ</h5>
+        <p style="font-size: 1.1rem; line-height: 1.8;">小さなお子様と一緒に、安心して映画をお楽しみいただけるよう、様々なサービスをご用意しております。</p>
+        
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>チャイルドシート（ブースターシート）</h6>
+          <p>座席が低いお子様でもスクリーンが見やすいよう、座面を高くするクッションを無料で貸し出しています。身長100cm〜130cmのお子様に最適です。<br><small class="text-muted">※劇場入口カウンターでお申し付けください</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>チャイルドヘッドホン</h6>
+          <p>お子様の耳に優しい音量調整機能付きヘッドホンを貸し出しています。大きな音が苦手なお子様も安心です。3歳〜10歳のお子様用サイズをご用意。<br><small class="text-muted">※数に限りがございます。事前予約をおすすめします</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>授乳室・おむつ交換室</h6>
+          <p>2階ロビーに完全個室の授乳室を完備。おむつ交換台、調乳用温水器、ゴミ箱、ソファも設置しています。清潔で快適な空間でご利用いただけます。<br><small class="text-muted">※営業時間中いつでもご利用いただけます</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>キッズトイレ</h6>
+          <p>お子様用の低い便器、補助便座、踏み台を設置したキッズトイレをご用意しています。トイレトレーニング中のお子様も安心してご利用いただけます。<br><small class="text-muted">※各フロアのトイレ内に設置</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>キッズプレイエリア</h6>
+          <p>2階ロビーに小さなお子様が遊べるプレイスペースを設置。滑り台やボールプール、絵本コーナーもあります。上映前の待ち時間も楽しく過ごせます。<br><small class="text-muted">※対象年齢: 2歳〜6歳程度（保護者同伴必須）</small></p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>キッズグッズ販売</h6>
+          <p>人気キャラクターのぬいぐるみ、おもちゃ、文房具などを販売しています。映画の記念品やプレゼントにいかがですか？限定グッズも随時入荷中！</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h6>キッズメニュー</h6>
+          <p>お子様サイズのポップコーン（¥250）やジュース（¥200）、キッズランチボックス（¥500）もご用意しています。栄養バランスを考えたメニューで安心。<br><small class="text-muted">※詳しくは売店メニューをご覧ください</small></p>
+        </div>
+
+        <div class="info-box">
+          <h6 style="color: #ffcc00;"><strong>ママズシアター（特別上映）</strong></h6>
+          <p style="margin: 10px 0;">毎月第2・第4木曜日の午前中は、赤ちゃん連れでも安心して映画を楽しめる「ママズシアター」を開催しています。</p>
+          <ul style="margin: 10px 0 0 20px; line-height: 2;">
+            <li>場内を少し明るめに設定（通常の50%の明るさ）</li>
+            <li>音量をやや控えめに設定（通常の80%の音量）</li>
+            <li>泣いてしまっても大丈夫な雰囲気</li>
+            <li>ベビーカー置き場完備（スクリーン前に10台分）</li>
+            <li>途中退出・再入場も自由</li>
+          </ul>
+        </div>
+
+        <div class="info-box warning">
+          <h6 style="color: #f39c12;"><strong>ご注意事項</strong></h6>
+          <ul style="margin: 10px 0 0 20px; line-height: 2;">
+            <li>作品によっては年齢制限がございます。事前にご確認ください。</li>
+            <li>周りのお客様へのご配慮をお願いいたします。</li>
+            <li>お子様の体調が優れない場合は、ご来場をお控えください。</li>
+            <li>館内では必ず保護者の方が付き添いをお願いいたします。</li>
+          </ul>
+        </div>
+
+        <div class="info-box success">
+          <h6 style="color: #28a745;"><strong>おすすめ情報</strong></h6>
+          <p style="margin: 10px 0 0 0; line-height: 2;">
+            平日の午前中や、休日の初回上映（9:00〜）は比較的空いており、お子様連れでもゆったりとご覧いただけます。また、通路側の座席は途中退出がしやすく便利です。
+          </p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 30px;">閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock content %}
 
-  {% block javascript %}
+{% block javascript %}
  {{ block.super }}
-  {% endblock javascript %}
-
-
-
-
-
+{% endblock javascript %}
