@@ -396,7 +396,6 @@ def profile_select(request):
 
     return render(request, 'pages/profile_select.html')
 
-
 @login_required
 def home_page(request):
     return render(request, 'pages/home.html')
@@ -436,6 +435,30 @@ def ticket_buy_page(request):
 @login_required
 def online_page(request):
     return render(request, 'apps/Online.html')
+
+@login_required
+def notice_foodmenu(request):
+    return render(request, "notices/notice_foodmenu.html")
+
+@login_required
+def notice_dolby(request):
+    return render(request, "notices/notice_dolby.html")
+
+@login_required
+def notice_phone(request):
+    return render(request, "notices/notice_phone.html")
+
+@login_required
+def notice_parkir(request):
+    return render(request, "notices/notice_parkir.html")
+
+@login_required
+def notice_newyear(request):
+    return render(request, "notices/notice_newyear.html")
+
+@login_required
+def notice_lobby(request):
+    return render(request, "notices/notice_lobby.html")
 
 class IndexPageView(TemplateView):
     template_name = "pages/index.html"

@@ -1,0 +1,224 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}最新ドルビーサウンド導入！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(77, 171, 247, 0.2);
+      color: #4dabf7;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #4dabf7;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .notice-highlight {
+      background: rgba(77, 171, 247, 0.15);
+      border-left: 4px solid #4dabf7;
+      padding: 20px;
+      margin: 30px 0;
+      border-radius: 8px;
+    }
+
+    .notice-highlight h4 {
+      color: #4dabf7;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .notice-features {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    .notice-features li {
+      padding: 12px 0;
+      padding-left: 30px;
+      position: relative;
+      font-size: 1.05rem;
+    }
+
+    .notice-features li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #4dabf7;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .notice-hero-image {
+        height: 250px;
+      }
+
+      .notice-body {
+        font-size: 1rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/new_theater.jpg' %}" alt="最新ドルビーサウンド導入" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月13日</span>
+          <span class="notice-category">設備情報</span>
+        </div>
+
+        <h1 class="notice-title">最新ドルビーサウンド導入！</h1>
+
+        <div class="notice-body">
+          <p>
+            HalCinemaでは、お客様により臨場感あふれる映画体験をお届けするため、最新のDolby Atmos®サウンドシステムを全スクリーンに導入いたしました。
+          </p>
+
+          <p>
+            この革新的な音響技術により、音が三次元空間を移動し、まるで映画の世界に入り込んだかのような圧倒的な没入感を体験いただけます。
+          </p>
+
+          <div class="notice-highlight">
+            <h4>新サウンドシステムの特徴</h4>
+            <ul class="notice-features">
+              <li>天井スピーカーを含む多次元音響システムで、360度すべての方向から音が聞こえる立体音響を実現</li>
+              <li>128個の独立したオーディオオブジェクトを同時に処理可能な最新プロセッサー搭載</li>
+              <li>各座席で最適化された音響バランスで、どの席でも最高の音質を体験</li>
+              <li>低音域の迫力と高音域のクリアさを両立した高品質スピーカーシステム</li>
+            </ul>
+          </div>
+
+          <p>
+            特にアニメ映画では、キャラクターの声や効果音、音楽が鮮明に聞こえ、作品の世界観をより深く味わうことができます。アクションシーンでは迫力ある音響が、感動的なシーンでは繊細な音の表現が、物語をさらに引き立てます。
+          </p>
+
+          <p>
+            すでに多くのお客様から「音の立体感がすごい！」「今まで聞こえなかった細かい音まで聞こえる」といった喜びの声をいただいております。
+          </p>
+
+          <div class="notice-highlight">
+            <h4>おすすめ作品</h4>
+            <p>
+              新しいサウンドシステムで特におすすめの作品は「鬼滅の刃 無限列車編」「OnePiece Film Red」「SPYxFAMILY CODE: White」です。迫力のアクションシーンと美しい音楽を、最高の音響でお楽しみください。
+            </p>
+          </div>
+
+          <p>
+            ぜひ一度、新しくなったHalCinemaの音響システムで映画をご鑑賞ください。きっと今までにない感動体験をお届けできるはずです。
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

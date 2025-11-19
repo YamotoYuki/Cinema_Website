@@ -86,21 +86,21 @@ const selectedSeatsSpan = document.getElementById('selected-seats');
 const seatInput = document.getElementById('seatInput');
 
 const rows = ['A','B','C','D','E','F','G','H','I','J'];
-const leftCols = Array.from({length: 15}, (_, i) => i + 1);  // 1〜15
-const rightCols = Array.from({length: 5}, (_, i) => i + 16); // 16〜20
+const leftCols = Array.from({length: 15}, (_, i) => i + 1);
+const rightCols = Array.from({length: 5}, (_, i) => i + 16); 
 
 let selectedSeats = [];
 
 rows.forEach(row => {
-  seatingDiv.appendChild(makeLabel(row)); // 左ラベル
+  seatingDiv.appendChild(makeLabel(row));
 
   leftCols.forEach(num => seatingDiv.appendChild(makeSeat(row, num)));
 
-  seatingDiv.appendChild(makeLabel(row)); // 中央ラベル（15の右）
+  seatingDiv.appendChild(makeLabel(row));
 
   rightCols.forEach(num => seatingDiv.appendChild(makeSeat(row, num)));
 
-  seatingDiv.appendChild(makeLabel(row)); // 右ラベル
+  seatingDiv.appendChild(makeLabel(row)); 
 });
 
 function makeSeat(row, num) {

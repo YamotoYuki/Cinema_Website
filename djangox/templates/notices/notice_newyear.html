@@ -1,0 +1,278 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}新年キャンペーン開催！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #ffc107;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .campaign-box {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
+      border: 2px solid #ffc107;
+      padding: 30px;
+      margin: 30px 0;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .campaign-box h3 {
+      color: #ffc107;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .campaign-period {
+      background: rgba(255, 193, 7, 0.2);
+      display: inline-block;
+      padding: 10px 25px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 15px 0;
+      color: #ffc107;
+    }
+
+    .campaign-details {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .campaign-details h4 {
+      color: #4dabf7;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .campaign-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .campaign-details li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .campaign-details li:before {
+      content: "🎁";
+      position: absolute;
+      left: 0;
+      font-size: 1.2rem;
+    }
+
+    .notice-note {
+      background: rgba(77, 171, 247, 0.1);
+      border-left: 4px solid #4dabf7;
+      padding: 20px;
+      margin: 30px 0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .notice-note h5 {
+      color: #4dabf7;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .notice-hero-image {
+        height: 250px;
+      }
+
+      .campaign-box h3 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/happy2025.jpg' %}" alt="新年キャンペーン" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月11日</span>
+          <span class="notice-category">キャンペーン</span>
+        </div>
+
+        <h1 class="notice-title">新年キャンペーン開催！</h1>
+
+        <div class="notice-body">
+          <p>
+            新しい年の始まりを、HalCinemaで素敵な映画とともにお過ごしください！日頃のご愛顧に感謝して、1月限定の特別キャンペーンを開催いたします。
+          </p>
+
+          <div class="campaign-box">
+            <h3>🎊 1月ご来場特典 🎊</h3>
+            <p style="font-size: 1.2rem; margin: 20px 0;">
+              1月中にご来場いただいたすべてのお客様に<br>
+              <strong style="color: #ffc107; font-size: 1.4rem;">ドリンクチケットをプレゼント！</strong>
+            </p>
+            <div class="campaign-period">
+              期間：2026年1月1日（木）～ 1月31日（土）
+            </div>
+          </div>
+
+          <div class="campaign-details">
+            <h4>特典内容</h4>
+            <ul>
+              <li>Sサイズドリンク1杯無料（コーラ、オレンジ、メロンソーダ、ウーロン茶から選択可）</li>
+              <li>チケット購入時に自動で付与されます</li>
+              <li>当日の映画鑑賞前後にご利用いただけます</li>
+              <li>お一人様1回のご来場につき1枚まで</li>
+            </ul>
+          </div>
+
+          <p>
+            新年最初の映画鑑賞を、お好きなドリンクとともにお楽しみください。家族や友人と一緒に、素敵なアニメ映画の世界に浸りませんか？
+          </p>
+
+          <div class="campaign-details">
+            <h4>1月のおすすめ作品</h4>
+            <ul>
+              <li>「鬼滅の刃 無限列車編」- 感動の物語を大画面で</li>
+              <li>「すずめの戸締まり」- 新海誠監督の最新作</li>
+              <li>「SPYxFAMILY CODE: White」- 家族で楽しめる冒険</li>
+              <li>「君の名は」- 何度観ても心に響く名作</li>
+            </ul>
+          </div>
+
+          <div class="notice-note">
+            <h5>ご利用にあたってのお願い</h5>
+            <ul style="list-style: disc; padding-left: 20px; margin: 10px 0;">
+              <li>ドリンクチケットは当日のみ有効です</li>
+              <li>他の割引やクーポンとの併用はできません</li>
+              <li>換金・払い戻しはできません</li>
+              <li>混雑状況により、お待ちいただく場合がございます</li>
+            </ul>
+          </div>
+
+          <p>
+            皆様のご来場を、スタッフ一同心よりお待ちしております。2025年も、HalCinemaで素敵な映画体験をお楽しみください！
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,368 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}ロビーエリアをリニューアル！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(33, 150, 243, 0.2);
+      color: #42a5f5;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #42a5f5;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .renewal-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin: 35px 0;
+    }
+
+    .feature-item {
+      background: rgba(66, 165, 245, 0.1);
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid rgba(66, 165, 245, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(66, 165, 245, 0.2);
+      border-color: rgba(66, 165, 245, 0.6);
+    }
+
+    .feature-item-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    .feature-item h4 {
+      color: #42a5f5;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+
+    .feature-item p {
+      font-size: 1rem;
+      color: #d0d0d0;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .highlight-section {
+      background: linear-gradient(135deg, rgba(66, 165, 245, 0.15), rgba(33, 150, 243, 0.1));
+      border: 2px solid #42a5f5;
+      padding: 30px;
+      margin: 35px 0;
+      border-radius: 12px;
+    }
+
+    .highlight-section h3 {
+      color: #42a5f5;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .amenities-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .amenity-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid rgba(66, 165, 245, 0.2);
+    }
+
+    .amenity-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .amenity-name {
+      font-size: 1rem;
+      color: #e0e0e0;
+      font-weight: 600;
+    }
+
+    .info-box {
+      background: rgba(77, 171, 247, 0.1);
+      border-left: 4px solid #4dabf7;
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 8px;
+    }
+
+    .info-box h4 {
+      color: #4dabf7;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .info-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-box li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .info-box li:before {
+      content: "•";
+      position: absolute;
+      left: 10px;
+      color: #42a5f5;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .renewal-features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/lobby_renewal.jpg' %}" alt="ロビーリニューアル" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月8日</span>
+          <span class="notice-category">施設情報</span>
+        </div>
+
+        <h1 class="notice-title">ロビーエリアをリニューアル！</h1>
+
+        <div class="notice-body">
+          <p>
+            HalCinemaのロビーエリアが、お客様により快適にお過ごしいただけるよう、全面リニューアルいたしました。上映前後の時間を、ゆったりとくつろげる空間でお楽しみください。
+          </p>
+
+          <div class="highlight-section">
+            <h3>✨ リニューアルのコンセプト ✨</h3>
+            <p style="text-align: center; font-size: 1.1rem; margin: 15px 0; color: #e0e0e0;">
+              「くつろぎ」と「わくわく」が共存する、<br>
+              映画の世界への入口となるような空間
+            </p>
+          </div>
+
+          <h3 style="color: #42a5f5; margin: 40px 0 30px; font-size: 1.8rem;">主なリニューアル内容</h3>
+
+          <div class="renewal-features">
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>快適な待合スペース</h4>
+              <p>ゆったりとしたソファと個室風のブース席を新設。映画の前後にリラックスしてお過ごしいただけます。</p>
+            </div>
+
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>カフェスペース</h4>
+              <p>本格的なコーヒーや軽食を楽しめるカフェカウンターを設置。映画の余韻に浸りながらのカフェタイムも。</p>
+            </div>
+
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>充電スポット</h4>
+              <p>各テーブルにUSB充電ポートとコンセントを完備。スマホの充電を気にせず待ち時間を過ごせます。</p>
+            </div>
+
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>アートウォール</h4>
+              <p>人気アニメ作品のポスターやアート作品を展示。フォトスポットとしても楽しめる空間です。</p>
+            </div>
+
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>情報コーナー</h4>
+              <p>上映作品のパンフレットや関連書籍を閲覧できるスペース。作品の世界をより深く知ることができます。</p>
+            </div>
+
+            <div class="feature-item">
+              <span class="feature-item-icon"></span>
+              <h4>グリーンエリア</h4>
+              <p>観葉植物を配置した癒しの空間。自然を感じながらゆっくりとおくつろぎいただけます。</p>
+            </div>
+          </div>
+
+          <div class="highlight-section">
+            <h3>新しい設備・サービス</h3>
+            <div class="amenities-list">
+              <div class="amenity-item">
+                <span class="amenity-icon">📶</span>
+                <p class="amenity-name">無料Wi-Fi完備</p>
+              </div>
+              <div class="amenity-item">
+                <span class="amenity-icon">🔌</span>
+                <p class="amenity-name">充電スポット</p>
+              </div>
+              <div class="amenity-item">
+                <span class="amenity-icon">🚻</span>
+                <p class="amenity-name">リニューアルした化粧室</p>
+              </div>
+              <div class="amenity-item">
+                <span class="amenity-icon">🎧</span>
+                <p class="amenity-name">静音エリア</p>
+              </div>
+              <div class="amenity-item">
+                <span class="amenity-icon">👶</span>
+                <p class="amenity-name">授乳室・おむつ交換台</p>
+              </div>
+              <div class="amenity-item">
+                <span class="amenity-icon">♿</span>
+                <p class="amenity-name">バリアフリー対応</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <h4>ロビーの利用について</h4>
+            <ul>
+              <li>営業時間：9:00〜23:00（最終上映終了まで）</li>
+              <li>どなたでも無料でご利用いただけます</li>
+              <li>カフェスペースは有料（コーヒー¥380〜）</li>
+              <li>Wi-Fi接続時間：無制限</li>
+              <li>グループでのご利用も歓迎いたします</li>
+            </ul>
+          </div>
+
+          <p>
+            新しいロビーは、映画を観る前のワクワク感を高め、映画を観た後の余韻を楽しむための空間として生まれ変わりました。友人やご家族との待ち合わせ場所としても、お一人でのリラックススペースとしても、ぜひご活用ください。
+          </p>
+
+          <p>
+            照明にもこだわり、時間帯に応じて色温度を変化させることで、朝は爽やかに、夜は落ち着いた雰囲気を演出しています。季節ごとの装飾も予定しておりますので、訪れるたびに新しい発見があることでしょう。
+          </p>
+
+          <p>
+            皆様のご来場を、新しくなったHalCinemaのロビーでお待ちしております。快適な空間で、映画の前後の時間もお楽しみください！
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
