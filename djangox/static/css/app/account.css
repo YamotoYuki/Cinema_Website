@@ -10,7 +10,7 @@ html,body {
   display: flex;
   flex-direction: column;
   animation: fadeZoomIn 0.9s ease-out both;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
 }
 
 .account-delete-container {
@@ -26,7 +26,7 @@ html,body {
   border: 2px solid rgba(255, 255, 255, 0.1);
   padding: 3rem 2rem;
   border-radius: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   text-align: center;
   flex: 1;
   position: relative;
@@ -83,7 +83,7 @@ html,body {
   font-weight: 600;
   padding: 8px 24px;
   border-radius: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -95,7 +95,7 @@ html,body {
   font-weight: 600;
   padding: 8px 24px;
   border-radius: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -173,7 +173,7 @@ html,body {
   font-weight: 600;
   padding: 8px 24px;
   border-radius: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -185,7 +185,7 @@ html,body {
   font-weight: 600;
   padding: 8px 24px;
   border-radius: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -287,7 +287,7 @@ nav {
 
 
 .roboto-slab-nav {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cinzel', serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;

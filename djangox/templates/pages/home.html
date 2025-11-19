@@ -249,36 +249,125 @@
   </div>
 </section>
 
-        <!-- SNS・アプリ -->
-        <section class="mt-5 text-center card-body fade-in-text" style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 2rem 1rem; border-radius: 0.5rem;">
-          <h4 class="mb-3 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">公式SNS・アプリ</h4>
-          <p class="card-text">最新情報はSNSやアプリでチェック！限定キャンペーンも配信中！</p>
-          <a href="#" class="btn btn-outline-primary mx-1" target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="#" class="btn btn-outline-info mx-1" target="_blank" rel="noopener noreferrer">Twitter</a>
-          <a href="#" class="btn btn-outline-success mx-1" target="_blank" rel="noopener noreferrer">アプリをダウンロード</a>
-        </section>
+<!-- SNS・アプリ -->
+<section class="mt-5 text-center card-body fade-in-text" style="background-color: rgba(0, 0, 0, 0.5); color: #fff; padding: 2rem 1rem; border-radius: 0.5rem;">
+    <h4 class="mb-3 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">公式SNS・アプリ</h4>
+      <p class="card-text">最新情報はSNSやアプリでチェック！限定キャンペーンも配信中！</p>
+      <a href="#" class="btn btn-outline-primary mx-1" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="#" class="btn btn-outline-info mx-1" target="_blank" rel="noopener noreferrer">Twitter</a>
+      <a href="#" class="btn btn-outline-success mx-1" target="_blank" rel="noopener noreferrer">アプリをダウンロード</a>
+</section>
 
-        <!-- お知らせ -->
-        <section class="mt-5 card-body fade-in-text">
-          <h4 class="text-center mb-4 fw-bold card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">最新ニュース</h4>
-          <ul class="list-group list-group-flush shadow-sm rounded card-text">
-            <li class="list-group-item">テストテストテストテストテストテストテストテストテストテスト</li>
-            <li class="list-group-item">テストテストテストテストテストテストテストテストテストテスト</li>
-            <li class="list-group-item">テストテストテストテストテストテストテストテストテストテスト</li>
-          </ul>
-        </section>
+<!-- お知らせ -->
+<section class="notices-section card-body fade-in-text">
+  
+  <h4 class="notices-title card-title">お知らせ</h4>
 
-        <!-- アクセス情報 -->
-        <section class="mt-5 text-center card-body fade-in-text" style="margin: 30rem 0 0 0;">
-          <h5 class="fw-bold mb-3 card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">アクセス情報</h5>
-          <p class="card-text custom-size">愛知県名古屋市中村区名駅南1丁目10-1 HAL名古屋</p>
-          <p class="card-text custom-size">営業時間：毎日 9:00 〜 23:00</p>
-          <p class="card-text custom-size">お問い合わせ：00-1234-5678</p>
-        </section>
-
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/new_theater.jpg' %}" 
+               alt="新設備導入" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">最新ドルビーサウンド導入！</h5>
+        <p class="notice-description card-text">
+          より臨場感あふれるサウンドをお届け。全スクリーンで最高品質の音響を体感できます！
+        </p>
+        <footer class="notice-date">2025年11月13日</footer>
       </div>
     </div>
+
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/happy2025.jpg' %}" 
+               alt="新年キャンペーン" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">新年キャンペーン開催！</h5>
+        <p class="notice-description card-text">
+          1月中にご来場の方全員にドリンクチケットをプレゼント！ぜひこの機会にお越しください。
+        </p>
+        <footer class="notice-date">2025年11月11日</footer>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/phone.jpg' %}" 
+               alt="アプリリニューアル" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">公式アプリがリニューアル！</h5>
+        <p class="notice-description card-text">
+          新しいUIで座席予約がさらにスムーズに。お気に入り作品の通知機能も追加されました。
+        </p>
+        <footer class="notice-date">2025年11月10日</footer>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/pop_more.jpg' %}" 
+               alt="フードメニュー追加" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">フードメニューに新セット登場！</h5>
+        <p class="notice-description card-text">
+          キャラメル＆チーズMIXポップコーンセットが新登場！映画と一緒にお楽しみください。
+        </p>
+        <footer class="notice-date">2025年11月9日</footer>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/lobby_renewal.jpg' %}" 
+               alt="館内リニューアル" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">ロビーエリアをリニューアル！</h5>
+        <p class="notice-description card-text">
+          ゆったり過ごせる待合スペースに改装。上映前後も快適にお過ごしいただけます。
+        </p>
+        <footer class="notice-date">2025年11月8日</footer>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="notice-card">
+        <div class="notice-image-wrapper">
+          <img src="{% static 'images/parkir.jpg' %}" 
+               alt="駐車場拡張" 
+               class="notice-image">
+        </div>
+        <h5 class="notice-heading">駐車場を拡張しました！</h5>
+        <p class="notice-description card-text">
+          新たに50台分の駐車スペースを追加。お車でのご来場がより便利になりました。
+        </p>
+        <footer class="notice-date">2025年11月4日</footer>
+      </div>
+    </div>
+
   </div>
+</section>
+
+<!-- アクセス情報 -->
+<section class="mt-5 text-center card-body fade-in-text" style="margin: 30rem 0 0 0;">
+    <h5 class="fw-bold mb-3 card-title" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">アクセス情報</h5>
+      <p class="card-text custom-size">愛知県名古屋市中村区名駅南1丁目10-1 HAL名古屋</p>
+      <p class="card-text custom-size">営業時間：毎日 9:00 〜 23:00</p>
+      <p class="card-text custom-size">お問い合わせ：00-1234-5678</p>
+</section>
+
+    </div>
+  </div>
+</div>
 </main>
 {% endblock content %}
 
