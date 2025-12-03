@@ -3,6 +3,11 @@ from django.conf import settings
 from decimal import Decimal
 
 class Movie(models.Model):
+    STATUS_CHOICES = [
+        ('now_showing', '上映中'),
+        ('coming_soon', '公開予定'),
+    ]
+    
     title = models.CharField(max_length=200)
     description = models.TextField()
     show_date = models.DateField()
@@ -12,9 +17,25 @@ class Movie(models.Model):
     duration = models.PositiveIntegerField(null=True, blank=True, help_text="上映時間（分）")
     theater = models.CharField(max_length=100, null=True, blank=True, help_text="シアター名")
     
+    # 新規追加
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOICES, 
+        default='now_showing',
+        verbose_name='上映ステータス'
+    )
+    release_date = models.DateField(
+        null=True, 
+        blank=True,
+        verbose_name='公開日',
+        help_text='公開予定日（coming_soonの場合に設定）'
+    )
+    
     payment_method = models.CharField(max_length=50, blank=True, null=True)
     convenience_type = models.CharField(max_length=50, blank=True, null=True)
 
+    class Meta:
+        ordering = ['status', '-show_date']  # ステータス順、日付降順
 
     def __str__(self):
         return self.title
@@ -93,3 +114,16 @@ class ShowSchedule(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} | {self.date} {self.start_time} - {self.end_time} (スクリーン{self.screen})"
+    
+class ChatMessage(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField(verbose_name='メッセージ')
+    response = models.TextField(verbose_name='AI応答', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_user = models.BooleanField(default=True)  # True=ユーザー, False=AI
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.created_at}"

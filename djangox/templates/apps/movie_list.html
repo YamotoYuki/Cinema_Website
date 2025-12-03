@@ -10,19 +10,58 @@
 {% block content %}
 <div class="cont py-5">
   
-  <h1 class="mb-4 text-center">上映中</h1>
+  <!-- フィルタータブ -->
+  <div class="mb-4">
+    <ul class="nav nav-tabs justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link {% if current_status == 'all' %}active{% endif %}" 
+           href="?status=all">すべて</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if current_status == 'now_showing' %}active{% endif %}" 
+           href="?status=now_showing">上映中</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if current_status == 'coming_soon' %}active{% endif %}" 
+           href="?status=coming_soon">公開予定</a>
+      </li>
+    </ul>
+  </div>
+
+  <h1 class="mb-4 text-center">
+    {% if current_status == 'now_showing' %}
+      上映中
+    {% elif current_status == 'coming_soon' %}
+      公開予定
+    {% else %}
+      映画一覧
+    {% endif %}
+  </h1>
+
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for movie in movies %}
       <div class="col">
         <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none text-dark">
           <div class="card h-100 shadow-sm">
-            {% if movie.image %}
-              <img src="{{ movie.image.url }}" class="card-img-top fade-in-img" alt="{{ movie.title }}">
-            {% else %}
-              <img src="{% static 'images/noimage.jpg' %}" class="card-img-top" alt="画像なし">
-            {% endif %}
+            <!-- ステータスバッジ -->
+            <div class="position-relative">
+              {% if movie.image %}
+                <img src="{{ movie.image.url }}" class="card-img-top fade-in-img" alt="{{ movie.title }}">
+              {% else %}
+                <img src="{% static 'images/noimage.jpg' %}" class="card-img-top" alt="画像なし">
+              {% endif %}
+              <span class="position-absolute top-0 end-0 m-2 badge 
+                    {% if movie.status == 'now_showing' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                {{ movie.get_status_display }}
+              </span>
+            </div>
             <div class="card-body fade-in-text">
               <h5 class="card-title text-primary fw-bold">{{ movie.title }}</h5>
+              {% if movie.status == 'coming_soon' %}
+                <p class="text-muted small mb-2">
+                  <i class="bi bi-calendar-event"></i> 公開日: {{ movie.release_date|date:"Y年m月d日" }}
+                </p>
+              {% endif %}
               <p class="card-text text-secondary">{{ movie.description|truncatewords:30 }}</p>
             </div>
           </div>
