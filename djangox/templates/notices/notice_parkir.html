@@ -1,0 +1,432 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}駐車場を拡張しました！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(76, 175, 80, 0.2);
+      color: #66bb6a;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #66bb6a;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .capacity-box {
+      background: linear-gradient(135deg, rgba(102, 187, 106, 0.15), rgba(76, 175, 80, 0.1));
+      border: 2px solid #66bb6a;
+      padding: 35px;
+      margin: 35px 0;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .capacity-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    .stat-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid rgba(102, 187, 106, 0.3);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      color: #66bb6a;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      font-weight: 600;
+    }
+
+    .parking-features {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px;
+      border-radius: 12px;
+      margin: 30px 0;
+    }
+
+    .parking-features h4 {
+      color: #4dabf7;
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature-card {
+      background: rgba(102, 187, 106, 0.1);
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid rgba(102, 187, 106, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(102, 187, 106, 0.2);
+      border-color: rgba(102, 187, 106, 0.6);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .feature-card h5 {
+      color: #66bb6a;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #d0d0d0;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .pricing-table {
+      background: rgba(77, 171, 247, 0.1);
+      border-left: 4px solid #4dabf7;
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 8px;
+    }
+
+    .pricing-table h4 {
+      color: #4dabf7;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .price-row:last-child {
+      border-bottom: none;
+    }
+
+    .price-label {
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    .price-value {
+      color: #66bb6a;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .info-section {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 8px;
+      margin: 25px 0;
+    }
+
+    .info-section h4 {
+      color: #4dabf7;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .info-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-section li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .info-section li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #66bb6a;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .capacity-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/parkir.jpg' %}" alt="駐車場拡張" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月4日</span>
+          <span class="notice-category">アクセス</span>
+        </div>
+
+        <h1 class="notice-title">駐車場を拡張しました！</h1>
+
+        <div class="notice-body">
+          <p>
+            お客様からご要望の多かった駐車場の混雑解消のため、このたび新たに50台分の駐車スペースを増設いたしました。週末や人気作品の上映時でも、よりスムーズにご来場いただけるようになりました。
+          </p>
+
+          <div class="capacity-box">
+            <h3 style="color: #66bb6a; font-size: 2rem; margin-bottom: 25px;">駐車可能台数が大幅UP！</h3>
+            <div class="capacity-stats">
+              <div class="stat-item">
+                <span class="stat-number">120台</span>
+                <span class="stat-label">従来の収容台数</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">+50台</span>
+                <span class="stat-label">新規増設</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">170台</span>
+                <span class="stat-label">合計収容台数</span>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            新しい駐車スペースは館内の西側エリアに設置され、既存の駐車場との行き来もスムーズです。屋根付きエリアも拡張しましたので、雨天時でも快適にご利用いただけます。
+          </p>
+
+          <div class="parking-features">
+            <h4>駐車場の主な特徴</h4>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>広々とした駐車スペース</h5>
+                <p>大型車両やファミリーカーでも安心して駐車できる、ゆとりのある駐車スペース設計。</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>屋根付きエリア</h5>
+                <p>50台分の屋根付きスペースで、雨の日でも濡れずに館内へアクセス可能。</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>LED照明完備</h5>
+                <p>夜間でも明るく安全な環境。防犯カメラも24時間稼働しています。</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>バリアフリー対応</h5>
+                <p>車いす対応スペース10台分を確保。館内入口まで段差なしでアクセス。</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>EV充電スタンド</h5>
+                <p>電気自動車用の充電スタンドを4基設置。映画鑑賞中に充電可能。</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon"></span>
+                <h5>空車情報表示</h5>
+                <p>入口と駐車場内に空車状況を表示するデジタルサイネージを設置。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pricing-table">
+            <h4>駐車料金のご案内</h4>
+            <div class="price-row">
+              <span class="price-label">最初の3時間</span>
+              <span class="price-value">無料</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">3時間以降 30分ごと</span>
+              <span class="price-value">¥200</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">1日最大料金</span>
+              <span class="price-value">¥1,500</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">EV充電（1時間）</span>
+              <span class="price-value">¥300</span>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h4>ご利用にあたって</h4>
+            <ul>
+              <li>チケット購入時に駐車券をご提示ください（3時間無料サービス適用）</li>
+              <li>営業時間：24時間出入庫可能（映画館営業時間：9:00〜23:00）</li>
+              <li>高さ制限：2.3m（大型車両は事前にお問い合わせください）</li>
+              <li>車いす対応スペースは事前予約不要でご利用いただけます</li>
+              <li>EV充電スタンドは先着順でのご利用となります</li>
+              <li>支払方法：現金、クレジットカード、電子マネー、QRコード決済対応</li>
+            </ul>
+          </div>
+
+          <div class="info-section">
+            <h4>アクセス方法</h4>
+            <ul>
+              <li>名古屋駅から車で約5分</li>
+              <li>国道19号線「名駅南交差点」を西へ300m</li>
+              <li>カーナビ設定：「HAL名古屋」または「名古屋市中村区名駅南1-10-1」</li>
+              <li>駐車場入口は建物の北側と西側の2ヶ所</li>
+            </ul>
+          </div>
+
+          <p>
+            駐車場の拡張により、週末や祝日、人気作品の上映日でも、満車でお困りになることが大幅に減少いたしました。お車でのご来場がより便利になりましたので、ぜひお気軽にお越しください。
+          </p>
+
+          <p>
+            また、環境に配慮したEV充電スタンドの設置により、電気自動車でのご来場もサポートいたします。映画鑑賞中に充電が完了するので、時間を有効活用していただけます。
+          </p>
+
+          <p>
+            ご不明な点がございましたら、お気軽にスタッフまでお声がけください。皆様のご来場を心よりお待ちしております！
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

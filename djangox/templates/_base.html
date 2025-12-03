@@ -39,6 +39,348 @@
     .notification-badge {
       font-size: 0.65rem;
     }
+    
+    /* フローティングチャットのスタイル */
+    .chat-toggle-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #135034 0%, #086021 100%);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(8, 96, 33, 0.4);
+      transition: all 0.3s ease;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-toggle-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(8, 96, 33, 0.6);
+    }
+
+    .chat-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: 2px solid white;
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 380px;
+      height: 550px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 998;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-window.show {
+      display: flex;
+    }
+
+    .chat-window-header {
+      background: linear-gradient(135deg, #135034 0%, #086021 100%);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 15px 15px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-window-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .chat-window-header p {
+      margin: 3px 0 0 0;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .chat-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-fullscreen,
+    .btn-close-chat {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn-fullscreen:hover,
+    .btn-close-chat:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .chat-window-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f5f5f5;
+    }
+
+    .chat-window-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-window-messages::-webkit-scrollbar-track {
+      background: #e0e0e0;
+    }
+
+    .chat-window-messages::-webkit-scrollbar-thumb {
+      background: #135034;
+      border-radius: 10px;
+    }
+
+    .welcome-message-small {
+      text-align: center;
+      padding: 20px 15px;
+      color: #666;
+    }
+
+    .welcome-message-small i {
+      font-size: 3rem;
+      color: #086021;
+      margin-bottom: 15px;
+    }
+
+    .welcome-message-small p {
+      margin: 0 0 15px 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .quick-questions-mini {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .quick-btn {
+      background: white;
+      border: 2px solid #086021;
+      color: #086021;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .quick-btn:hover {
+      background: #086021;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(8, 96, 33, 0.3);
+    }
+
+    .quick-btn i {
+      font-size: 1rem;
+    }
+
+    .floating-message {
+      display: flex;
+      margin-bottom: 15px;
+      animation: slideInMessage 0.3s ease;
+    }
+
+    @keyframes slideInMessage {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .floating-message.user {
+      justify-content: flex-end;
+    }
+
+    .floating-message-content {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 15px;
+      word-wrap: break-word;
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .floating-message.user .floating-message-content {
+      background: white;
+      color: #086021;
+      border: 2px solid #086021;
+      border-bottom-right-radius: 4px;
+      font-weight: 500;
+    }
+
+    .floating-message.ai .floating-message-content {
+      background: white;
+      color: #333;
+      border: 2px solid #e0e0e0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-window-input {
+      padding: 15px;
+      background: white;
+      border-top: 2px solid #e0e0e0;
+      border-radius: 0 0 15px 15px;
+    }
+
+    .chat-window-input form {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-window-input input {
+      flex: 1;
+      border: 2px solid #d0d0d0;
+      border-radius: 25px;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .chat-window-input input:focus {
+      border-color: #086021;
+      box-shadow: 0 0 0 3px rgba(8, 96, 33, 0.1);
+    }
+
+    .chat-window-input button {
+      background: linear-gradient(135deg, #135034 0%, #086021 100%);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-window-input button:hover {
+      transform: scale(1.1);
+    }
+
+    .floating-typing {
+      display: none;
+      padding: 8px 12px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      width: fit-content;
+    }
+
+    .floating-typing.show {
+      display: block;
+    }
+
+    .floating-typing span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #086021;
+      margin: 0 2px;
+      animation: typing 1.4s infinite;
+    }
+
+    .floating-typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .floating-typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .chat-window {
+        width: calc(100% - 20px);
+        right: 10px;
+        bottom: 90px;
+        height: 500px;
+      }
+
+      .chat-toggle-btn {
+        width: 55px;
+        height: 55px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.6rem;
+      }
+    }
   </style>
   {% endblock %}
   {% block extra_css %}{% endblock %}
@@ -135,6 +477,15 @@
                   </form>
                 </li>
                 <li><hr class="dropdown-divider"></li>
+                
+                <!-- AIサポート -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'ai_support' %}">
+                    <i class="bi bi-robot"></i> AIサポート
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                
                 <li><a class="dropdown-item" href="{% url 'my_reservations' %}">予約一覧</a></li>
                 <li><a class="dropdown-item" href="{% url 'account_edit' %}">アカウント編集</a></li>
                 <li><a class="dropdown-item" href="{% url 'account_change_password' %}">パスワード変更</a></li>
@@ -179,6 +530,173 @@
       </li>
     </ul>
   </div>
+
+  {% if user.is_authenticated %}
+  <!-- フローティングチャットウィジェット -->
+  <div id="floatingChatWidget">
+    <!-- チャットボタン -->
+    <button id="chatToggleBtn" class="chat-toggle-btn" title="AIサポート">
+      <i class="bi bi-robot"></i>
+    </button>
+
+    <!-- チャットウィンドウ -->
+    <div id="chatWindow" class="chat-window">
+      <div class="chat-window-header">
+        <div>
+          <h3>AIサポート</h3>
+          <p>ご質問にお答えします</p>
+        </div>
+        <div class="chat-header-actions">
+          <a href="{% url 'ai_support' %}" class="btn-fullscreen" title="全画面表示">
+            <i class="bi bi-arrows-fullscreen"></i>
+          </a>
+          <button id="chatCloseBtn" class="btn-close-chat" title="閉じる">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-window-messages" id="floatingChatMessages">
+        <div class="welcome-message-small">
+          <i class="bi bi-chat-dots"></i>
+          <p>ようこそ、{{ user.username }}様！<br>映画予約や劇場に関するご質問をお気軽にどうぞ</p>
+          <div class="quick-questions-mini">
+            <button class="quick-btn" onclick="sendQuickQuestion('予約状況を確認')">
+              <i class="bi bi-calendar-check"></i> 予約状況を確認
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('上映中の映画は？')">
+              <i class="bi bi-film"></i> 上映中の映画
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('料金について教えて')">
+              <i class="bi bi-cash-coin"></i> 料金について
+            </button>
+            <button class="quick-btn" onclick="sendQuickQuestion('アクセス方法は？')">
+              <i class="bi bi-geo-alt"></i> アクセス方法
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-window-input">
+        <form id="floatingChatForm">
+          {% csrf_token %}
+          <input 
+            type="text" 
+            id="floatingMessageInput" 
+            placeholder="メッセージを入力..." 
+            autocomplete="off"
+          >
+          <button type="submit" id="floatingSendBtn">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+      const toggleBtn = document.getElementById('chatToggleBtn');
+      const chatWindow = document.getElementById('chatWindow');
+      const closeBtn = document.getElementById('chatCloseBtn');
+      const chatForm = document.getElementById('floatingChatForm');
+      const messageInput = document.getElementById('floatingMessageInput');
+      const messagesContainer = document.getElementById('floatingChatMessages');
+
+      // チャット開閉
+      toggleBtn.addEventListener('click', () => {
+          chatWindow.classList.toggle('show');
+          if (chatWindow.classList.contains('show')) {
+              messageInput.focus();
+          }
+      });
+
+      closeBtn.addEventListener('click', () => {
+          chatWindow.classList.remove('show');
+      });
+
+      // メッセージ追加
+      function addFloatingMessage(content, isUser) {
+          const welcome = messagesContainer.querySelector('.welcome-message-small');
+          if (welcome) welcome.remove();
+
+          const messageDiv = document.createElement('div');
+          messageDiv.className = `floating-message ${isUser ? 'user' : 'ai'}`;
+          
+          const messageContent = document.createElement('div');
+          messageContent.className = 'floating-message-content';
+          messageContent.innerHTML = content.replace(/\n/g, '<br>');
+          
+          messageDiv.appendChild(messageContent);
+          
+          const typingIndicator = messagesContainer.querySelector('.floating-typing');
+          if (typingIndicator) {
+              messagesContainer.insertBefore(messageDiv, typingIndicator.parentElement || typingIndicator);
+          } else {
+              messagesContainer.appendChild(messageDiv);
+          }
+          
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      // クイック質問送信
+      window.sendQuickQuestion = function(question) {
+          messageInput.value = question;
+          chatForm.dispatchEvent(new Event('submit'));
+      };
+
+      // タイピングインジケーター追加
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'floating-message ai';
+      typingDiv.innerHTML = `
+          <div class="floating-typing" id="floatingTypingIndicator">
+              <span></span><span></span><span></span>
+          </div>
+      `;
+      messagesContainer.appendChild(typingDiv);
+      const typingIndicator = document.getElementById('floatingTypingIndicator');
+
+      // フォーム送信
+      chatForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const message = messageInput.value.trim();
+          if (!message) return;
+
+          addFloatingMessage(message, true);
+          messageInput.value = '';
+          
+          typingIndicator.classList.add('show');
+
+          try {
+              const response = await fetch('{% url "ai_chat" %}', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  },
+                  body: JSON.stringify({ message: message })
+              });
+
+              const data = await response.json();
+              typingIndicator.classList.remove('show');
+
+              if (data.success) {
+                  setTimeout(() => {
+                      addFloatingMessage(data.ai_response, false);
+                  }, 300);
+              } else {
+                  alert('エラーが発生しました');
+              }
+          } catch (error) {
+              console.error('Error:', error);
+              typingIndicator.classList.remove('show');
+              alert('通信エラーが発生しました');
+          }
+      });
+  })();
+  </script>
+  {% endif %}
 
   {% block javascript %}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

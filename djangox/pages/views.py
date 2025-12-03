@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
-from .models import Movie, Seat, Reservation, Notification
+from .models import Movie, Seat, Reservation, Notification, ChatMessage
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 import qrcode
@@ -14,8 +14,9 @@ from django.contrib.auth import get_user_model
 from pages.models import UserProfile
 from accounts.forms import CustomUserChangeForm  
 from pages.forms import UserProfileForm
-from pages.models import UserProfile
 from django.db import IntegrityError
+from django.http import JsonResponse
+import json
 User = get_user_model()
 
 
@@ -35,8 +36,25 @@ def generate_qr_code(reservation):
 
 def movie_list(request):
     query = request.GET.get('q')
-    movies = Movie.objects.filter(title__icontains=query) if query else Movie.objects.all()
-    return render(request, 'apps/movie_list.html', {'movies': movies, 'query': query})
+    status_filter = request.GET.get('status', 'all')
+    
+    # 検索クエリがある場合
+    if query:
+        movies = Movie.objects.filter(title__icontains=query)
+    else:
+        # ステータスフィルター
+        if status_filter == 'now_showing':
+            movies = Movie.objects.filter(status='now_showing')
+        elif status_filter == 'coming_soon':
+            movies = Movie.objects.filter(status='coming_soon')
+        else:
+            movies = Movie.objects.all()
+    
+    return render(request, 'apps/movie_list.html', {
+        'movies': movies,
+        'query': query,
+        'current_status': status_filter,
+    })
 
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
@@ -396,6 +414,120 @@ def profile_select(request):
 
     return render(request, 'pages/profile_select.html')
 
+@login_required
+def ai_support(request):
+    """AIサポートページ"""
+    messages = ChatMessage.objects.filter(user=request.user).order_by('created_at')
+    return render(request, 'apps/ai_support.html', {
+        'messages': messages
+    })
+
+@login_required
+def ai_chat(request):
+    """AIチャットAPI"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_message = data.get('message', '').strip()
+            
+            if not user_message:
+                return JsonResponse({'error': 'メッセージが空です'}, status=400)
+            
+            # ユーザーメッセージを保存
+            chat_message = ChatMessage.objects.create(
+                user=request.user,
+                message=user_message,
+                is_user=True
+            )
+            
+            # AI応答を生成（簡易版）
+            ai_response = generate_ai_response(user_message, request.user)
+            
+            # AI応答を保存
+            ai_message = ChatMessage.objects.create(
+                user=request.user,
+                message=ai_response,
+                is_user=False
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'user_message': user_message,
+                'ai_response': ai_response,
+                'timestamp': ai_message.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+            
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'POSTリクエストのみ対応'}, status=405)
+
+def generate_ai_response(message, user):
+    """簡易AI応答生成（後でClaude APIに置き換え可能）"""
+    message_lower = message.lower()
+    
+    # 予約関連
+    if '予約' in message_lower or '座席' in message_lower:
+        reservations = Reservation.objects.filter(user=user).order_by('-reserved_at')[:3]
+        if reservations:
+            response = "ご予約状況をお調べしました。\n\n"
+            for r in reservations:
+                response += f"・映画: {r.movie.title}\n"
+                response += f"  座席: {r.seat.seat_number}\n"
+                response += f"  上映日時: {r.show_time}\n\n"
+            response += "その他のご予約は「マイページ」からご確認いただけます。"
+        else:
+            response = "現在、ご予約はございません。上映中の映画をチェックして、ぜひチケットをご購入ください！"
+    
+    # 映画情報
+    elif '映画' in message_lower or '上映' in message_lower:
+        now_showing = Movie.objects.filter(status='now_showing').count()
+        coming_soon = Movie.objects.filter(status='coming_soon').count()
+        response = f"現在、上映中の映画は{now_showing}作品、公開予定は{coming_soon}作品ございます。\n\n"
+        response += "映画一覧ページから詳細をご確認いただけます。お好みの作品をお探しください！"
+    
+    # 料金・支払い
+    elif '料金' in message_lower or '支払' in message_lower or '決済' in message_lower:
+        response = "お支払い方法は以下をご利用いただけます：\n\n"
+        response += "・現金\n・クレジットカード\n・PayPal\n・メルペイ\n・PayPay\n・コンビニ払い\n\n"
+        response += "料金は作品によって異なります。各映画の詳細ページでご確認ください。"
+    
+    # キャンセル
+    elif 'キャンセル' in message_lower or '取消' in message_lower:
+        response = "予約のキャンセルは「マイページ」→「予約履歴」から行えます。\n\n"
+        response += "上映開始時刻の1時間前までキャンセル可能です。お早めにお手続きください。"
+    
+    # 劇場情報
+    elif '劇場' in message_lower or 'アクセス' in message_lower or '場所' in message_lower:
+        response = "当劇場は愛知県岡崎市に位置しております。\n\n"
+        response += "詳しいアクセス方法は「劇場案内」ページをご覧ください。駐車場も完備しております。"
+    
+    # 挨拶
+    elif 'こんにち' in message_lower or 'こんばん' in message_lower or 'おはよ' in message_lower or 'はじめまして' in message_lower:
+        response = f"こんにちは、{user.username}様！シネマサポートAIです。\n\n"
+        response += "映画のご予約、上映情報、劇場案内など、どのようなことでもお気軽にお尋ねください。"
+    
+    # ありがとう
+    elif 'ありがとう' in message_lower or 'ありがと' in message_lower:
+        response = "どういたしまして！他にご不明な点がございましたら、いつでもお声がけください。\n\n"
+        response += "素敵な映画体験をお楽しみくださいませ。"
+    
+    # デフォルト応答
+    else:
+        response = f"{user.username}様、ご質問ありがとうございます。\n\n"
+        response += "以下のようなご質問にお答えできます：\n"
+        response += "・ご予約状況の確認\n・上映中の映画情報\n・料金・お支払い方法\n・予約のキャンセル\n・劇場へのアクセス\n\n"
+        response += "お困りのことがございましたら、具体的にお聞かせください。"
+    
+    return response
+
+@login_required
+def clear_chat_history(request):
+    """チャット履歴をクリア"""
+    if request.method == 'POST':
+        ChatMessage.objects.filter(user=request.user).delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'POSTリクエストのみ対応'}, status=405)
 
 @login_required
 def home_page(request):
@@ -436,6 +568,30 @@ def ticket_buy_page(request):
 @login_required
 def online_page(request):
     return render(request, 'apps/Online.html')
+
+@login_required
+def notice_foodmenu(request):
+    return render(request, "notices/notice_foodmenu.html")
+
+@login_required
+def notice_dolby(request):
+    return render(request, "notices/notice_dolby.html")
+
+@login_required
+def notice_phone(request):
+    return render(request, "notices/notice_phone.html")
+
+@login_required
+def notice_parkir(request):
+    return render(request, "notices/notice_parkir.html")
+
+@login_required
+def notice_newyear(request):
+    return render(request, "notices/notice_newyear.html")
+
+@login_required
+def notice_lobby(request):
+    return render(request, "notices/notice_lobby.html")
 
 class IndexPageView(TemplateView):
     template_name = "pages/index.html"

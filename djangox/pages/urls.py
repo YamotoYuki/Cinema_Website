@@ -34,7 +34,15 @@ urlpatterns = [
     path('notifications/delete_all/', views.delete_all_notifications, name='delete_all_notifications'),
     path('payment/', views.payment_input, name='payment_input'),
     path('profile/select/', views.profile_select, name='profile_select'),
-
+    path("foodmenu/", views.notice_foodmenu, name="notice_foodmenu"),
+    path("dolby/", views.notice_dolby, name="notice_dolby"),
+    path("parkir/", views.notice_parkir, name="notice_parkir"),
+    path("lobby/", views.notice_lobby, name="notice_lobby"),
+    path("newyear/", views.notice_newyear, name="notice_newyear"),
+    path("phone/", views.notice_phone, name="notice_phone"),
+    path('ai-support/', views.ai_support, name='ai_support'),
+    path('ai-chat/', views.ai_chat, name='ai_chat'),
+    path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history')
 ]
 
 if settings.DEBUG:

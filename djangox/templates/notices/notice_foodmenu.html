@@ -1,0 +1,348 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}フードメニューに新セット登場！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(255, 87, 34, 0.2);
+      color: #ff6f3c;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #ff6f3c;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .menu-showcase {
+      background: linear-gradient(135deg, rgba(255, 111, 60, 0.15), rgba(255, 87, 34, 0.1));
+      border: 2px solid #ff6f3c;
+      padding: 35px;
+      margin: 35px 0;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .menu-showcase h3 {
+      color: #ff6f3c;
+      font-size: 2rem;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .menu-showcase .subtitle {
+      font-size: 1.2rem;
+      color: #ffb74d;
+      margin-bottom: 25px;
+      font-style: italic;
+    }
+
+    .price-tag {
+      background: #ff6f3c;
+      color: #fff;
+      display: inline-block;
+      padding: 12px 35px;
+      border-radius: 25px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 20px 0;
+      box-shadow: 0 4px 12px rgba(255, 111, 60, 0.3);
+    }
+
+    .menu-details {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 25px;
+      border-radius: 8px;
+      margin: 25px 0;
+      text-align: left;
+    }
+
+    .menu-details h4 {
+      color: #4dabf7;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+
+    .menu-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .menu-item {
+      background: rgba(255, 111, 60, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 111, 60, 0.3);
+      text-align: center;
+    }
+
+    .menu-item-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .menu-item h5 {
+      color: #ff6f3c;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .menu-item p {
+      font-size: 0.9rem;
+      color: #d0d0d0;
+      margin: 0;
+    }
+
+    .feature-box {
+      background: rgba(77, 171, 247, 0.1);
+      border-left: 4px solid #4dabf7;
+      padding: 25px;
+      margin: 30px 0;
+      border-radius: 8px;
+    }
+
+    .feature-box h4 {
+      color: #4dabf7;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    .feature-box ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-box li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+    }
+
+    .feature-box li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #ff6f3c;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .menu-items {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/pop_more.jpg' %}" alt="フードメニュー" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月9日</span>
+          <span class="notice-category">グルメ</span>
+        </div>
+
+        <h1 class="notice-title">フードメニューに新セット登場！</h1>
+
+        <div class="notice-body">
+          <p>
+            映画鑑賞のお供に最適な、新しいフードセットが登場しました！甘さとしょっぱさが絶妙にマッチした、今までにない味わいをお楽しみいただけます。
+          </p>
+
+          <div class="menu-showcase">
+            <h3>キャラメル＆チーズMIXポップコーンセット</h3>
+            <p class="subtitle">Sweet & Savory Perfect Combination</p>
+            <div class="price-tag">¥890</div>
+            <p style="margin-top: 20px; font-size: 1.05rem; color: #e0e0e0;">
+              人気のキャラメルポップコーンとチーズポップコーンを<br>
+              一つのバケツで楽しめる贅沢なセット！
+            </p>
+          </div>
+
+          <div class="menu-details">
+            <h4>セット内容</h4>
+            <div class="menu-items">
+              <div class="menu-item">
+                <span class="menu-item-icon">🍿</span>
+                <h5>MIXポップコーン</h5>
+                <p>Lサイズバケツ<br>キャラメル＆チーズ</p>
+              </div>
+              <div class="menu-item">
+                <span class="menu-item-icon">🥤</span>
+                <h5>ドリンク</h5>
+                <p>Mサイズ<br>お好きな飲み物</p>
+              </div>
+              <div class="menu-item">
+                <span class="menu-item-icon">🎁</span>
+                <h5>おまけ</h5>
+                <p>オリジナルステッカー<br>（全6種ランダム）</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-box">
+            <h4>このセットのおすすめポイント</h4>
+            <ul>
+              <li>甘いキャラメルとしょっぱいチーズの絶妙なハーモニー</li>
+              <li>一つのバケツで2つの味が楽しめるお得感</li>
+              <li>Lサイズなのでシェアしても十分な量</li>
+              <li>数量限定のオリジナルステッカー付き</li>
+              <li>通常より150円もお得な特別価格</li>
+            </ul>
+          </div>
+
+          <p>
+            キャラメルポップコーンは香ばしい甘さが特徴で、チーズポップコーンはコクのあるチェダーチーズを使用しています。交互に食べることで、飽きることなく最後まで美味しくお楽しみいただけます。
+          </p>
+
+          <div class="menu-details">
+            <h4>その他の人気メニュー</h4>
+            <div style="text-align: left; padding: 15px;">
+              <p style="margin-bottom: 15px;"><strong style="color: #ff6f3c;">定番ポップコーン</strong><br>
+              塩味（S ¥350 / M ¥450 / L ¥550）<br>
+              キャラメル（S ¥380 / M ¥480 / L ¥580）<br>
+              チーズ（S ¥380 / M ¥480 / L ¥580）</p>
+
+              <p style="margin-bottom: 15px;"><strong style="color: #ff6f3c;">ホットドッグ</strong><br>
+              プレーン（¥450）/ チーズ（¥500）/ チリ（¥550）</p>
+
+              <p style="margin-bottom: 15px;"><strong style="color: #ff6f3c;">ドリンク</strong><br>
+              コーラ・オレンジ・メロンソーダ・ウーロン茶<br>
+              （S ¥300 / M ¥400 / L ¥500）</p>
+
+              <p><strong style="color: #ff6f3c;">アイスクリーム</strong><br>
+              バニラ・チョコ・ストロベリー（各¥380）</p>
+            </div>
+          </div>
+
+          <div class="feature-box">
+            <h4>ご注文について</h4>
+            <ul>
+              <li>劇場2階のコンセッションカウンターでご注文ください</li>
+              <li>上映開始15分前までのご注文をおすすめします</li>
+              <li>クレジットカード・電子マネー・QRコード決済対応</li>
+              <li>持ち込みはご遠慮ください（館内でご購入をお願いします）</li>
+            </ul>
+          </div>
+
+          <p>
+            新しいキャラメル＆チーズMIXポップコーンセットで、映画鑑賞をさらに楽しいものにしませんか？皆様のご来場を心よりお待ちしております！
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

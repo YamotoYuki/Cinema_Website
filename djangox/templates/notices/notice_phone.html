@@ -1,0 +1,366 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}公式アプリがリニューアル！ - お知らせ{% endblock title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/app/home.css' %}">
+  <style>
+    .notice-detail-container {
+      max-width: 900px;
+      margin: 100px auto 60px;
+      padding: 0 20px;
+    }
+
+    .notice-detail-card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .notice-hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .notice-content {
+      padding: 40px;
+      color: #f0f0f0;
+    }
+
+    .notice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(77, 171, 247, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .notice-date-badge {
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-category {
+      background: rgba(156, 39, 176, 0.2);
+      color: #ab47bc;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .notice-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #ab47bc;
+      line-height: 1.3;
+    }
+
+    .notice-body {
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e0e0e0;
+    }
+
+    .notice-body p {
+      margin-bottom: 20px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .feature-card {
+      background: rgba(171, 71, 188, 0.1);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid rgba(171, 71, 188, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(171, 71, 188, 0.2);
+      border-color: rgba(171, 71, 188, 0.6);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .feature-card h4 {
+      color: #ab47bc;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #d0d0d0;
+      line-height: 1.6;
+    }
+
+    .download-section {
+      background: linear-gradient(135deg, rgba(171, 71, 188, 0.15), rgba(142, 36, 170, 0.1));
+      border: 2px solid #ab47bc;
+      padding: 30px;
+      margin: 30px 0;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .download-section h3 {
+      color: #ab47bc;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    .download-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #ab47bc, #8e24aa);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 1.05rem;
+    }
+
+    .download-btn:hover {
+      background: linear-gradient(135deg, #8e24aa, #7b1fa2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(171, 71, 188, 0.4);
+      color: #fff;
+    }
+
+    .download-btn i {
+      font-size: 1.3rem;
+    }
+
+    .update-list {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border-radius: 8px;
+      margin: 25px 0;
+    }
+
+    .update-list h4 {
+      color: #4dabf7;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+    }
+
+    .update-list ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .update-list li {
+      padding: 12px 0;
+      padding-left: 30px;
+      position: relative;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .update-list li:last-child {
+      border-bottom: none;
+    }
+
+    .update-list li:before {
+      content: "✨";
+      position: absolute;
+      left: 0;
+      font-size: 1.2rem;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #135034, #1a6b45);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(135deg, #1a6b45, #22844f);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 80, 52, 0.4);
+      color: #fff;
+    }
+
+    .store-logo {
+      height: 40px;
+      width: auto;
+      background: transparent;
+    }
+
+    .store-logo2 {
+      height: 50px;
+      background: transparent;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .notice-content {
+        padding: 30px 20px;
+      }
+
+      .notice-title {
+        font-size: 1.8rem;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .download-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main class="main">
+  <div class="notice-detail-container">
+    <div class="notice-detail-card">
+      <img src="{% static 'images/phone.jpg' %}" alt="アプリリニューアル" class="notice-hero-image">
+      
+      <div class="notice-content">
+        <div class="notice-meta">
+          <span class="notice-date-badge">2025年11月10日</span>
+          <span class="notice-category">アプリ</span>
+        </div>
+
+        <h1 class="notice-title">公式アプリがリニューアル！</h1>
+
+        <div class="notice-body">
+          <p>
+            HalCinema公式アプリが、より使いやすく、より便利に生まれ変わりました！新しいデザインと充実した機能で、映画鑑賞がもっと楽しくなります。
+          </p>
+
+          <div class="update-list">
+            <h4>主なアップデート内容</h4>
+            <ul>
+              <li>直感的で美しい新デザイン - 見やすく操作しやすいUIに刷新</li>
+              <li>座席予約がスムーズに - わずか3タップで予約完了</li>
+              <li>お気に入り機能 - 気になる作品を登録して上映開始を通知</li>
+              <li>デジタルチケット - スマホ画面を見せるだけで入場可能</li>
+              <li>視聴履歴 - 過去に観た作品を記録して振り返り</li>
+              <li>レコメンド機能 - あなたの好みに合った作品をおすすめ</li>
+            </ul>
+          </div>
+
+          <h3 style="color: #ab47bc; margin: 40px 0 30px; font-size: 1.8rem;">新機能のご紹介</h3>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>スマート予約</h4>
+              <p>作品選択→日時選択→座席選択の3ステップで、最短30秒で予約完了。過去の予約履歴から好みの座席を記憶します。</p>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>通知機能</h4>
+              <p>お気に入り作品の上映開始、新作情報、限定キャンペーンなど、見逃したくない情報をプッシュ通知でお届けします。</p>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>デジタルチケット</h4>
+              <p>紙のチケットは不要！スマホに表示されるQRコードをかざすだけでスムーズに入場できます。</p>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>レビュー機能</h4>
+              <p>観た作品に評価やコメントを投稿。他のユーザーのレビューも参考にできます。</p>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>会員特典</h4>
+              <p>アプリ限定のクーポンやポイントプログラム。映画を観るほどお得になります。</p>
+            </div>
+
+            <div class="feature-card">
+              <span class="feature-icon"></span>
+              <h4>統計機能</h4>
+              <p>今年観た映画の本数や時間、お気に入りジャンルなど、あなたの映画ライフを可視化します。</p>
+            </div>
+          </div>
+
+          <div class="download-section">
+            <h3>今すぐダウンロード！</h3>
+            <p style="font-size: 1.1rem; color: #d0d0d0; margin: 15px 0;">
+              iOS・Android両対応。完全無料でご利用いただけます。
+            </p>
+            <div class="download-buttons">
+              <a href="#" class="download-btn">
+                <img src="{% static 'logo/appstore-logo.png' %}" class="store-logo" alt="アップストア">
+                App Storeからダウンロード
+              </a>
+              <a href="#" class="download-btn">
+                <img src="{% static 'logo/google-play-store.png' %}" class="store-logo2" alt="グーグルプレイ">
+                Google Playで手に入れよう
+              </a>
+            </div>
+          </div>
+
+          <p>
+            既にアプリをご利用中のお客様は、アプリストアから最新版にアップデートしてください。ログイン情報やポイントはそのまま引き継がれます。
+          </p>
+
+          <p>
+            新しいHalCinemaアプリで、より快適で楽しい映画体験をお楽しみください。皆様のご利用を心よりお待ちしております！
+          </p>
+
+          <a href="{% url 'home' %}" class="back-button">← お知らせ一覧に戻る</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
