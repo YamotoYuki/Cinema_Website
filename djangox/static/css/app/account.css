@@ -9,7 +9,6 @@ html,body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  animation: fadeZoomIn 0.9s ease-out both;
   font-family: 'Cinzel', serif;
 }
 
@@ -30,6 +29,7 @@ html,body {
   text-align: center;
   flex: 1;
   position: relative;
+  animation: fadeZoomIn 0.8s ease-out both;
 }
 
 

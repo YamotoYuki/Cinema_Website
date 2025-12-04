@@ -1,3 +1,22 @@
+body {
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Cinzel', serif;
+}
+
+.main {
+  animation: fadeZoomIn 0.8s ease-out both;
+  background-color: rgba(0, 0, 0, 0.5); 
+  padding: 60px 0;
+}
+
 nav {
   position: fixed;
   top: 0;
@@ -97,25 +116,6 @@ font
 .animated-login-title {
   animation: blinkGlow 1.8s ease-in-out infinite;
   text-shadow: 0 0 10px #fff, 0 0 20px #aaffaa;
-}
-
-body {
-  background-image: url('/static/images/wallpaper.jpg'); 
-  background-size: cover;          
-  background-position: center;    
-  background-repeat: no-repeat;    
-  background-attachment: fixed;  
-  color: #fff;                    
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  animation: fadeZoomIn 0.8s ease-out both;
-  font-family: 'Cinzel', serif;
-}
-
-.main {
-    background-color: rgba(0, 0, 0, 0.5); 
-    padding: 60px 0;
 }
 
 section h4 {
