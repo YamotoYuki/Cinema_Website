@@ -345,18 +345,15 @@
   }
 </style>
 
-<!-- フローティングチャットウィジェット -->
 <div id="floatingChatWidget">
-  <!-- チャットボタン -->
   <button id="chatToggleBtn" class="chat-toggle-btn" title="AIサポート">
     <i class="bi bi-robot"></i>
   </button>
 
-  <!-- チャットウィンドウ -->
   <div id="chatWindow" class="chat-window">
     <div class="chat-window-header">
       <div>
-        <h3>HAl CINEMA サポート</h3>
+        <h3>HALCINEMA サポート</h3>
         <p>ご質問にお答えします</p>
       </div>
       <div class="chat-header-actions">
@@ -409,8 +406,23 @@
 
 <script>
 (function() {
-    // URL設定（Djangoテンプレートから取得）
-    const aiChatUrl = '{{ ai_chat_url|default:"/ai/chat/" }}';
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    const csrftoken = getCookie('csrftoken');
+    const aiChatUrl = '{% url "ai_chat" %}';
     
     const toggleBtn = document.getElementById('chatToggleBtn');
     const chatWindow = document.getElementById('chatWindow');
@@ -419,7 +431,6 @@
     const messageInput = document.getElementById('floatingMessageInput');
     const messagesContainer = document.getElementById('floatingChatMessages');
 
-    // チャット開閉
     toggleBtn.addEventListener('click', () => {
         chatWindow.classList.toggle('show');
         if (chatWindow.classList.contains('show')) {
@@ -431,7 +442,6 @@
         chatWindow.classList.remove('show');
     });
 
-    // メッセージ追加
     function addFloatingMessage(content, isUser) {
         const welcome = messagesContainer.querySelector('.welcome-message-small');
         if (welcome) welcome.remove();
@@ -446,8 +456,8 @@
         messageDiv.appendChild(messageContent);
         
         const typingIndicator = messagesContainer.querySelector('.floating-typing');
-        if (typingIndicator) {
-            messagesContainer.insertBefore(messageDiv, typingIndicator.parentElement || typingIndicator);
+        if (typingIndicator && typingIndicator.parentElement) {
+            messagesContainer.insertBefore(messageDiv, typingIndicator.parentElement);
         } else {
             messagesContainer.appendChild(messageDiv);
         }
@@ -455,13 +465,14 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // クイック質問送信
     window.sendQuickQuestion = function(question) {
+        if (!chatWindow.classList.contains('show')) {
+            chatWindow.classList.add('show');
+        }
         messageInput.value = question;
         chatForm.dispatchEvent(new Event('submit'));
     };
 
-    // タイピングインジケーター追加
     const typingDiv = document.createElement('div');
     typingDiv.className = 'floating-message ai';
     typingDiv.innerHTML = `
@@ -472,7 +483,6 @@
     messagesContainer.appendChild(typingDiv);
     const typingIndicator = document.getElementById('floatingTypingIndicator');
 
-    // フォーム送信
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -489,10 +499,14 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
+                    'X-CSRFToken': csrftoken
                 },
                 body: JSON.stringify({ message: message })
             });
+
+            if (!response.ok) {
+                throw new Error('通信エラーが発生しました');
+            }
 
             const data = await response.json();
             typingIndicator.classList.remove('show');
@@ -502,12 +516,12 @@
                     addFloatingMessage(data.ai_response, false);
                 }, 300);
             } else {
-                alert('エラーが発生しました');
+                addFloatingMessage('エラーが発生しました。もう一度お試しください。', false);
             }
         } catch (error) {
             console.error('Error:', error);
             typingIndicator.classList.remove('show');
-            alert('通信エラーが発生しました');
+            addFloatingMessage('申し訳ございません。通信エラーが発生しました。', false);
         }
     });
 })();
