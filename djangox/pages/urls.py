@@ -42,7 +42,9 @@ urlpatterns = [
     path("phone/", views.notice_phone, name="notice_phone"),
     path('ai-support/', views.ai_support, name='ai_support'),
     path('ai-chat/', views.ai_chat, name='ai_chat'),
-    path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history')
+    path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history'),
+    path('my_profile/', views.my_profile, name='my_profile'),
+    path('point-history/', views.point_history, name='point_history')
 ]
 
 if settings.DEBUG:

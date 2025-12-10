@@ -20,6 +20,9 @@ import json
 from django.utils import timezone
 from django.db.models import Count, Q
 import re
+from datetime import timedelta
+from collections import Counter
+
 User = get_user_model()
 
 
@@ -538,9 +541,8 @@ def generate_ai_response(message, user):
     
     return response
 
-
 def handle_reservation_inquiry(user):
-    """予約状況の確認"""
+    """予約状況の確認 - 改善版"""
     try:
         now = timezone.now()
         
@@ -562,94 +564,101 @@ def handle_reservation_inquiry(user):
             
             # 今後の予約
             if future_reservations:
+                response += "【 ご予約中】\n\n"
                 for r in future_reservations:
                     try:
-                        # 基本情報の表示
-                        response += f"\n {r.movie.title}\n"
+                        response += f" {r.movie.title}\n"
                         
-                        # 上映日時の取得と表示
-                        show_time_value = None
-                        try:
-                            # show_timeフィールドを取得
-                            show_time_value = getattr(r, 'show_time', None)
-                            
-                            if show_time_value and show_time_value is not None:
-                                # datetimeオブジェクトかどうか確認
+                        # 上映日時の安全な取得
+                        show_time_value = getattr(r, 'show_time', None)
+                        
+                        if show_time_value:
+                            try:
+                                # datetimeオブジェクトの場合
                                 if hasattr(show_time_value, 'strftime'):
-                                    response += f"    上映日時: {show_time_value.strftime('%Y年%m月%d日 %H:%M')}\n"
+                                    response += f" {show_time_value.strftime('%Y年%m月%d日(%a) %H:%M')}\n"
+                                    
+                                    # 上映までの時間
+                                    time_until = show_time_value - now
+                                    if time_until.days > 0:
+                                        response += f" あと{time_until.days}日\n"
+                                    elif time_until.total_seconds() > 0:
+                                        hours = time_until.seconds // 3600
+                                        minutes = (time_until.seconds % 3600) // 60
+                                        if hours > 0:
+                                            response += f" あと{hours}時間{minutes}分\n"
+                                        else:
+                                            response += f" あと{minutes}分\n"
+                                # 文字列の場合
                                 else:
-                                    # 文字列の場合
-                                    response += f"    上映日時: {show_time_value}\n"
-                            else:
-                                response += f"    上映日時: 未定\n"
-                        except AttributeError:
-                            response += f"    上映日時: 日時情報なし\n"
-                        except Exception as e:
-                            response += f"    上映日時: 取得エラー\n"
+                                    response += f" {show_time_value}\n"
+                            except Exception as e:
+                                response += f" 上映日時: 日時情報の取得に失敗\n"
+                        else:
+                            response += f" 上映日時: 未定\n"
                         
                         # 座席情報
-                        try:
-                            if hasattr(r, 'seat') and r.seat:
-                                response += f"    座席: {r.seat.seat_number}\n"
-                            else:
-                                response += f"    座席: 未割当\n"
-                        except:
-                            response += f"    座席: 情報なし\n"
+                        if hasattr(r, 'seat') and r.seat:
+                            response += f" 座席: {r.seat.seat_number}\n"
+                        else:
+                            response += f" 座席: 未割当\n"
                         
                         # シアター情報
-                        try:
-                            if hasattr(r, 'theater') and r.theater:
-                                theater_name = r.theater.name
-                                response += f"    シアター: {theater_name}\n"
-                        except:
-                            pass
+                        if hasattr(r, 'theater') and r.theater:
+                            response += f" シアター: {r.theater.name}\n"
                         
-                        # 上映までの時間
-                        try:
-                            if show_time_value and hasattr(show_time_value, 'strftime'):
-                                time_until = show_time_value - now
-                                if time_until.days > 0:
-                                    response += f"    あと{time_until.days}日\n"
-                                elif time_until.total_seconds() > 0:
-                                    hours = time_until.seconds // 3600
-                                    minutes = (time_until.seconds % 3600) // 60
-                                    if hours > 0:
-                                        response += f"    あと{hours}時間{minutes}分\n"
-                                    else:
-                                        response += f"    あと{minutes}分\n"
-                        except:
-                            pass
+                        response += "\n"
                             
                     except Exception as e:
-                        # 最悪の場合でも映画タイトルだけは表示
+                        # エラーが出ても継続
                         try:
-                            response += f"\n {r.movie.title}\n"
-                            response += f"   ℹ 詳細情報の取得に失敗しました\n"
+                            response += f" {r.movie.title}\n"
+                            response += f"ℹ 詳細情報の取得に失敗しました\n\n"
                         except:
-                            response += f"\n 予約情報\n"
-                            response += f"   ℹ データエラー\n"
+                            response += f" 予約情報にエラーがあります\n\n"
             
             # 過去の予約（視聴履歴）
             if past_reservations:
-                response += "\n\n【視聴履歴（直近3件）】\n"
+                response += "【 視聴履歴（直近3件）】\n\n"
                 for r in past_reservations:
-                    response += f"\n {r.movie.title}\n"
-                    # show_timeのNullチェック
-                    if r.show_time:
-                        try:
-                            response += f"    視聴日: {r.show_time.strftime('%Y年%m月%d日')}\n"
-                        except:
-                            response += f"    視聴日: 情報取得エラー\n"
-                    else:
-                        response += f"    視聴日: 日付未定\n"
-                    
-                    # 座席情報も安全に取得
                     try:
-                        response += f"    座席: {r.seat.seat_number}\n"
-                    except:
-                        response += f"    座席: 情報なし\n"
+                        response += f" {r.movie.title}\n"
+                        
+                        # show_timeの安全な取得
+                        show_time_value = getattr(r, 'show_time', None)
+                        
+                        if show_time_value:
+                            try:
+                                if hasattr(show_time_value, 'strftime'):
+                                    response += f" 視聴日: {show_time_value.strftime('%Y年%m月%d日(%a)')}\n"
+                                elif hasattr(show_time_value, 'date'):
+                                    # dateオブジェクトの場合
+                                    response += f" 視聴日: {show_time_value.date().strftime('%Y年%m月%d日')}\n"
+                                else:
+                                    # 文字列やその他の形式
+                                    response += f" 視聴日: {str(show_time_value)}\n"
+                            except Exception as date_error:
+                                response += f" 視聴日: 日付情報取得エラー\n"
+                        else:
+                            response += f" 視聴日: 日付未定\n"
+                        
+                        # 座席情報
+                        if hasattr(r, 'seat') and r.seat:
+                            response += f" 座席: {r.seat.seat_number}\n"
+                        else:
+                            response += f" 座席: 情報なし\n"
+                        
+                        response += "\n"
+                    except Exception as e:
+                        # 個別のエラーをログに出力（本番環境では適切なロガーを使用）
+                        print(f"視聴履歴取得エラー: {str(e)}")
+                        try:
+                            response += f" {r.movie.title}\n"
+                            response += f"ℹ 詳細情報の取得に失敗しました\n\n"
+                        except:
+                            response += f" 履歴情報にエラーがあります\n\n"
             
-            response += "\n\n 詳細は「マイページ」からご確認いただけます。"
+            response += " 詳細は「マイページ」からご確認いただけます。"
         else:
             response = "現在、ご予約はございません。\n\n"
             
@@ -659,17 +668,19 @@ def handle_reservation_inquiry(user):
             ).order_by('release_date')[:5]
             
             if upcoming_movies:
-                response += "【上映中・公開予定の映画】\n"
+                response += "【 上映中・公開予定の映画】\n\n"
                 for movie in upcoming_movies:
                     try:
                         if movie.status == 'now_showing':
-                            response += f"\n {movie.title} 上映中\n"
+                            response += f"▶ {movie.title} 【上映中】\n"
                             if movie.release_date:
                                 response += f"    公開日: {movie.release_date.strftime('%Y年%m月%d日')}\n"
-                            response += f"    ジャンル: {movie.genre if hasattr(movie, 'genre') else '未定'}\n"
-                            response += f"   ⏱ 上映時間: {movie.duration}分\n" if hasattr(movie, 'duration') else ""
+                            if hasattr(movie, 'genre'):
+                                response += f"    ジャンル: {movie.genre}\n"
+                            if hasattr(movie, 'duration'):
+                                response += f"   ⏱ 上映時間: {movie.duration}分\n"
                         else:
-                            response += f"\n {movie.title} 🆕公開予定\n"
+                            response += f"🆕 {movie.title} 【公開予定】\n"
                             if movie.release_date:
                                 response += f"    公開予定日: {movie.release_date.strftime('%Y年%m月%d日')}\n"
                                 try:
@@ -677,16 +688,16 @@ def handle_reservation_inquiry(user):
                                     response += f"    あと{days_until}日で公開\n"
                                 except:
                                     pass
+                        response += "\n"
                     except Exception as e:
-                        # 個別の映画でエラーが出ても続行
-                        response += f"\n {movie.title}\n"
-                        response += f"   ℹ 詳細情報準備中\n"
+                        response += f" {movie.title}\n"
+                        response += f"   ℹ️ 詳細情報準備中\n\n"
             
-            response += "\n\n ぜひチケットをご購入ください！"
+            response += "ぜひチケットをご購入ください！"
         
         return response
     except Exception as e:
-        return f"申し訳ございません。予約情報の取得中にエラーが発生しました。\nマイページから直接ご確認いただくか、お問い合わせください。\n\nエラー詳細: {str(e)}"
+        return f"申し訳ございません。予約情報の取得中にエラーが発生しました。\n\n💡 マイページから直接ご確認いただくか、お問い合わせください。\n\n⚠️ エラー詳細: {str(e)}"
 
 
 def handle_seat_availability(message, message_lower):
@@ -1926,6 +1937,342 @@ def clear_chat_history(request):
         ChatMessage.objects.filter(user=request.user).delete()
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'POSTリクエストのみ対応'}, status=405)
+
+@login_required
+def my_profile(request):
+    """マイプロフィールページ"""
+    user = request.user
+    now = timezone.now()
+    
+    # 予約情報の取得
+    try:
+        total_reservations = Reservation.objects.filter(user=user).count()
+        
+        # 視聴済み映画（過去の予約）
+        watched_movies = Reservation.objects.filter(
+            user=user,
+            show_time__lt=now
+        ).count()
+        
+        # 今後の予約
+        upcoming_reservations = Reservation.objects.filter(
+            user=user,
+            show_time__gte=now
+        ).count()
+    except Exception as e:
+        total_reservations = 0
+        watched_movies = 0
+        upcoming_reservations = 0
+    
+    # ポイント計算
+    user_points = calculate_user_points(user)
+    
+    # 会員レベルの判定
+    membership_level = get_membership_level(user_points)
+    
+    # 次のレベルまでのポイント
+    points_to_next_level = get_points_to_next_level(user_points, membership_level)
+    
+    # 進捗パーセンテージ
+    progress_percentage = calculate_progress_percentage(user_points, membership_level)
+    
+    # 会員登録からの日数
+    membership_days = (now.date() - user.date_joined.date()).days
+    
+    # 好きなジャンルの取得
+    favorite_genre = get_favorite_genre(user)
+    
+    # ジャンル統計
+    genre_stats = get_genre_statistics(user)
+    
+    # 最近のアクティビティ
+    recent_activities = get_recent_activities(user)
+    
+    # 利用可能なクーポン（サンプル）
+    available_coupons = get_available_coupons(user)
+    
+    context = {
+        'total_reservations': total_reservations,
+        'watched_movies': watched_movies,
+        'upcoming_reservations': upcoming_reservations,
+        'user_points': user_points,
+        'membership_level': membership_level,
+        'points_to_next_level': points_to_next_level,
+        'progress_percentage': progress_percentage,
+        'membership_days': membership_days,
+        'favorite_genre': favorite_genre,
+        'genre_stats': genre_stats,
+        'recent_activities': recent_activities,
+        'available_coupons': available_coupons,
+    }
+    
+    return render(request, 'my_profile.html', context)
+
+
+def calculate_user_points(user):
+    """ユーザーのポイント計算"""
+    try:
+        # UserProfileにpointsフィールドがある場合
+        if hasattr(user, 'userprofile') and hasattr(user.userprofile, 'points'):
+            return user.userprofile.points
+        
+        # ない場合は視聴数から計算（1視聴=100ポイント）
+        watched_count = Reservation.objects.filter(
+            user=user,
+            show_time__lt=timezone.now()
+        ).count()
+        
+        return watched_count * 100
+    except Exception as e:
+        return 0
+
+
+def get_membership_level(points):
+    """ポイントから会員レベルを判定"""
+    if points >= 5000:
+        return 'platinum'
+    elif points >= 2000:
+        return 'gold'
+    else:
+        return 'standard'
+
+
+def get_points_to_next_level(points, current_level):
+    """次のレベルまでに必要なポイント"""
+    if current_level == 'standard':
+        return max(0, 2000 - points)
+    elif current_level == 'gold':
+        return max(0, 5000 - points)
+    else:
+        return 0  # プラチナは最高レベル
+
+
+def calculate_progress_percentage(points, level):
+    """レベルアップまでの進捗パーセンテージ"""
+    if level == 'standard':
+        # 0-2000の間
+        return min(100, (points / 2000) * 100)
+    elif level == 'gold':
+        # 2000-5000の間
+        progress = ((points - 2000) / 3000) * 100
+        return min(100, max(0, progress))
+    else:
+        # プラチナは100%
+        return 100
+
+
+def get_favorite_genre(user):
+    """最も多く視聴しているジャンルを取得"""
+    try:
+        # 視聴済みの予約から映画のジャンルを集計
+        reservations = Reservation.objects.filter(
+            user=user,
+            show_time__lt=timezone.now()
+        ).select_related('movie')
+        
+        genres = []
+        for res in reservations:
+            if hasattr(res.movie, 'genre') and res.movie.genre:
+                genres.append(res.movie.genre)
+        
+        if genres:
+            # 最頻出ジャンルを返す
+            genre_counts = Counter(genres)
+            return genre_counts.most_common(1)[0][0]
+        
+        return "未設定"
+    except Exception as e:
+        return "未設定"
+
+
+def get_genre_statistics(user):
+    """ジャンル別の視聴統計"""
+    try:
+        reservations = Reservation.objects.filter(
+            user=user,
+            show_time__lt=timezone.now()
+        ).select_related('movie')
+        
+        genres = []
+        for res in reservations:
+            if hasattr(res.movie, 'genre') and res.movie.genre:
+                genres.append(res.movie.genre)
+        
+        if not genres:
+            return []
+        
+        genre_counts = Counter(genres)
+        total = len(genres)
+        
+        # ジャンル統計リストの作成
+        stats = []
+        for genre, count in genre_counts.most_common(5):  # トップ5まで
+            percentage = (count / total) * 100
+            stats.append({
+                'name': genre,
+                'count': count,
+                'percentage': round(percentage, 1)
+            })
+        
+        return stats
+    except Exception as e:
+        return []
+
+
+def get_recent_activities(user):
+    """最近のアクティビティを取得"""
+    try:
+        activities = []
+        now = timezone.now()
+        
+        # 最近の予約（今後30日以内）
+        upcoming = Reservation.objects.filter(
+            user=user,
+            show_time__gte=now,
+            show_time__lte=now + timedelta(days=30)
+        ).select_related('movie').order_by('show_time')[:3]
+        
+        for res in upcoming:
+            activities.append({
+                'type': 'reservation',
+                'title': f'「{res.movie.title}」を予約しました',
+                'date': res.created_at if hasattr(res, 'created_at') else res.show_time
+            })
+        
+        # 最近視聴した映画（過去30日以内）
+        watched = Reservation.objects.filter(
+            user=user,
+            show_time__lt=now,
+            show_time__gte=now - timedelta(days=30)
+        ).select_related('movie').order_by('-show_time')[:3]
+        
+        for res in watched:
+            activities.append({
+                'type': 'watched',
+                'title': f'「{res.movie.title}」を視聴しました',
+                'date': res.show_time
+            })
+        
+        # 日付でソート
+        activities.sort(key=lambda x: x['date'], reverse=True)
+        
+        return activities[:5]  # 最新5件
+    except Exception as e:
+        return []
+
+
+def get_available_coupons(user):
+    """利用可能なクーポンを取得（サンプル実装）"""
+    try:
+        # 実際のクーポンモデルがある場合はそれを使用
+        # ここではサンプルデータを返す
+        coupons = []
+        
+        # 誕生月チェック
+        if hasattr(user, 'userprofile') and hasattr(user.userprofile, 'birth_date'):
+            if user.userprofile.birth_date:
+                current_month = timezone.now().month
+                birth_month = user.userprofile.birth_date.month
+                
+                if current_month == birth_month:
+                    coupons.append({
+                        'title': '🎂 誕生月特典',
+                        'description': '¥500 OFF',
+                        'expiry_date': timezone.now() + timedelta(days=30)
+                    })
+        
+        # ポイントベースのクーポン
+        points = calculate_user_points(user)
+        if points >= 1000:
+            coupons.append({
+                'title': '🎟️ 1000pt 達成特典',
+                'description': '次回鑑賞無料',
+                'expiry_date': timezone.now() + timedelta(days=60)
+            })
+        
+        return coupons
+    except Exception as e:
+        return []
+
+
+# ポイント付与関数（予約完了時などに呼び出す）
+def add_points_to_user(user, points, reason=""):
+    """ユーザーにポイントを付与"""
+    try:
+        if hasattr(user, 'userprofile'):
+            profile = user.userprofile
+            
+            # pointsフィールドがない場合は作成
+            if not hasattr(profile, 'points'):
+                profile.points = 0
+            
+            profile.points += points
+            profile.save()
+            
+            # ポイント履歴を記録（PointHistoryモデルがある場合）
+            try:
+                PointHistory.objects.create(
+                    user=user,
+                    points=points,
+                    reason=reason,
+                    balance_after=profile.points
+                )
+            except:
+                pass
+            
+            return True
+    except Exception as e:
+        print(f"ポイント付与エラー: {str(e)}")
+        return False
+
+
+# ポイント使用関数
+def use_points(user, points, reason=""):
+    """ユーザーのポイントを使用"""
+    try:
+        if hasattr(user, 'userprofile'):
+            profile = user.userprofile
+            
+            if hasattr(profile, 'points') and profile.points >= points:
+                profile.points -= points
+                profile.save()
+                
+                # ポイント履歴を記録
+                try:
+                    PointHistory.objects.create(
+                        user=user,
+                        points=-points,
+                        reason=reason,
+                        balance_after=profile.points
+                    )
+                except:
+                    pass
+                
+                return True
+            else:
+                return False  # ポイント不足
+    except Exception as e:
+        print(f"ポイント使用エラー: {str(e)}")
+        return False
+
+
+# ポイント履歴の取得
+@login_required
+def point_history(request):
+    """ポイント履歴ページ"""
+    try:
+        history = PointHistory.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:50]
+    except:
+        history = []
+    
+    context = {
+        'point_history': history,
+        'current_points': calculate_user_points(request.user)
+    }
+    
+    return render(request, 'point_history.html', context)
 
 @login_required
 def home_page(request):
