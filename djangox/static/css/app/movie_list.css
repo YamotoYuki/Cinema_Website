@@ -35,6 +35,10 @@ h1{
   padding: 0 0 50px 0;
 }
 
+h2{
+  padding: 12px 0;
+}
+
 nav {
   position: fixed;
   top: 0;
@@ -106,7 +110,6 @@ nav {
   align-items: center;
 }
 
-
 .roboto-slab-nav {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-optical-sizing: auto;
@@ -133,12 +136,37 @@ nav {
   }
 }
 
-  .custom-title {
-    color: #135034;
-  }
+.custom-title {
+  color: #135034;
+}
 
-h2{
-    padding: 12px 0;
+/* フィルタータブのスタイル */
+.nav-tabs {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  justify-content: flex-start !important;
+}
+
+.nav-tabs .nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+}
+
+.nav-tabs .nav-link.active {
+  color: #135034;
+  background-color: #ffcc00;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
 }
 
 .card-img-top {
@@ -183,14 +211,12 @@ h2{
   transition-delay: 0.4s; 
 }
 
-
 @keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
 
 .footer {
   padding: 5px 0 0 0;
