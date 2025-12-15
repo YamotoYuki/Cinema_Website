@@ -1,6 +1,13 @@
 from django.db import models
 from django.conf import settings
 from decimal import Decimal
+from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 class Movie(models.Model):
     STATUS_CHOICES = [
@@ -40,7 +47,8 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
 class Seat(models.Model):
     seat_number = models.CharField(max_length=5, verbose_name='座席番号')
 
@@ -50,6 +58,7 @@ class Seat(models.Model):
 
     def __str__(self):
         return self.seat_number
+
 
 class Reservation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='ユーザー')
@@ -98,6 +107,7 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.movie.title}"
 
+
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='ユーザー')
     message = models.CharField(max_length=255, verbose_name='メッセージ')
@@ -112,18 +122,6 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.user.username}への通知: {self.message}"
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='ユーザー')
-    phone_number = models.CharField(max_length=15, blank=True, verbose_name='電話番号')
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True, verbose_name='プロフィール画像')
-    is_completed = models.BooleanField(default=False, verbose_name='プロフィール完了')
-
-    class Meta:
-        verbose_name = 'ユーザープロフィール'
-        verbose_name_plural = 'ユーザープロフィール'
-
-    def __str__(self):
-        return self.user.username
 
 class ShowSchedule(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='schedules', verbose_name='映画')
@@ -140,7 +138,8 @@ class ShowSchedule(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} | {self.date} {self.start_time} - {self.end_time} (スクリーン{self.screen})"
-    
+
+
 class ChatMessage(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='ユーザー')
     message = models.TextField(verbose_name='メッセージ')
@@ -155,13 +154,7 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.created_at}"
-    
-    
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
 
-# settings.AUTH_USER_MODELを使用してUserモデルを参照
 
 class UserProfile(models.Model):
     """ユーザープロフィール拡張"""
@@ -200,6 +193,10 @@ class UserProfile(models.Model):
         ],
         default='standard',
         verbose_name='会員レベル'
+    )
+    is_completed = models.BooleanField(
+        default=False,
+        verbose_name='プロフィール完了'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -409,7 +406,7 @@ class UserCoupon(models.Model):
         verbose_name='使用日時'
     )
     reservation = models.ForeignKey(
-        'Reservation',
+        Reservation,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -427,17 +424,12 @@ class UserCoupon(models.Model):
 
 
 # シグナルの設定
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """ユーザー作成時にUserProfileを自動作成"""
     if created:
         UserProfile.objects.get_or_create(user=instance)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -449,20 +441,28 @@ def save_user_profile(sender, instance, **kwargs):
             UserProfile.objects.create(user=instance)
 
 
-# 予約完了時にポイントを付与するシグナル
-# Reservationモデルがある場合のみ使用
-try:
-    from .models import Reservation  # 同じファイル内にある場合
+@receiver(post_save, sender=Reservation)
+def add_points_on_reservation(sender, instance, created, **kwargs):
+    """予約作成時にポイントを付与"""
+    if created:
+        try:
+            profile, created = UserProfile.objects.get_or_create(user=instance.user)
+            profile.add_points(100, f'予約: {instance.movie.title}')
+        except Exception as e:
+            print(f"ポイント付与エラー: {str(e)}")
+            
+class Contact(models.Model):
+    """お問い合わせ"""
+    name = models.CharField(max_length=100, verbose_name='お名前')
+    email = models.EmailField(verbose_name='メールアドレス')
+    message = models.TextField(verbose_name='お問い合わせ内容')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='送信日時')
+    is_read = models.BooleanField(default=False, verbose_name='既読')
     
-    @receiver(post_save, sender=Reservation)
-    def add_points_on_reservation(sender, instance, created, **kwargs):
-        """予約作成時にポイントを付与"""
-        if created:
-            try:
-                profile, created = UserProfile.objects.get_or_create(user=instance.user)
-                profile.add_points(100, f'予約: {instance.movie.title}')
-            except Exception as e:
-                print(f"ポイント付与エラー: {str(e)}")
-except ImportError:
-    # Reservationモデルが別ファイルにある場合は、そのファイルでシグナルを設定
-    pass
+    class Meta:
+        verbose_name = 'お問い合わせ'
+        verbose_name_plural = 'お問い合わせ'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.created_at.strftime('%Y/%m/%d %H:%M')}"

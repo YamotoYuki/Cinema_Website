@@ -5,6 +5,65 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+<style>
+  .coupon-section {
+    background-color: #1350348e; 
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    color: white;
+  }
+  
+  .coupon-select {
+    background: white;
+    border: 2px solid #ffcc00;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    width: 100%;
+    color: #333;
+  }
+  
+  .discount-info {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .discount-info i {
+    font-size: 1.3rem;
+    margin-right: 8px;
+  }
+  
+  .price-breakdown {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .price-row:last-child {
+    border-bottom: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -21,14 +80,65 @@
 
     <p><strong>選択された座席:</strong> {{ selected_seat_numbers|join:", " }}</p>
     <p><strong>座席数:</strong> {{ selected_seat_count }} 席</p>
-    <p><strong>金額:</strong> ¥{{ movie.price|floatformat:"0" }}</p>
-    <p class="fs-5 fw-bold text-success">合計金額: ¥{{ total_price|floatformat:"0" }}</p>
+    <p><strong>単価:</strong> ¥{{ movie.price|floatformat:"0" }}</p>
+
+    <!-- クーポン選択セクション -->
+    {% if available_coupons %}
+    <div class="coupon-section">
+      <h5 class="mb-3">
+        <i class="bi bi-ticket-perforated-fill me-2"></i>
+        クーポンを使用する（任意）
+      </h5>
+      <select name="coupon_id" id="couponSelect" class="coupon-select">
+        <option value="">クーポンを選択してください</option>
+        {% for coupon in available_coupons %}
+        <option value="{{ coupon.id }}" 
+                data-type="{{ coupon.discount_type }}" 
+                data-value="{{ coupon.discount_value }}">
+          {{ coupon.title }} - 
+          {% if coupon.discount_type == 'percentage' %}
+            {{ coupon.discount_value }}%OFF
+          {% elif coupon.discount_type == 'fixed' %}
+            ¥{{ coupon.discount_value }}OFF
+          {% else %}
+            無料
+          {% endif %}
+          (有効期限: {{ coupon.expiry_date|date:"Y/m/d" }})
+        </option>
+        {% endfor %}
+      </select>
+      <div id="discountInfo" class="discount-info" style="display: none;">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="discountText"></span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 金額表示 -->
+    <div class="price-breakdown">
+      <div class="price-row">
+        <span>小計:</span>
+        <span id="subtotal">¥{{ total_price|floatformat:"0" }}</span>
+      </div>
+      <div class="price-row" id="discountRow" style="display: none;">
+        <span style="color: #dc3545;">
+          <i class="bi bi-tag-fill me-1"></i>
+          クーポン割引:
+        </span>
+        <span id="discountAmount" style="color: #dc3545;">-¥0</span>
+      </div>
+      <div class="price-row">
+        <span>合計金額:</span>
+        <span id="finalTotal">¥{{ total_price|floatformat:"0" }}</span>
+      </div>
+    </div>
 
     <hr>
 
     <form method="post" action="{% url 'purchase_complete' %}">
       {% csrf_token %}
       <input type="hidden" name="movie_id" value="{{ movie.id }}">
+      <input type="hidden" name="coupon_id" id="selectedCouponId" value="">
       {% for seat_id in selected_seat_ids %}
         <input type="hidden" name="seats" value="{{ seat_id }}">
       {% endfor %}
@@ -131,8 +241,57 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   toggleConvenienceOptions();
+
+  // クーポン選択処理
+  const couponSelect = document.getElementById('couponSelect');
+  if (couponSelect) {
+    const totalPrice = {{ total_price }};
+    
+    couponSelect.addEventListener('change', function() {
+      const selected = this.options[this.selectedIndex];
+      const discountInfo = document.getElementById('discountInfo');
+      const discountText = document.getElementById('discountText');
+      const discountRow = document.getElementById('discountRow');
+      const discountAmount = document.getElementById('discountAmount');
+      const finalTotal = document.getElementById('finalTotal');
+      const selectedCouponId = document.getElementById('selectedCouponId');
+      
+      if (this.value) {
+        const type = selected.dataset.type;
+        const value = parseFloat(selected.dataset.value);
+        let discount = 0;
+        let finalPrice = totalPrice;
+        
+        if (type === 'percentage') {
+          discount = Math.floor((totalPrice * value) / 100);
+          finalPrice = totalPrice - discount;
+          discountText.textContent = `${value}%割引が適用されました！ ¥${discount.toLocaleString()}お得！`;
+        } else if (type === 'fixed') {
+          discount = value;
+          finalPrice = Math.max(0, totalPrice - discount);
+          discountText.textContent = `¥${discount.toLocaleString()}割引が適用されました！`;
+        } else if (type === 'free') {
+          discount = totalPrice;
+          finalPrice = 0;
+          discountText.textContent = '無料クーポンが適用されました！';
+        }
+        
+        // 表示を更新
+        discountInfo.style.display = 'block';
+        discountRow.style.display = 'flex';
+        discountAmount.textContent = `-¥${discount.toLocaleString()}`;
+        finalTotal.textContent = `¥${finalPrice.toLocaleString()}`;
+        selectedCouponId.value = this.value;
+      } else {
+        // クーポン未選択
+        discountInfo.style.display = 'none';
+        discountRow.style.display = 'none';
+        finalTotal.textContent = `¥${totalPrice.toLocaleString()}`;
+        selectedCouponId.value = '';
+      }
+    });
+  }
 });
 </script>
-
 
 {% endblock %}

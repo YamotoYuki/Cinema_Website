@@ -131,3 +131,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# =====================================
+# Anthropic API Key for AI Features
+# =====================================
+# Anthropic API Key
+ANTHROPIC_API_KEY= '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'

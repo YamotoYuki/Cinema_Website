@@ -173,42 +173,75 @@ nav {
 
   /* ポイント履歴ページ専用のコンテナ設定 */
   .history-container {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 1200px;
+    margin: 80px auto 50px;
+    padding: 0 20px;
   }
   
-  /* 親コンテナのスタイルをリセット */
-  body.history-page {
-    background-image: url('/static/images/wallpaper.jpg');
-  }
-  
-  .history-page .container {
-    max-width: 100% !important;
-    background: none !important;
-    padding: 30px 15px !important;
-  }
-  
+  /* ポイントヘッダー - my_profileと同じグリーン系 */
   .points-header {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #135034 0%, #1a7a50 100%);
     border-radius: 20px;
     padding: 40px;
     color: white;
     margin-bottom: 30px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 40px rgba(19, 80, 52, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .points-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 204, 0, 0.15) 0%, transparent 70%);
+  }
+
+  .points-header h2 {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1rem;
   }
   
   .current-points {
     font-size: 4rem;
     font-weight: bold;
     margin: 20px 0;
+    color: #ffcc00;
+    position: relative;
+    z-index: 1;
+  }
+
+  .points-header p {
+    position: relative;
+    z-index: 1;
   }
   
+  /* 履歴カード */
   .history-card {
-    background: rgba(255, 255, 255, 0.98);
+    background: rgba(30, 30, 30, 0.9);
     border-radius: 15px;
     padding: 30px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 204, 0, 0.1);
+  }
+
+  .history-card h4 {
+    color: #ffcc00;
+  }
+
+  .history-card .btn-outline-primary {
+    border-color: #ffcc00;
+    color: #ffcc00;
+  }
+
+  .history-card .btn-outline-primary:hover {
+    background-color: #ffcc00;
+    color: #135034;
   }
   
   .history-item {
@@ -219,21 +252,32 @@ nav {
     display: flex;
     align-items: center;
     gap: 20px;
+    color: #fff;
   }
   
+  /* 獲得ポイント - グリーン系 */
   .history-earned {
-    background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
-    border-left: 4px solid #43e97b;
+    background: linear-gradient(135deg, rgba(19, 80, 52, 0.3) 0%, rgba(26, 122, 80, 0.3) 100%);
+    border-left: 4px solid #1a7a50;
   }
   
+  /* 使用ポイント - オレンジ系 */
   .history-used {
-    background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
-    border-left: 4px solid #f5576c;
+    background: linear-gradient(135deg, rgba(255, 149, 0, 0.2) 0%, rgba(255, 204, 0, 0.2) 100%);
+    border-left: 4px solid #ff9500;
   }
   
   .history-item:hover {
     transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(255, 204, 0, 0.2);
+  }
+
+  .history-item h6 {
+    color: #fff;
+  }
+
+  .history-item small {
+    color: rgba(255, 255, 255, 0.6) !important;
   }
   
   .points-badge {
@@ -245,13 +289,15 @@ nav {
     text-align: center;
   }
   
+  /* 獲得バッジ - グリーン/イエロー */
   .points-earned {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    background: linear-gradient(135deg, #1a7a50 0%, #ffcc00 100%);
     color: white;
   }
   
+  /* 使用バッジ - オレンジ/イエロー */
   .points-used {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%);
     color: white;
   }
   
@@ -267,24 +313,68 @@ nav {
   }
   
   .icon-earned {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    color: white;
+    background: linear-gradient(135deg, #135034 0%, #1a7a50 100%);
+    color: #ffcc00;
   }
   
   .icon-used {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #ff9500 0%, #ffcc00 100%);
     color: white;
   }
   
   .empty-state {
     text-align: center;
     padding: 80px 20px;
+    color: rgba(255, 255, 255, 0.5);
   }
   
   .empty-state i {
     font-size: 5rem;
-    color: #dee2e6;
+    color: rgba(255, 204, 0, 0.3);
     margin-bottom: 20px;
+  }
+
+  .empty-state h5 {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .empty-state p {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .empty-state .btn-primary {
+    background: linear-gradient(135deg, #135034 0%, #1a7a50 100%);
+    border: none;
+    color: #ffcc00;
+    font-weight: 600;
+  }
+
+  .empty-state .btn-primary:hover {
+    background: linear-gradient(135deg, #1a7a50 0%, #135034 100%);
+    transform: scale(1.05);
+  }
+
+  .text-end strong {
+    color: #ffcc00;
+  }
+
+  .text-center .text-muted {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  @media (max-width: 768px) {
+    .current-points {
+      font-size: 3rem;
+    }
+
+    .history-item {
+      flex-wrap: wrap;
+    }
+
+    .points-badge {
+      min-width: 80px;
+      font-size: 1rem;
+    }
   }
 </style>
 {% endblock %}
@@ -335,7 +425,7 @@ nav {
         </div>
         
         <div class="text-end" style="min-width: 100px;">
-          <small class="text-muted">残高</small><br>
+          <small style="color: rgba(255,255,255,0.6);">残高</small><br>
           <strong style="font-size: 1.1rem;">{{ history.balance_after }}</strong>
         </div>
       </div>
@@ -343,8 +433,8 @@ nav {
     {% else %}
       <div class="empty-state">
         <i class="bi bi-hourglass-split"></i>
-        <h5 class="text-muted">ポイント履歴がありません</h5>
-        <p class="text-muted">映画を予約するとポイントが貯まります！</p>
+        <h5>ポイント履歴がありません</h5>
+        <p>映画を予約するとポイントが貯まります！</p>
         <a href="{% url 'movie_list' %}" class="btn btn-primary btn-lg mt-3">
           <i class="bi bi-film me-2"></i>映画を探す
         </a>

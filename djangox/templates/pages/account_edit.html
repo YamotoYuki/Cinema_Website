@@ -6,8 +6,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="div py-5" style="max-width: 600px;">
-  <h2 class="mb-4">アカウント編集</h2>
+<div class="div py-5">
+  <h2>
+    <i class="bi bi-person-circle me-2"></i>
+    アカウント編集
+  </h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ user_form.non_field_errors }}
@@ -36,15 +39,22 @@
       {% if request.user.userprofile.profile_image %}
         <img src="{{ request.user.userprofile.profile_image.url }}"
              class="rounded-circle mb-2"
-             style="width:100px; height:100px; object-fit:cover;">
+             style="width:120px; height:120px; object-fit:cover;">
       {% endif %}
       {{ profile_form.profile_image }}
       {{ profile_form.profile_image.errors }}
     </div>
 
-      <button type="submit" class="btn custom-OK-btn">OK</button>
-      <button type="button" class="btn custom-cancel-btn" onclick="location.href='{% url 'home' %}'">戻る</button>
-
+    <div class="button-container">
+      <button type="submit" class="btn custom-OK-btn">
+        <i class="bi bi-check-circle me-2"></i>
+        保存
+      </button>
+      <button type="button" class="btn custom-cancel-btn" onclick="location.href='{% url 'home' %}'">
+        <i class="bi bi-arrow-left me-2"></i>
+        戻る
+      </button>
+    </div>
   </form>
 </div>
 {% endblock %}

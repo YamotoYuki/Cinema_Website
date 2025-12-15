@@ -34,7 +34,12 @@ h2 {
   margin-bottom: 2rem;
   font-weight: 700;
   font-size: 2rem;
-  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.profile-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0;
+  text-align: center;
 }
 
 .fade-in-text {
@@ -338,50 +343,112 @@ nav {
   }
 
   /* お気に入り映画カード */
+  .favorites-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding-bottom: 15px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ffcc00 rgba(0,0,0,0.3);
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #ff9500 0%, #ffcc00 100%);
+  }
+
+  .favorite-movie-wrapper {
+    display: inline-block;
+    width: 280px;
+    margin-right: 20px;
+    vertical-align: top;
+    white-space: normal;
+  }
+
+  .favorite-movie-wrapper:last-child {
+    margin-right: 0;
+  }
+
   .favorite-movie-card {
     background: rgba(40, 40, 40, 0.95);
-    border-radius: 12px;
+    border-radius: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
     border: 2px solid transparent;
     height: 100%;
+    position: relative;
   }
 
   .favorite-movie-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
     border-color: #ffcc00;
-    box-shadow: 0 10px 30px rgba(255, 204, 0, 0.3);
+    box-shadow: 0 15px 40px rgba(255, 204, 0, 0.4);
   }
 
   .favorite-movie-img {
     width: 100%;
-    height: 300px;
+    height: 400px;
     object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .favorite-movie-card:hover .favorite-movie-img {
+    transform: scale(1.05);
   }
 
   .favorite-movie-body {
-    padding: 15px;
+    padding: 20px;
+    background: linear-gradient(to bottom, rgba(40, 40, 40, 0.98), rgba(20, 20, 20, 0.98));
   }
 
   .favorite-movie-title {
     color: #ffcc00;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    min-height: 2.8em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  }
+
+  .favorite-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
   }
 
   .remove-favorite-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 35px;
-    height: 35px;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: rgba(220, 53, 69, 0.9);
-    border: none;
+    background: rgba(220, 53, 69, 0.95);
+    border: 2px solid white;
     color: white;
     display: flex;
     align-items: center;
@@ -389,11 +456,13 @@ nav {
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 10;
+    font-size: 1.1rem;
   }
 
   .remove-favorite-btn:hover {
     background: #dc3545;
-    transform: scale(1.1);
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
   }
 
   /* アクティビティ */
@@ -481,6 +550,10 @@ nav {
     .points-number {
       font-size: 2.5rem;
     }
+
+    .favorite-movie-img {
+      height: 300px;
+    }
   }
 </style>
 {% endblock %}
@@ -490,15 +563,15 @@ nav {
   <!-- プロフィールヘッダー -->
   <div class="profile-header">
     <div class="row align-items-center">
-      <div class="col-md-2 text-center mb-3 mb-md-0">
+      <div class="col-md-3 text-center mb-3 mb-md-0">
         {% if user.userprofile.profile_image %}
           <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-avatar">
         {% else %}
           <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-avatar">
         {% endif %}
+        <h2 class="mt-3 mb-0" style="position: relative; z-index: 1; color: #ffcc00;">{{ user.username }}</h2>
       </div>
-      <div class="col-md-7">
-        <h2 class="mb-3" style="position: relative; z-index: 1; color: #ffcc00;">{{ user.username }}</h2>
+      <div class="col-md-6">
         <p class="mb-2" style="position: relative; z-index: 1;">
           <i class="bi bi-envelope-fill me-2"></i>{{ user.email }}
         </p>
@@ -594,7 +667,7 @@ nav {
       <!-- お気に入り映画 -->
       <div class="info-card">
         <h5><i class="bi bi-star-fill"></i>お気に入り映画</h5>
-        <div id="favorite-movies-container" class="row row-cols-1 row-cols-md-3 g-3">
+        <div id="favorite-movies-container" class="favorites-scroll-container">
           <!-- JavaScriptで動的に読み込み -->
         </div>
       </div>
@@ -663,19 +736,17 @@ async function loadFavoriteMovies() {
   
   if (favorites.length === 0) {
     container.innerHTML = `
-      <div class="col-12">
-        <div class="empty-state">
-          <i class="bi bi-star"></i>
-          <p>お気に入りの映画がまだありません</p>
-          <small style="color: rgba(255,255,255,0.5);">映画ページでハートボタンを押してお気に入りに追加しましょう</small>
-        </div>
+      <div style="text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.5);">
+        <i class="bi bi-star" style="font-size: 3.5rem; color: rgba(255, 204, 0, 0.3); margin-bottom: 15px; display: block;"></i>
+        <p>お気に入りの映画がまだありません</p>
+        <small style="color: rgba(255,255,255,0.5);">映画ページでハートボタンを押してお気に入りに追加しましょう</small>
       </div>
     `;
     return;
   }
   
   // ローディング表示
-  container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-warning" role="status"></div></div>';
+  container.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner-border text-warning" role="status"></div></div>';
   
   try {
     // 各お気に入り映画の情報をlocalStorageから取得
@@ -690,30 +761,33 @@ async function loadFavoriteMovies() {
         return {
           id: movieId,
           title: `映画 #${movieId}`,
-          image_url: '{% static "images/noimage.jpg" %}'
+          image_url: '/static/images/noimage.jpg'
         };
       }
     });
     
     const movies = await Promise.all(moviePromises);
     
-    // 映画カードを表示
+    // 映画カードを横スクロール用に表示
     container.innerHTML = movies.map(movie => `
-      <div class="col">
+      <div class="favorite-movie-wrapper">
         <div class="favorite-movie-card position-relative">
-          <button class="remove-favorite-btn" onclick="removeFavorite('${movie.id}'); event.stopPropagation();">
+          <button class="remove-favorite-btn" onclick="removeFavorite('${movie.id}'); event.stopPropagation();" title="お気に入りから削除">
             <i class="bi bi-x-lg"></i>
           </button>
           <a href="/movie/${movie.id}/" style="text-decoration: none; color: inherit; display: block;">
-            <img src="${movie.image_url || '{% static "images/noimage.jpg" %}'}" 
+            <img src="${movie.image_url || '/static/images/noimage.jpg'}" 
                  class="favorite-movie-img" 
                  alt="${movie.title}"
-                 onerror="this.src='{% static 'images/noimage.jpg' %}'">
+                 onerror="this.src='/static/images/noimage.jpg'">
             <div class="favorite-movie-body">
               <div class="favorite-movie-title" title="${movie.title}">${movie.title}</div>
-              <small style="color: rgba(255,255,255,0.6);">
-                <i class="bi bi-heart-fill text-danger me-1"></i>お気に入り登録済み
-              </small>
+              <div class="mt-2">
+                <span class="favorite-badge">
+                  <i class="bi bi-heart-fill"></i>
+                  お気に入り
+                </span>
+              </div>
             </div>
           </a>
         </div>
@@ -722,18 +796,16 @@ async function loadFavoriteMovies() {
   } catch (error) {
     console.error('お気に入り映画の読み込みエラー:', error);
     container.innerHTML = `
-      <div class="col-12">
-        <div class="empty-state">
-          <i class="bi bi-exclamation-triangle"></i>
-          <p>お気に入り映画の読み込みに失敗しました</p>
-        </div>
+      <div style="text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.5);">
+        <i class="bi bi-exclamation-triangle" style="font-size: 3.5rem; color: rgba(255, 204, 0, 0.3); margin-bottom: 15px; display: block;"></i>
+        <p>お気に入り映画の読み込みに失敗しました</p>
       </div>
     `;
   }
 }
 
 function removeFavorite(movieId) {
-  if (confirm('この映画をお気に入りから削除しますか?')) {
+  if (confirm('この映画をお気に入りから削除しますか？')) {
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     const newFavorites = favorites.filter(id => id !== movieId);
     localStorage.setItem('favorites', JSON.stringify(newFavorites));

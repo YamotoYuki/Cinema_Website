@@ -4,6 +4,10 @@ from django import forms
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.admin import SimpleListFilter
+from pages.models import Contact
+from django.conf import settings
+import requests
+import json
 
 from .models import (
     Movie, Seat, Reservation, Notification, ShowSchedule, 
@@ -27,8 +31,27 @@ class ShowScheduleInline(admin.TabularInline):
     verbose_name = "上映スケジュール"
     verbose_name_plural = "上映スケジュール"
 
+
+class MovieAdminForm(forms.ModelForm):
+    """映画登録フォーム（AI自動入力機能付き）"""
+    auto_generate = forms.BooleanField(
+        required=False, 
+        initial=False,
+        label='AI自動入力を使用',
+        help_text='映画タイトルを入力後、このチェックを入れて保存すると自動的に情報を入力します'
+    )
+    
+    class Meta:
+        model = Movie
+        fields = '__all__'
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 6, 'cols': 80}),
+        }
+
+
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
+    form = MovieAdminForm
     list_display = ['title', 'status', 'release_date', 'show_date', 'genre', 'price', 'image_tag']
     list_filter = ['status', 'genre', 'show_date']
     search_fields = ['title', 'description']
@@ -46,6 +69,11 @@ class MovieAdmin(admin.ModelAdmin):
         ('料金', {
             'fields': ('price',)
         }),
+        ('AI自動入力', {
+            'fields': ('auto_generate',),
+            'classes': ('collapse',),
+            'description': 'タイトルだけ入力してこのチェックを入れると、自動的に説明文やジャンルを生成します'
+        }),
     )
     
     def image_tag(self, obj):
@@ -53,6 +81,127 @@ class MovieAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" width="100" />'.format(obj.image.url))
         return "-"
     image_tag.short_description = '画像'
+    
+    def save_model(self, request, obj, form, change):
+        """保存時に映画情報を自動入力（TMDb API - 無料）"""
+        if form.cleaned_data.get('auto_generate') and obj.title:
+            try:
+                # TMDb API Key
+                TMDB_API_KEY = '161e2d17545a30906bfacfab70d7c68d'
+                
+                # 映画を検索
+                search_url = "https://api.themoviedb.org/3/search/movie"
+                params = {
+                    'api_key': TMDB_API_KEY,
+                    'query': obj.title,
+                    'language': 'ja-JP'
+                }
+                
+                response = requests.get(search_url, params=params)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    if data['results']:
+                        movie = data['results'][0]
+                        updated_fields = []
+                        
+                        # 説明文を取得
+                        if not obj.description and movie.get('overview'):
+                            obj.description = movie['overview']
+                            updated_fields.append('説明文')
+                        
+                        # ポスター画像を取得してダウンロード
+                        if not obj.image and movie.get('poster_path'):
+                            try:
+                                import urllib.request
+                                from django.core.files import File
+                                import tempfile
+                                import os
+                                
+                                poster_url = f"https://image.tmdb.org/t/p/w500{movie['poster_path']}"
+                                
+                                # 一時ファイルを作成
+                                fd, temp_path = tempfile.mkstemp(suffix='.jpg')
+                                os.close(fd)
+                                
+                                try:
+                                    # 画像をダウンロード
+                                    urllib.request.urlretrieve(poster_url, temp_path)
+                                    
+                                    # ファイル名を生成（安全な文字列に変換）
+                                    safe_title = "".join(c for c in obj.title if c.isalnum() or c in (' ', '_')).rstrip()
+                                    file_name = f"{safe_title.replace(' ', '_')}_poster.jpg"
+                                    
+                                    # Djangoのファイルとして保存
+                                    with open(temp_path, 'rb') as f:
+                                        obj.image.save(file_name, File(f), save=False)
+                                    
+                                    updated_fields.append('画像')
+                                finally:
+                                    # 一時ファイルを削除
+                                    if os.path.exists(temp_path):
+                                        os.remove(temp_path)
+                                        
+                            except Exception as img_error:
+                                messages.warning(request, f'画像のダウンロードに失敗しました: {str(img_error)}')
+                        
+                        # 詳細情報を取得
+                        movie_id = movie['id']
+                        detail_url = f"https://api.themoviedb.org/3/movie/{movie_id}"
+                        detail_params = {
+                            'api_key': TMDB_API_KEY,
+                            'language': 'ja-JP'
+                        }
+                        
+                        detail_response = requests.get(detail_url, params=detail_params)
+                        
+                        if detail_response.status_code == 200:
+                            detail = detail_response.json()
+                            
+                            # 上映時間
+                            if not obj.duration and detail.get('runtime'):
+                                obj.duration = detail['runtime']
+                                updated_fields.append('上映時間')
+                            
+                            # ジャンル
+                            if not obj.genre and detail.get('genres'):
+                                obj.genre = detail['genres'][0]['name']
+                                updated_fields.append('ジャンル')
+                        
+                        # デフォルト値を設定
+                        if not obj.price:
+                            obj.price = 1800
+                            updated_fields.append('料金（デフォルト値）')
+                        
+                        if not obj.theater:
+                            obj.theater = 'シアター1'
+                            updated_fields.append('シアター（デフォルト値）')
+                        
+                        if updated_fields:
+                            messages.success(
+                                request,
+                                f'TMDb APIから自動入力が完了しました（{", ".join(updated_fields)}）'
+                            )
+                        else:
+                            messages.info(
+                                request,
+                                '全ての項目が既に入力されているため、自動入力はスキップされました。'
+                            )
+                    else:
+                        messages.warning(
+                            request,
+                            f'「{obj.title}」の情報が見つかりませんでした。手動で入力してください。'
+                        )
+                else:
+                    messages.error(request, f'API呼び出しエラー: {response.status_code}')
+                    
+            except requests.RequestException as e:
+                messages.error(request, f'ネットワークエラー: {str(e)}')
+            except Exception as e:
+                messages.error(request, f'エラー: {str(e)}')
+        
+        super().save_model(request, obj, form, change)
 
 
 # =====================================
@@ -450,3 +599,23 @@ class UserCouponAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """削除権限あり（誤使用の場合のみ）"""
         return request.user.is_superuser
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at', 'is_read')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('name', 'email', 'message')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_read',)
+    
+    fieldsets = (
+        ('送信者情報', {
+            'fields': ('name', 'email')
+        }),
+        ('お問い合わせ内容', {
+            'fields': ('message',)
+        }),
+        ('管理情報', {
+            'fields': ('is_read', 'created_at')
+        }),
+    )

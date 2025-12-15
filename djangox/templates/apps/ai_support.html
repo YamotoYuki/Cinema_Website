@@ -495,14 +495,17 @@
         </ul>
 
         <div class="ms-auto d-flex align-items-center gap-2">
-          <div class="icon-wrapper">
+
+          <!-- プロフィール画像（クリック可能） -->
+          <a href="{% url 'my_profile' %}" class="icon-wrapper profile-link text-decoration-none" title="マイプロフィール">
             {% if user.userprofile.profile_image %}
               <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-image">
             {% else %}
               <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-image">
             {% endif %}
-          </div>
+          </a>
 
+          <!-- 通知ドロップダウン -->
           <div class="dropdown icon-wrapper">
             <a class="nav-link position-relative d-flex align-items-center justify-content-center p-0"
                href="#" role="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
@@ -511,6 +514,7 @@
               {% if unread_count > 0 %}
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
                 {{ unread_count }}
+                <span class="visually-hidden">未読の通知</span>
               </span>
               {% endif %}
             </a>
@@ -521,7 +525,7 @@
                   <li>
                     <a class="dropdown-item small" href="{% url 'mark_notification_read' notif.id %}">
                       {{ notif.message|striptags|truncatechars:30 }}<br>
-                      <small class="text-muted">{{ notif.created_at|date:"Y/m/d H:i" }}</small>
+                    <small class="text-muted">{{ notif.created_at|date:"Y/m/d H:i" }}</small>
                     </a>
                   </li>
                 {% endfor %}
@@ -531,6 +535,7 @@
             </ul>
           </div>
 
+          <!-- 設定ドロップダウン -->
           <ul class="navbar-nav icon-wrapper">
             <li class="nav-item dropdown w-100 h-100 d-flex align-items-center justify-content-center">
               <a class="nav-link dropdown-toggle p-0 d-flex align-items-center justify-content-center w-100 h-100"
@@ -538,26 +543,88 @@
                  style="color: white; font-size: 1.3rem;">
                 <i class="bi bi-gear-fill"></i>
               </a>
-              <ul class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="settingsDropdown" style="min-width: 260px;">
+              <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu p-3" aria-labelledby="settingsDropdown" style="min-width: 280px;">
+                <!-- 検索フォーム -->
                 <li class="dropdown-item p-0 mb-2">
                   <form action="{% url 'movie_list' %}" method="get" class="d-flex">
-                    <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="映画を検索" aria-label="Search" value="{{ request.GET.q|default_if_none:'' }}">
-                    <button type="submit" class="btn btn-sm btn-outline-light" style="padding: 2px 8px;">
+                    <input
+                      class="form-control form-control-sm me-2 search-dropdown"
+                      type="search"
+                      name="q"
+                      placeholder="映画を検索"
+                      aria-label="Search"
+                      value="{{ request.GET.q|default_if_none:'' }}"
+                    >
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-outline-light"
+                      style="padding: 2px 8px;"
+                    >
                       <img src="{% static 'logo/icon_kensaku.png' %}" alt="検索" style="width: 16px; height: 16px;">
                     </button>
                   </form>
                 </li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'ai_support' %}"><i class="bi bi-robot"></i> HALCINEMA サポート</a></li>
+                
+                <!-- プロフィール・ポイント -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'my_profile' %}">
+                    <i class="bi bi-person-circle"></i> マイプロフィール
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'point_history' %}">
+                    <i class="bi bi-coin"></i> ポイント履歴
+                  </a>
+                </li>
+                
+                <!-- クーポンメニュー追加 -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'my_coupons' %}">
+                    <i class="bi bi-ticket-perforated-fill"></i> マイクーポン
+                  </a>
+                </li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'my_reservations' %}">予約一覧</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_edit' %}">アカウント編集</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_change_password' %}">パスワード変更</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_delete' %}">アカウント削除</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a></li>
+                
+                <!-- AIサポート -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'ai_support' %}">
+                    <i class="bi bi-robot"></i> HALCINEMA サポート
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                
+                <!-- その他のメニュー -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'my_reservations' %}">
+                    <i class="bi bi-ticket-perforated"></i> 予約一覧
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_edit' %}">
+                    <i class="bi bi-pencil-square"></i> アカウント編集
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_change_password' %}">
+                    <i class="bi bi-key"></i> パスワード変更
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_delete' %}">
+                    <i class="bi bi-trash"></i> アカウント削除
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_logout' %}">
+                    <i class="bi bi-box-arrow-right"></i> ログアウト
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
+
         </div>
       </div>
     </div>
@@ -584,7 +651,7 @@
                 {% if message.is_user %}
                   {{ user.username|first|upper }}
                 {% else %}
-                  🤖
+                  AI
                 {% endif %}
               </div>
               <div class="message-content">{{ message.message }}</div>
@@ -606,7 +673,7 @@
         {% endif %}
         
         <div class="message ai" style="display: none;" id="typingMessage">
-          <div class="message-avatar"></div>
+          <div class="message-avatar">AI</div>
           <div class="typing-indicator" id="typingIndicator">
             <span></span>
             <span></span>
@@ -687,7 +754,7 @@
       
       const avatar = document.createElement('div');
       avatar.className = 'message-avatar';
-      avatar.textContent = isUser ? '{{ user.username|first|upper }}' : '🤖';
+      avatar.textContent = isUser ? '{{ user.username|first|upper }}' : 'AI';
       
       const messageContent = document.createElement('div');
       messageContent.className = 'message-content';
