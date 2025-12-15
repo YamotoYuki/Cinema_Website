@@ -12,12 +12,12 @@
 
 <main class="main">
   <div class="container">
-    <h1>Sign Out</h1>
+    <h1>ログアウト</h1>
     <p><strong>サインアウトしてもよろしいですか？</strong></p>
     <form method="post" action="{% url 'account_logout' %}">
       {% csrf_token %}
       {{ form|crispy }}
-      <button class="btn btn-danger" type="submit">Sign Out</button>
+      <button class="btn btn-danger" type="submit">ログアウトする</button>
     </form>
   </div>
 </main>

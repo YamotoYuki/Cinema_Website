@@ -480,11 +480,13 @@ def payment_input(request):
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        # get_or_createを使用して、既に存在する場合は作成しない
+        UserProfile.objects.get_or_create(user=instance)
     else:
+        # 更新時は、プロファイルが存在する場合のみ保存
         if hasattr(instance, 'userprofile'):
             instance.userprofile.save()
-
+            
 @login_required
 def profile_select(request):
     user = request.user
