@@ -126,11 +126,13 @@ input[type="radio"].btn-check:checked + .btn-date {
   box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
 }
 
+/* 改善: 選択された時間ボタンの視認性向上 */
 input[type="radio"].btn-check:checked + .btn-timeslot {
-  background: linear-gradient(135deg, #246c0c, #00350b);
+  background: #135034;
   color: #fff;
-  border-color: transparent;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  border-color: #135034;
+  box-shadow: 0 0 15px rgba(19, 80, 52, 0.6);
+  font-weight: 600;
 }
 
 

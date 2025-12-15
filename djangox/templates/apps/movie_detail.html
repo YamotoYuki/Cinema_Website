@@ -84,6 +84,38 @@
       border-radius: 5px;
       color: #856404;
     }
+
+    /* 改善: 選択された時間ボタンのスタイル */
+    .btn-check:checked + .time-label {
+      background-color: #135034 !important;
+      color: #fff !important;
+      border-color: #135034 !important;
+      font-weight: 600;
+      box-shadow: 0 0 15px rgba(19, 80, 52, 0.6);
+    }
+
+    /* 選択前のスクリーン表示はグレー */
+    .time-label small.text-muted {
+      color: #6c757d !important;
+    }
+
+    /* 選択後のスクリーン表示は白色 */
+    .btn-check:checked + .time-label small.text-muted {
+      color: #fff !important;
+    }
+
+    /* 過去の時間（赤色ボタン）のスクリーン表示も白色 */
+    .time-label.btn-danger small.text-muted {
+      color: #fff !important;
+    }
+
+    .time-label {
+      transition: all 0.3s ease;
+    }
+
+    .time-label:hover:not(.btn-danger) {
+      transform: scale(1.05);
+    }
   </style>
 {% endblock %}
 
