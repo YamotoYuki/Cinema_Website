@@ -61,36 +61,72 @@ def movie_list(request):
 
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
-    weekdays = ['月', '火', '水', '木', '金', '土', '日']
-    show_dates = []
     
-    if movie.status == 'coming_soon' and movie.release_date:
-        start_date = movie.release_date
+    # ShowScheduleモデルをインポート（既にインポートされている場合は不要）
+    from .models import ShowSchedule
+    
+    today = datetime.today().date()
+    weekdays = ['月', '火', '水', '木', '金', '土', '日']
+    
+    # 実際の上映スケジュールを取得（今日から7日間）
+    schedules = ShowSchedule.objects.filter(
+        movie=movie,
+        date__gte=today,
+        date__lte=today + timedelta(days=6)
+    ).order_by('date', 'start_time')
+    
+    # 日付ごとにグループ化
+    schedules_by_date = {}
+    
+    for schedule in schedules:
+        date_str = schedule.date.strftime('%Y-%m-%d')
+        
+        if date_str not in schedules_by_date:
+            schedules_by_date[date_str] = {
+                'date': date_str,
+                'label': f"{schedule.date.month}月{schedule.date.day}日（{weekdays[schedule.date.weekday()]}）",
+                'weekday': weekdays[schedule.date.weekday()],
+                'time_slots': []
+            }
+        
+        # 時間帯の文字列を作成
+        time_slot = f"{schedule.start_time.strftime('%H:%M')}～{schedule.end_time.strftime('%H:%M')}"
+        
+        schedules_by_date[date_str]['time_slots'].append({
+            'time': time_slot,
+            'screen': schedule.screen,
+            'format': schedule.format if schedule.format else ''
+        })
+    
+    # 辞書をリストに変換
+    show_dates = list(schedules_by_date.values())
+    
+    # スケジュールが登録されていない場合は、デフォルトで7日間の日付のみ表示
+    if not show_dates:
         for i in range(7):
-            date = start_date + timedelta(days=i)
-            if date >= datetime.today().date():
-                show_dates.append({
-                    'date': date.strftime('%Y-%m-%d'),
-                    'label': f"{date.month}月{date.day}日（{weekdays[date.weekday()]}）",
-                    'weekday': weekdays[date.weekday()]
-                })
-    else:
-        for i in range(7):
-            date = datetime.today() + timedelta(days=i)
+            date = today + timedelta(days=i)
+            
+            # 公開予定の映画で公開日前の日付はスキップ
+            if movie.status == 'coming_soon' and movie.release_date:
+                if date < movie.release_date:
+                    continue
+            
             show_dates.append({
                 'date': date.strftime('%Y-%m-%d'),
                 'label': f"{date.month}月{date.day}日（{weekdays[date.weekday()]}）",
-                'weekday': weekdays[date.weekday()]
+                'weekday': weekdays[date.weekday()],
+                'time_slots': []  # スケジュール未登録
             })
     
+    # 予約可否の判定
     can_reserve = True
     release_message = ""
     
     if movie.status == 'coming_soon':
         if movie.release_date:
-            if movie.release_date > datetime.today().date():
+            if movie.release_date > today:
                 can_reserve = False
-                days_until_release = (movie.release_date - datetime.today().date()).days
+                days_until_release = (movie.release_date - today).days
                 release_message = f"この映画は{movie.release_date.strftime('%Y年%m月%d日')}公開予定です（あと{days_until_release}日）"
         else:
             can_reserve = False
@@ -99,7 +135,6 @@ def movie_detail(request, movie_id):
     return render(request, 'apps/movie_detail.html', {
         'movie': movie,
         'show_dates': show_dates,
-        'time_slots': ["09:00～11:00", "11:00～13:00", "13:00～15:00", "15:00～17:00", "17:00～19:00", "19:00～21:00", "21:00～23:00"],
         'can_reserve': can_reserve,
         'release_message': release_message,
     })
@@ -111,25 +146,47 @@ def seat_select(request, movie_id):
 
     movie = get_object_or_404(Movie, pk=movie_id)
     
+    # デバッグ情報（問題解決後に削除可能）
+    print("=" * 50)
+    print("seat_select - デバッグ情報")
+    print(f"映画: {movie.title} (ID: {movie_id})")
+    print(f"選択された日付: {selected_date}")
+    print(f"選択された時間帯: {time_slot}")
+    print(f"GET parameters: {request.GET}")
+    print("=" * 50)
+    
+    # 公開予定映画のチェック
     if movie.status == 'coming_soon' and movie.release_date:
         if movie.release_date > datetime.today().date():
             messages.error(request, f"この映画は{movie.release_date.strftime('%Y年%m月%d日')}公開予定です。公開日以降にご予約ください。")
             return redirect('movie_detail', movie_id=movie.id)
     
+    # 座席データを取得
     seats = Seat.objects.all()
 
+    # 日付と時間帯のチェック
     if not selected_date or not time_slot:
-        messages.error(request, "上映日または時間帯の情報がありません。")
+        messages.error(request, "上映日または時間帯の情報がありません。映画詳細ページから再度選択してください。")
+        print("エラー: 日付または時間帯が選択されていません")
         return redirect('movie_detail', movie_id=movie.id)
     
+    # 公開予定映画の日付チェック
     if movie.status == 'coming_soon' and movie.release_date:
-        selected_date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
-        if selected_date_obj < movie.release_date:
-            messages.error(request, f"公開日({movie.release_date.strftime('%Y年%m月%d日')})以降の日付を選択してください。")
+        try:
+            selected_date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
+            if selected_date_obj < movie.release_date:
+                messages.error(request, f"公開日({movie.release_date.strftime('%Y年%m月%d日')})以降の日付を選択してください。")
+                return redirect('movie_detail', movie_id=movie.id)
+        except ValueError as e:
+            messages.error(request, "日付の形式が正しくありません。")
+            print(f"日付パースエラー: {e}")
             return redirect('movie_detail', movie_id=movie.id)
 
+    # 上映時間の文字列を作成
     show_time_str = f"{selected_date} {time_slot}"
+    print(f"上映時間文字列: {show_time_str}")
 
+    # 予約済み座席を取得
     reserved_seats = Reservation.objects.filter(
         movie=movie,
         show_time=show_time_str
@@ -139,24 +196,51 @@ def seat_select(request, movie_id):
         r.seat.seat_number for r in Reservation.objects.filter(
             movie=movie,
             show_time=show_time_str
-        )
+        ).select_related('seat')
     )
+    
+    print(f"予約済み座席数: {len(reserved_seats)}")
+    print(f"予約済み座席番号: {reserved_seat_numbers}")
 
+    # 座席レイアウト
     rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     left_cols = [str(i) for i in range(1, 5)]
     center_cols = [str(i) for i in range(5, 17)]
     right_cols = [str(i) for i in range(17, 21)]
     wheelchair_seat_numbers = {'A5', 'A6', 'A15', 'A16'}
 
+    # POST: 座席選択確定
     if request.method == 'POST':
         selected_seat_ids = request.POST.getlist('seats')
+        
+        print(f"選択された座席ID: {selected_seat_ids}")
 
+        if not selected_seat_ids:
+            messages.error(request, "座席を選択してください。")
+            return render(request, 'apps/seat_select.html', {
+                'movie': movie,
+                'seats': seats,
+                'reserved_seats': reserved_seats,
+                'rows': rows,
+                'left_cols': left_cols,
+                'center_cols': center_cols,
+                'right_cols': right_cols,
+                'reserved_seat_numbers': reserved_seat_numbers,
+                'wheelchair_seat_numbers': wheelchair_seat_numbers,
+                'selected_date': selected_date,
+                'time_slot': time_slot,
+            })
+
+        # セッションに保存
         request.session['selected_seats'] = selected_seat_ids
         request.session['selected_datetime'] = show_time_str
         request.session['movie_id'] = movie.id
+        
+        print(f"セッションに保存: seats={selected_seat_ids}, datetime={show_time_str}, movie={movie.id}")
 
         return redirect('purchase_confirm')
 
+    # GET: 座席選択画面を表示
     return render(request, 'apps/seat_select.html', {
         'movie': movie,
         'seats': seats,

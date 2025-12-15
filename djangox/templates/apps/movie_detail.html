@@ -69,6 +69,21 @@
       font-size: 0.9em;
       opacity: 0.9;
     }
+
+    .time-slots-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .no-schedule-message {
+      padding: 15px;
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 5px;
+      color: #856404;
+    }
   </style>
 {% endblock %}
 
@@ -118,29 +133,70 @@
           </button>
         {% else %}
           <!-- 予約可能な場合（上映中 or 公開日以降） -->
-          <form method="get" action="{% url 'seat_select' movie.id %}">
-            <p class="fw-bold">上映日を選択してください：</p>
-            <div class="btn-group flex-wrap" role="group">
-              {% for show in show_dates %}
-                <input type="radio" class="btn-check" name="date" id="date{{ forloop.counter }}" value="{{ show.date }}" data-weekday="{{ show.weekday }}" {% if forloop.first %}checked{% endif %}>
-                <label class="btn btn-outline-primary m-1" for="date{{ forloop.counter }}">{{ show.label }}</label>
-              {% endfor %}
-            </div>
-
-            <div class="mt-4">
-              <p class="fw-bold">上映時間を選択してください：</p>
-              <div id="time-slot-container" class="d-flex flex-wrap gap-2">
-                {% for time in time_slots %}
-                  <input type="radio" class="btn-check" name="time_slot" id="time{{ forloop.counter }}" value="{{ time }}" {% if forloop.first %}checked{% endif %}>
-                  <label class="btn btn-outline-secondary time-label" for="time{{ forloop.counter }}" data-time="{{ time }}">{{ time }}</label>
+          {% if show_dates %}
+            <form method="get" action="{% url 'seat_select' movie.id %}" id="scheduleForm" onsubmit="return validateForm();">
+              <p class="fw-bold">上映日を選択してください：</p>
+              <div class="btn-group flex-wrap" role="group">
+                {% for show in show_dates %}
+                  <input type="radio" class="btn-check date-radio" name="date" id="date{{ forloop.counter }}" 
+                         value="{{ show.date }}" data-weekday="{{ show.weekday }}" 
+                         {% if forloop.first %}checked{% endif %}>
+                  <label class="btn btn-outline-primary m-1" for="date{{ forloop.counter }}">
+                    {{ show.label }}
+                  </label>
                 {% endfor %}
               </div>
-            </div>
 
-            <button type="submit" class="btn btn-success mt-4 px-4">
-              <i class="bi bi-ticket-perforated"></i> 座席を選択する
-            </button>
-          </form>
+              <div class="mt-4">
+                <p class="fw-bold">上映時間を選択してください：</p>
+                <div id="time-slot-container">
+                  {% for show in show_dates %}
+                    <div class="time-slots-group" data-date="{{ show.date }}" 
+                         style="{% if not forloop.first %}display:none;{% endif %}">
+                      {% if show.time_slots %}
+                        {% for slot in show.time_slots %}
+                          <input type="radio" class="btn-check" name="time_slot" 
+                                 id="time_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" 
+                                 value="{{ slot.time }}" 
+                                 {% if forloop.first and forloop.parentloop.first %}checked{% endif %}>
+                          <label class="btn btn-outline-secondary time-label" 
+                                 for="time_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" 
+                                 data-time="{{ slot.time }}">
+                            {{ slot.time }}
+                            {% if slot.screen %}
+                              <br><small class="text-muted">スクリーン{{ slot.screen }}</small>
+                            {% endif %}
+                            {% if slot.format %}
+                              <br><small class="badge bg-info">{{ slot.format }}</small>
+                            {% endif %}
+                          </label>
+                        {% endfor %}
+                      {% else %}
+                        <div class="no-schedule-message">
+                          <i class="bi bi-exclamation-triangle"></i>
+                          この日の上映スケジュールは登録されていません。
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success mt-4 px-4" id="submitBtn">
+                <i class="bi bi-ticket-perforated"></i> 座席を選択する
+              </button>
+            </form>
+          {% elif not show_dates %}
+            <div class="alert alert-warning">
+              <i class="bi bi-calendar-x"></i>
+              現在、この映画の上映スケジュールが登録されていません。
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              <i class="bi bi-calendar-x"></i>
+              現在、上映スケジュールが登録されていません。
+            </div>
+          {% endif %}
         {% endif %}
       </div>
     </div>
@@ -158,47 +214,125 @@
 document.addEventListener("DOMContentLoaded", function () {
   const now = new Date();
 
-  function getSelectedDate() {
-    const selected = document.querySelector('input[name="date"]:checked');
-    return selected ? selected.value : null;
+  // フォーム送信前のバリデーション
+  window.validateForm = function() {
+    const selectedDate = document.querySelector('input[name="date"]:checked');
+    const selectedTimeSlot = document.querySelector('input[name="time_slot"]:checked');
+    
+    console.log('=== フォーム送信デバッグ ===');
+    console.log('選択された日付:', selectedDate ? selectedDate.value : 'なし');
+    console.log('選択された時間:', selectedTimeSlot ? selectedTimeSlot.value : 'なし');
+    
+    if (!selectedDate) {
+      alert('上映日を選択してください。');
+      return false;
+    }
+    
+    if (!selectedTimeSlot) {
+      alert('上映時間を選択してください。');
+      return false;
+    }
+    
+    // 選択された日付のグループを確認
+    const targetGroup = document.querySelector(`.time-slots-group[data-date="${selectedDate.value}"]`);
+    const noScheduleMsg = targetGroup ? targetGroup.querySelector('.no-schedule-message') : null;
+    
+    if (noScheduleMsg) {
+      alert('この日は上映スケジュールが登録されていません。別の日付を選択してください。');
+      return false;
+    }
+    
+    console.log('バリデーション成功 - フォーム送信');
+    return true;
+  };
+
+  // 日付選択時に対応する時間帯を表示
+  const dateRadios = document.querySelectorAll('.date-radio');
+  const timeGroups = document.querySelectorAll('.time-slots-group');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (dateRadios.length > 0 && timeGroups.length > 0) {
+    dateRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        const selectedDate = this.value;
+        
+        // すべての時間帯グループを非表示
+        timeGroups.forEach(group => {
+          group.style.display = 'none';
+        });
+        
+        // 選択された日付の時間帯グループを表示
+        const targetGroup = document.querySelector(`.time-slots-group[data-date="${selectedDate}"]`);
+        if (targetGroup) {
+          targetGroup.style.display = 'flex';
+          
+          // 最初の時間帯を自動選択
+          const firstTimeSlot = targetGroup.querySelector('input[name="time_slot"]');
+          if (firstTimeSlot) {
+            firstTimeSlot.checked = true;
+            if (submitBtn) submitBtn.disabled = false;
+          } else {
+            if (submitBtn) submitBtn.disabled = true;
+          }
+          
+          // 過去の時間帯を無効化
+          disablePastTimeSlots(selectedDate);
+        }
+      });
+    });
+    
+    // 初期表示時の処理
+    const firstDateRadio = document.querySelector('.date-radio:checked');
+    if (firstDateRadio) {
+      const selectedDate = firstDateRadio.value;
+      disablePastTimeSlots(selectedDate);
+    }
   }
 
-  function disablePastTimeSlots() {
-    const selectedDate = getSelectedDate();
+  function disablePastTimeSlots(selectedDate) {
     if (!selectedDate) return;
 
     const todayStr = now.toISOString().split('T')[0]; 
     const isToday = selectedDate === todayStr;
 
-    document.querySelectorAll('.time-label').forEach(label => {
+    const visibleGroup = document.querySelector(`.time-slots-group[data-date="${selectedDate}"]`);
+    if (!visibleGroup) return;
+
+    visibleGroup.querySelectorAll('.time-label').forEach(label => {
       const time = label.dataset.time;
       const input = document.getElementById(label.htmlFor);
+
+      if (!time || !input) return;
 
       label.classList.remove('btn-danger');
       label.classList.add('btn-outline-secondary');
       input.disabled = false;
 
       if (isToday) {
-        const [hour, minute] = time.split(':');
+        // 時間文字列から時刻を抽出（例: "09:00～11:00" → "09:00"）
+        const startTime = time.split('～')[0].trim();
+        const [hour, minute] = startTime.split(':').map(num => parseInt(num));
+        
         const slotTime = new Date();
-        slotTime.setHours(parseInt(hour), parseInt(minute), 0, 0);
+        slotTime.setHours(hour, minute, 0, 0);
 
         if (slotTime < now) {
           input.disabled = true;
           label.classList.remove('btn-outline-secondary');
           label.classList.add('btn-danger');
+          
+          // 無効化した時間帯が選択されていたら、次の有効な時間帯を選択
+          if (input.checked) {
+            input.checked = false;
+            const nextValid = visibleGroup.querySelector('input[name="time_slot"]:not(:disabled)');
+            if (nextValid) {
+              nextValid.checked = true;
+            }
+          }
         }
       }
     });
   }
-
-  // 予約可能な場合のみ実行
-  {% if can_reserve %}
-  disablePastTimeSlots();
-  document.querySelectorAll('input[name="date"]').forEach(radio => {
-    radio.addEventListener('change', disablePastTimeSlots);
-  });
-  {% endif %}
 
   // お気に入り機能
   const favoriteBtn = document.getElementById('favoriteBtn');

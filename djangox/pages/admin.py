@@ -20,17 +20,43 @@ admin.site.site_title = "Cinema 管理"
 admin.site.index_title = "ダッシュボード"
 
 # =====================================
-# Movie関連
+# ShowSchedule Inline（MovieAdminより前に定義）
 # =====================================
 
 class ShowScheduleInline(admin.TabularInline):
+    """映画詳細画面で上映スケジュールを編集できるようにする"""
     model = ShowSchedule
     extra = 1
-    fields = ('date', 'start_time', 'end_time', 'screen', 'format')
-    show_change_link = True
-    verbose_name = "上映スケジュール"
-    verbose_name_plural = "上映スケジュール"
+    fields = ['date', 'start_time', 'end_time', 'screen', 'format']
+    ordering = ['date', 'start_time']
 
+# =====================================
+# ShowSchedule（独立した管理画面）
+# =====================================
+
+@admin.register(ShowSchedule)
+class ShowScheduleAdmin(admin.ModelAdmin):
+    list_display = ['movie', 'date', 'start_time', 'end_time', 'screen', 'format']
+    list_filter = ['date', 'screen', 'movie']
+    search_fields = ['movie__title']
+    date_hierarchy = 'date'
+    ordering = ['date', 'start_time']
+    
+    fieldsets = (
+        ('基本情報', {
+            'fields': ('movie', 'date')
+        }),
+        ('上映時間', {
+            'fields': ('start_time', 'end_time')
+        }),
+        ('その他', {
+            'fields': ('screen', 'format')
+        }),
+    )
+
+# =====================================
+# Movie関連
+# =====================================
 
 class MovieAdminForm(forms.ModelForm):
     """映画登録フォーム（AI自動入力機能付き）"""
@@ -57,7 +83,7 @@ class MovieAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description']
     list_editable = ['status']
     date_hierarchy = 'show_date'
-    inlines = [ShowScheduleInline]
+    inlines = [ShowScheduleInline]  # これでShowScheduleInlineが使えます
     
     fieldsets = (
         ('基本情報', {
@@ -302,7 +328,7 @@ class PointRangeFilter(SimpleListFilter):
 
 
 # =====================================
-# UserProfile（統合版 - 1回のみ登録）
+# UserProfile
 # =====================================
 
 @admin.register(UserProfile)
@@ -599,6 +625,10 @@ class UserCouponAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         """削除権限あり（誤使用の場合のみ）"""
         return request.user.is_superuser
+
+# =====================================
+# Contact
+# =====================================
 
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
