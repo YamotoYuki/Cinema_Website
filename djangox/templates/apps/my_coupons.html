@@ -383,13 +383,13 @@ nav {
             <p class="card-text">{{ coupon.description }}</p>
             
             <div class="discount-badge">
-              {% if coupon.discount_type == 'percentage' %}
-                <i class="bi bi-percent me-1"></i>{{ coupon.discount_value }}%OFF
-              {% elif coupon.discount_type == 'fixed' %}
-                <i class="bi bi-cash-coin me-1"></i>¥{{ coupon.discount_value }}OFF
-              {% else %}
+                {% if coupon.discount_type == 'percentage' %}
+                    {{ coupon.discount_value }}%OFF
+                {% elif coupon.discount_type == 'fixed' %}
+                    ¥{{ coupon.discount_value }}OFF
+                {% else %}
                 <i class="bi bi-award-fill me-1"></i>無料
-              {% endif %}
+                {% endif %}
             </div>
             
             <div class="coupon-info">
