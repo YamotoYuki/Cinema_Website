@@ -85,6 +85,219 @@ h2 {
   margin-left: 15px;
 }
 
+  .completion-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+  }
+  
+  .completion-card {
+    max-width: 650px;
+    width: 100%;
+    background-color: #135034ec; 
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    padding: 40px 30px;
+    color: white;
+  }
+  
+  .success-icon {
+    font-size: 5rem;
+    color: #4ade80;
+    animation: scaleIn 0.5s ease;
+    margin-bottom: 20px;
+  }
+  
+  @keyframes scaleIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  
+  .completion-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .completion-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
+  }
+  
+  .ticket-summary {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .summary-row:last-child {
+    border-bottom: none;
+  }
+  
+  .summary-label {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  
+  .summary-value {
+    font-size: 1.05rem;
+  }
+  
+  .price-detail {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  
+  .original-price-text {
+    text-decoration: line-through;
+    opacity: 0.7;
+    font-size: 0.95rem;
+  }
+  
+  .discount-row {
+    color: #ffeb3b;
+    font-weight: 600;
+  }
+  
+  .final-price-row {
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    padding-top: 10px;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4ade80;
+  }
+  
+  .coupon-badge {
+    display: inline-block;
+    background: rgba(255, 235, 59, 0.2);
+    border: 2px solid #ffeb3b;
+    color: #ffeb3b;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  
+  .download-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+  
+  .download-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  
+  .download-btn-ticket {
+    background: #ffd700;
+    color: #333;
+  }
+  
+  .download-btn-ticket:hover {
+    background: #ffed4e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+  }
+  
+  .download-btn-receipt {
+    background: white;
+    color: #667eea;
+  }
+  
+  .download-btn-receipt:hover {
+    background: #135034; 
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid white;
+    background: transparent;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .action-btn:hover {
+    background: white;
+    color: #667eea;
+    transform: translateY(-2px);
+  }
+  
+  .action-btn-primary {
+    background: white;
+    color: #667eea;
+  }
+  
+  .action-btn-primary:hover {
+    background: #f0f0f0;
+  }
+  
+  @media (max-width: 576px) {
+    .completion-card {
+      padding: 30px 20px;
+    }
+    
+    .completion-title {
+      font-size: 1.5rem;
+    }
+    
+    .download-btn, .action-btn {
+      min-width: 100%;
+    }
+  }
+
 @media (max-width: 576px) {
   .card {
     padding: 2rem 1.5rem;

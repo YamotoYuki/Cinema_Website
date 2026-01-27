@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from .models import Movie, Seat, Reservation, Notification, ChatMessage
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
-import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.contrib import messages
@@ -21,6 +20,14 @@ from django.utils import timezone
 from django.db.models import Count, Q
 import re
 from collections import Counter
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+import qrcode
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+
 
 User = get_user_model()
 
@@ -257,182 +264,10 @@ def seat_select(request, movie_id):
 
 
 @login_required
-def purchase_confirm(request):
-    selected_seat_ids = request.session.get('selected_seats', [])
-    selected_datetime = request.session.get('selected_datetime')
-    movie_id = request.session.get('movie_id')
-
-    if not selected_seat_ids or not selected_datetime or not movie_id:
-        messages.error(request, "選択された座席または日時の情報がありません。")
-        return redirect('movie_list')
-
-    seats = Seat.objects.filter(id__in=selected_seat_ids)
-    seat_numbers = [seat.seat_number for seat in seats]
-    movie = get_object_or_404(Movie, id=movie_id)
-    total_price = movie.price * len(seats)
-    
-    now = timezone.now()
-    available_coupons = Coupon.objects.filter(
-        is_active=True,
-        start_date__lte=now,
-        expiry_date__gte=now,
-        min_purchase__lte=total_price
-    ).exclude(
-        id__in=UserCoupon.objects.filter(user=request.user).values_list('coupon_id', flat=True)
-    )
-
-    if request.method == 'POST':
-        payment_method = request.POST.get('payment_method', 'cash')
-        convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
-        coupon_id = request.POST.get('coupon_id')
-        
-        final_price = total_price
-        used_coupon = None
-        
-        if coupon_id:
-            try:
-                coupon = Coupon.objects.get(id=coupon_id)
-                
-                # 重要：クーポンが既に使用されているかチェック
-                if UserCoupon.objects.filter(user=request.user, coupon=coupon).exists():
-                    messages.error(request, "このクーポンは既に使用済みです。")
-                    return redirect('purchase_confirm')
-                
-                # クーポンが利用可能かチェック
-                now = timezone.now()
-                if not coupon.is_active or coupon.start_date > now or coupon.expiry_date < now:
-                    messages.error(request, "このクーポンは現在利用できません。")
-                    return redirect('purchase_confirm')
-                
-                if total_price < coupon.min_purchase:
-                    messages.error(request, f"このクーポンは¥{coupon.min_purchase}以上のご購入で利用可能です。")
-                    return redirect('purchase_confirm')
-                
-                # 割引計算
-                if coupon.discount_type == 'percentage':
-                    discount = (total_price * coupon.discount_value) / 100
-                    final_price = total_price - discount
-                elif coupon.discount_type == 'fixed':
-                    final_price = max(0, total_price - coupon.discount_value)
-                elif coupon.discount_type == 'free':
-                    final_price = 0
-                
-                used_coupon = coupon
-            except Coupon.DoesNotExist:
-                messages.warning(request, "無効なクーポンです。")
-
-        for seat in seats:
-            if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
-                reservation = Reservation.objects.create(
-                    user=request.user,
-                    movie=movie,
-                    seat=seat,
-                    show_time=selected_datetime,
-                    payment_method=payment_method,
-                    convenience_type=convenience_type,
-                    final_price=final_price  # 割引後の金額を保存
-                )
-                generate_qr_code(reservation)
-                
-                # クーポン使用記録（重要：ここで1回だけ作成）
-                if used_coupon:
-                    try:
-                        UserCoupon.objects.create(
-                            user=request.user,
-                            coupon=used_coupon,
-                            used_at=timezone.now(),
-                            reservation=reservation
-                        )
-                    except IntegrityError:
-                        # unique_togetherで重複エラーが出た場合
-                        messages.error(request, "クーポンは既に使用済みです。")
-                        reservation.delete()
-                        continue
-                
-                # ポイント付与
-                points_earned = 100
-                add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
-
-                Notification.objects.create(
-                    user=request.user,
-                    message=(
-                        f"映画「{movie.title}」のチケットを購入しました。"
-                        f"座席: {seat.seat_number}、上映日時: {selected_datetime}、"
-                        f"支払方法: {payment_method} {convenience_type or ''}"
-                        f"{f'、クーポン適用: {used_coupon.code} (割引後: ¥{int(final_price)})' if used_coupon else ''}"
-                        f"、{points_earned}ポイント獲得！"
-                    )
-                )
-
-        request.session.pop('selected_seats', None)
-        request.session.pop('selected_datetime', None)
-        request.session.pop('movie_id', None)
-        
-        messages.success(request, 'チケットの購入が完了しました！')
-        return redirect('my_reservations')
-
-    return render(request, 'apps/purchase_confirm.html', {
-        'movie': movie,
-        'selected_seat_numbers': seat_numbers,
-        'selected_seat_count': len(seats),
-        'total_price': total_price,
-        'selected_seat_ids': selected_seat_ids,
-        'selected_datetime': selected_datetime,
-        'available_coupons': available_coupons,
-    })
-
-@login_required
 def my_reservations(request):
     reservations = Reservation.objects.filter(user=request.user).order_by('-reserved_at')
     return render(request, 'apps/my_reservations.html', {'reservations': reservations})
 
-@login_required
-@require_POST
-def purchase_complete(request):
-    selected_seat_ids = request.POST.getlist('seats')
-    selected_datetime = request.session.get('selected_datetime')
-    movie_id = request.POST.get('movie_id')
-    movie = get_object_or_404(Movie, id=movie_id)
-    seats = Seat.objects.filter(id__in=selected_seat_ids)
-
-    payment_method = request.POST.get('payment_method', 'cash')
-    convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
-
-    seat_numbers = []
-    for seat in seats:
-        if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
-            reservation = Reservation.objects.create(
-                user=request.user,
-                movie=movie,
-                seat=seat,
-                show_time=selected_datetime,
-                payment_method=payment_method,
-                convenience_type=convenience_type
-            )
-            generate_qr_code(reservation)
-            
-            # ポイント付与
-            points_earned = 100
-            add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
-            
-            Notification.objects.create(
-                user=request.user,
-                message=(
-                    f"映画「{movie.title}」のチケットを購入しました。"
-                    f"座席: {seat.seat_number}、上映日時: {selected_datetime}、"
-                    f"支払方法: {payment_method} {convenience_type or ''}"
-                    f"、{points_earned}ポイント獲得！"
-                )
-            )
-            seat_numbers.append(seat.seat_number)
-
-    total_price = movie.price * len(seat_numbers)
-
-    return render(request, 'apps/purchase_complete.html', {
-        'movie': movie,
-        'selected_seat_numbers': seat_numbers,
-        'total_price': total_price
-    })
 
 @login_required
 def cancel_reservation(request, reservation_id):
@@ -461,6 +296,18 @@ def cancel_reservation(request, reservation_id):
             UserCoupon.objects.filter(reservation=reservation).delete()
         except Exception as e:
             print(f"クーポン削除エラー: {str(e)}")
+        
+        # チケット削除（テーブルが存在する場合のみ）
+        try:
+            from django.db import connection
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pages_ticket'")
+                if cursor.fetchone():
+                    # Ticketテーブルが存在する場合は削除
+                    if hasattr(reservation, 'tickets'):
+                        reservation.tickets.all().delete()
+        except Exception as e:
+            print(f"チケット削除エラー: {str(e)}")
         
         reservation.delete()
 
@@ -1026,6 +873,550 @@ def my_coupons(request):
         'available_coupons': available_coupons,
         'used_coupons': used_coupons
     })
+
+@login_required
+def purchase_confirm(request):
+    """購入確認画面（クーポン完全対応）"""
+    selected_seat_ids = request.session.get('selected_seats', [])
+    selected_datetime = request.session.get('selected_datetime')
+    movie_id = request.session.get('movie_id')
+
+    if not selected_seat_ids or not selected_datetime or not movie_id:
+        messages.error(request, "選択された座席または日時の情報がありません。")
+        return redirect('movie_list')
+
+    seats = Seat.objects.filter(id__in=selected_seat_ids)
+    seat_numbers = [seat.seat_number for seat in seats]
+    movie = get_object_or_404(Movie, id=movie_id)
+    total_price = movie.price * len(seats)
+    
+    now = timezone.now()
+    available_coupons = Coupon.objects.filter(
+        is_active=True,
+        start_date__lte=now,
+        expiry_date__gte=now,
+        min_purchase__lte=total_price
+    ).exclude(
+        id__in=UserCoupon.objects.filter(user=request.user).values_list('coupon_id', flat=True)
+    )
+
+    if request.method == 'POST':
+        payment_method = request.POST.get('payment_method', 'cash')
+        convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
+        coupon_id = request.POST.get('coupon_id')
+        
+        # 元の金額
+        original_price = float(total_price)
+        final_price = original_price
+        discount_amount = 0
+        used_coupon = None
+        
+        # クーポン適用処理
+        if coupon_id:
+            try:
+                coupon = Coupon.objects.get(id=coupon_id)
+                
+                # クーポンが既に使用されているかチェック
+                if UserCoupon.objects.filter(user=request.user, coupon=coupon).exists():
+                    messages.error(request, "このクーポンは既に使用済みです。")
+                    return redirect('purchase_confirm')
+                
+                # クーポンが利用可能かチェック
+                now = timezone.now()
+                if not coupon.is_active or coupon.start_date > now or coupon.expiry_date < now:
+                    messages.error(request, "このクーポンは現在利用できません。")
+                    return redirect('purchase_confirm')
+                
+                if original_price < coupon.min_purchase:
+                    messages.error(request, f"このクーポンは¥{coupon.min_purchase}以上のご購入で利用可能です。")
+                    return redirect('purchase_confirm')
+                
+                # 割引計算
+                if coupon.discount_type == 'percentage':
+                    discount_amount = (original_price * coupon.discount_value) / 100
+                    final_price = original_price - discount_amount
+                elif coupon.discount_type == 'fixed':
+                    discount_amount = float(coupon.discount_value)
+                    final_price = max(0, original_price - discount_amount)
+                elif coupon.discount_type == 'free':
+                    discount_amount = original_price
+                    final_price = 0
+                
+                used_coupon = coupon
+            except Coupon.DoesNotExist:
+                messages.warning(request, "無効なクーポンです。")
+
+        # 予約作成（各座席ごと）
+        created_reservations = []
+        
+        for seat in seats:
+            if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
+                reservation = Reservation.objects.create(
+                    user=request.user,
+                    movie=movie,
+                    seat=seat,
+                    show_time=selected_datetime,
+                    payment_method=payment_method,
+                    convenience_type=convenience_type,
+                    # ★ クーポン情報を保存 ★
+                    original_price=float(movie.price),  # 座席1つ分の元の金額
+                    discount_amount=discount_amount / len(seats) if discount_amount > 0 else 0,  # 割引を座席数で分割
+                    final_price=final_price / len(seats) if final_price > 0 else 0,  # 最終金額を座席数で分割
+                    applied_coupon=used_coupon  # ★ クーポンオブジェクトを保存 ★
+                )
+                generate_qr_code(reservation)
+                created_reservations.append(reservation)
+                
+                # ポイント付与
+                points_earned = 100
+                add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
+                
+                # 通知作成（最初の予約のみ）
+                if len(created_reservations) == 1:
+                    notification_msg = (
+                        f"映画「{movie.title}」のチケットを購入しました。\n"
+                        f"座席: {', '.join(seat_numbers)}\n"
+                        f"上映日時: {selected_datetime}\n"
+                        f"支払方法: {payment_method}"
+                    )
+                    
+                    if used_coupon:
+                        notification_msg += f"\nクーポン適用: {used_coupon.title} (-¥{int(discount_amount):,})"
+                    
+                    notification_msg += f"\n合計: ¥{int(final_price):,}"
+                    notification_msg += f"\n{points_earned * len(seats)}ポイント獲得！"
+                    
+                    Notification.objects.create(
+                        user=request.user,
+                        message=notification_msg
+                    )
+        
+        # クーポン使用記録（1回だけ作成）
+        if used_coupon and created_reservations:
+            try:
+                UserCoupon.objects.create(
+                    user=request.user,
+                    coupon=used_coupon,
+                    reservation=created_reservations[0]  # 最初の予約に紐付け
+                )
+                used_coupon.used_count += 1
+                used_coupon.save()
+            except IntegrityError:
+                messages.error(request, "クーポンは既に使用済みです。")
+
+        # セッションクリア
+        if created_reservations:
+            request.session['last_reservation_id'] = created_reservations[0].id
+        
+        request.session.pop('selected_seats', None)
+        request.session.pop('selected_datetime', None)
+        request.session.pop('movie_id', None)
+        
+        messages.success(request, 'チケットの購入が完了しました！')
+        return redirect('my_reservations')
+
+    return render(request, 'apps/purchase_confirm.html', {
+        'movie': movie,
+        'selected_seat_numbers': seat_numbers,
+        'selected_seat_count': len(seats),
+        'total_price': total_price,
+        'selected_seat_ids': selected_seat_ids,
+        'selected_datetime': selected_datetime,
+        'available_coupons': available_coupons,
+    })
+
+
+@login_required
+@require_POST
+def purchase_complete(request):
+    selected_seat_ids = request.POST.getlist('seats')
+    selected_datetime = request.session.get('selected_datetime')
+    movie_id = request.POST.get('movie_id')
+    movie = get_object_or_404(Movie, id=movie_id)
+    seats = Seat.objects.filter(id__in=selected_seat_ids)
+
+    payment_method = request.POST.get('payment_method', 'cash')
+    convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
+
+    # 最初の予約を保存（PDFリンク用）
+    first_reservation = None
+    seat_numbers = []
+    
+    for seat in seats:
+        if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
+            reservation = Reservation.objects.create(
+                user=request.user,
+                movie=movie,
+                seat=seat,
+                show_time=selected_datetime,
+                payment_method=payment_method,
+                convenience_type=convenience_type
+            )
+            generate_qr_code(reservation)
+            
+            # 最初の予約を保存
+            if first_reservation is None:
+                first_reservation = reservation
+            
+            # ポイント付与
+            points_earned = 100
+            add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
+            
+            Notification.objects.create(
+                user=request.user,
+                message=(
+                    f"映画「{movie.title}」のチケットを購入しました。"
+                    f"座席: {seat.seat_number}、上映日時: {selected_datetime}、"
+                    f"支払方法: {payment_method} {convenience_type or ''}"
+                    f"、{points_earned}ポイント獲得！"
+                )
+            )
+            seat_numbers.append(seat.seat_number)
+
+    # 合計金額の計算（クーポン考慮）
+    if first_reservation and first_reservation.final_price > 0:
+        total_price = first_reservation.final_price * len(seat_numbers)
+    else:
+        total_price = movie.price * len(seat_numbers)
+    
+    # セッションに予約IDを保存
+    if first_reservation:
+        request.session['last_reservation_id'] = first_reservation.id
+
+    return render(request, 'apps/purchase_complete.html', {
+        'movie': movie,
+        'selected_seat_numbers': seat_numbers,
+        'total_price': total_price,
+        'reservation': first_reservation,  # 追加
+        'all_reservations': Reservation.objects.filter(
+            user=request.user,
+            movie=movie,
+            show_time=selected_datetime
+        ) if first_reservation else [],
+        'tickets': []
+    })
+
+try:
+    pdfmetrics.registerFont(UnicodeCIDFont('HeiseiMin-W3'))  # 明朝体
+    pdfmetrics.registerFont(UnicodeCIDFont('HeiseiKakuGo-W5'))  # ゴシック体
+    JAPANESE_FONT_AVAILABLE = True
+except:
+    JAPANESE_FONT_AVAILABLE = False
+
+
+@login_required
+def download_ticket_pdf(request, reservation_id):
+    """チケットPDF - 日本語対応（IPAフォント使用）"""
+    try:
+        reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+        
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        
+        # ===== 背景 =====
+        p.setFillColor(colors.HexColor('#1a1a2e'))
+        p.rect(0, height - 150*mm, width, 150*mm, fill=1, stroke=0)
+        
+        # ===== タイトル =====
+        p.setFillColor(colors.white)
+        p.setFont('Helvetica-Bold', 32)
+        p.drawCentredString(width/2, height - 25*mm, 'HAL CINEMA')
+        
+        if JAPANESE_FONT_AVAILABLE:
+            p.setFont('HeiseiKakuGo-W5', 16)
+            p.drawCentredString(width/2, height - 35*mm, '映画チケット')
+        else:
+            p.setFont('Helvetica-Bold', 18)
+            p.drawCentredString(width/2, height - 35*mm, 'MOVIE TICKET')
+        
+        # ===== 区切り線 =====
+        p.setStrokeColor(colors.HexColor('#ffd700'))
+        p.setLineWidth(2)
+        p.line(40*mm, height - 42*mm, width - 40*mm, height - 42*mm)
+        
+        # ===== 映画情報 =====
+        y_pos = height - 55*mm
+        
+        if JAPANESE_FONT_AVAILABLE:
+            # 日本語版
+            p.setFont('HeiseiKakuGo-W5', 12)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, '映画:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('HeiseiMin-W3', 12)
+            p.drawString(60*mm, y_pos, reservation.movie.title[:40])
+            
+            y_pos -= 10*mm
+            p.setFont('HeiseiKakuGo-W5', 11)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, '上映日時:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('HeiseiMin-W3', 11)
+            p.drawString(60*mm, y_pos, str(reservation.show_time))
+            
+            y_pos -= 10*mm
+            p.setFont('HeiseiKakuGo-W5', 11)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, 'スクリーン:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('HeiseiMin-W3', 11)
+            theater = reservation.movie.theater or 'Screen 1'
+            p.drawString(60*mm, y_pos, theater)
+            
+            # 座席
+            y_pos -= 15*mm
+            p.setFont('HeiseiKakuGo-W5', 12)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, '座席番号:')
+            
+            y_pos -= 8*mm
+            p.setFont('HeiseiMin-W3', 14)
+            p.setFillColor(colors.white)
+            p.drawString(40*mm, y_pos, reservation.seat.seat_number)
+            
+            # 料金
+            y_pos -= 15*mm
+            p.setStrokeColor(colors.white)
+            p.setLineWidth(1)
+            p.line(35*mm, y_pos, width - 35*mm, y_pos)
+            
+            y_pos -= 10*mm
+            p.setFont('HeiseiKakuGo-W5', 14)
+            p.setFillColor(colors.HexColor('#4ade80'))
+            p.drawString(35*mm, y_pos, '料金:')
+            p.drawRightString(width - 35*mm, y_pos, f'¥{int(reservation.movie.price):,}')
+            
+        else:
+            # 英語版（フォールバック）
+            p.setFont('Helvetica-Bold', 12)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, 'Movie:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('Helvetica', 12)
+            p.drawString(65*mm, y_pos, reservation.movie.title[:40])
+            
+            y_pos -= 10*mm
+            p.setFont('Helvetica-Bold', 11)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, 'Date & Time:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('Helvetica', 11)
+            p.drawString(65*mm, y_pos, str(reservation.show_time))
+            
+            y_pos -= 10*mm
+            p.setFont('Helvetica-Bold', 11)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, 'Theater:')
+            
+            p.setFillColor(colors.white)
+            p.setFont('Helvetica', 11)
+            theater = reservation.movie.theater or 'Screen 1'
+            p.drawString(65*mm, y_pos, theater)
+            
+            y_pos -= 15*mm
+            p.setFont('Helvetica-Bold', 12)
+            p.setFillColor(colors.HexColor('#ffd700'))
+            p.drawString(35*mm, y_pos, 'Seat:')
+            
+            y_pos -= 8*mm
+            p.setFont('Helvetica', 14)
+            p.setFillColor(colors.white)
+            p.drawString(40*mm, y_pos, reservation.seat.seat_number)
+            
+            y_pos -= 15*mm
+            p.setStrokeColor(colors.white)
+            p.setLineWidth(1)
+            p.line(35*mm, y_pos, width - 35*mm, y_pos)
+            
+            y_pos -= 10*mm
+            p.setFont('Helvetica-Bold', 14)
+            p.setFillColor(colors.HexColor('#4ade80'))
+            p.drawString(35*mm, y_pos, 'Price:')
+            p.drawRightString(width - 35*mm, y_pos, f'JPY {int(reservation.movie.price):,}')
+        
+        # ===== QRコード =====
+        try:
+            qr_data = (
+                f"HAL CINEMA\n"
+                f"予約ID: {reservation.id}\n"
+                f"映画: {reservation.movie.title}\n"
+                f"座席: {reservation.seat.seat_number}\n"
+                f"日時: {reservation.show_time}"
+            )
+            
+            qr = qrcode.QRCode(version=1, box_size=10, border=2)
+            qr.add_data(qr_data)
+            qr.make(fit=True)
+            qr_img = qr.make_image(fill_color="black", back_color="white")
+            
+            qr_buffer = BytesIO()
+            qr_img.save(qr_buffer, format='PNG')
+            qr_buffer.seek(0)
+            
+            p.drawImage(qr_buffer, width - 65*mm, height - 125*mm, 50*mm, 50*mm)
+        except Exception as e:
+            print(f"QRコード生成エラー: {str(e)}")
+        
+        # ===== フッター =====
+        p.setFillColor(colors.grey)
+        
+        if JAPANESE_FONT_AVAILABLE:
+            p.setFont('HeiseiMin-W3', 8)
+            p.drawCentredString(width/2, 25*mm, 
+                               f'予約番号: {reservation.id} | HAL CINEMA をご利用いただきありがとうございます')
+            p.drawCentredString(width/2, 20*mm, '入場時にこのチケットをご提示ください')
+            p.drawCentredString(width/2, 15*mm, f'購入者: {request.user.username}')
+        else:
+            p.setFont('Helvetica', 8)
+            p.drawCentredString(width/2, 25*mm, 
+                               f'Reservation ID: {reservation.id} | Thank you for choosing HAL CINEMA')
+            p.drawCentredString(width/2, 20*mm, 'Please present this ticket at the entrance')
+            p.drawCentredString(width/2, 15*mm, f'Customer: {request.user.username}')
+        
+        p.showPage()
+        p.save()
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="HAL_CINEMA_Ticket_{reservation.id}.pdf"'
+        
+        return response
+        
+    except Exception as e:
+        return JsonResponse({'error': f'エラー: {str(e)}'}, status=500)
+
+
+@login_required
+def download_receipt_pdf(request, reservation_id):
+    """領収書PDF - 日本語対応（IPAフォント使用）"""
+    try:
+        reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+        
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        
+        # ===== タイトル =====
+        if JAPANESE_FONT_AVAILABLE:
+            p.setFont('HeiseiKakuGo-W5', 36)
+            p.drawCentredString(width/2, height - 30*mm, '領 収 書')
+            
+            p.setFont('HeiseiKakuGo-W5', 14)
+            p.drawCentredString(width/2, height - 40*mm, 'RECEIPT')
+        else:
+            p.setFont('Helvetica-Bold', 36)
+            p.drawCentredString(width/2, height - 30*mm, 'RECEIPT')
+        
+        # ===== 罫線 =====
+        p.setStrokeColor(colors.black)
+        p.setLineWidth(2)
+        p.line(30*mm, height - 48*mm, width - 30*mm, height - 48*mm)
+        
+        # ===== 宛名 =====
+        y_pos = height - 60*mm
+        font_name = 'HeiseiMin-W3' if JAPANESE_FONT_AVAILABLE else 'Helvetica'
+        p.setFont(font_name, 14)
+        p.drawString(30*mm, y_pos, f'{request.user.username} 様')
+        
+        # ===== 金額 =====
+        amount = int(reservation.movie.price)
+        y_pos -= 20*mm
+        font_bold = 'HeiseiKakuGo-W5' if JAPANESE_FONT_AVAILABLE else 'Helvetica-Bold'
+        p.setFont(font_bold, 20)
+        p.drawString(30*mm, y_pos, f'金額: ¥{amount:,}')
+        
+        # ===== 但し書き =====
+        y_pos -= 18*mm
+        p.setFont(font_name, 12)
+        p.drawString(30*mm, y_pos, '但し、映画チケット代として')
+        p.drawString(30*mm, y_pos - 7*mm, '上記正に領収いたしました。')
+        
+        # ===== 明細 =====
+        y_pos -= 25*mm
+        p.setFont(font_bold, 13)
+        p.drawString(30*mm, y_pos, '【内訳】')
+        
+        y_pos -= 10*mm
+        p.setFont(font_name, 11)
+        
+        p.drawString(35*mm, y_pos, f'映画名: {reservation.movie.title[:35]}')
+        y_pos -= 7*mm
+        
+        p.drawString(35*mm, y_pos, f'上映日時: {reservation.show_time}')
+        y_pos -= 7*mm
+        
+        p.drawString(35*mm, y_pos, f'座席: {reservation.seat.seat_number}')
+        y_pos -= 7*mm
+        
+        p.drawString(35*mm, y_pos, 'チケット枚数: 1枚')
+        p.drawRightString(width - 35*mm, y_pos, f'@ ¥{amount:,}')
+        y_pos -= 10*mm
+        
+        # ===== 小計線 =====
+        p.setLineWidth(0.5)
+        p.line(30*mm, y_pos, width - 30*mm, y_pos)
+        y_pos -= 8*mm
+        
+        # ===== 合計 =====
+        p.setFont(font_bold, 13)
+        p.drawString(35*mm, y_pos, '合計金額')
+        p.drawRightString(width - 35*mm, y_pos, f'¥{amount:,}')
+        
+        # ===== 発行情報 =====
+        y_pos -= 25*mm
+        p.setFont(font_name, 9)
+        
+        current_date = timezone.now().strftime("%Y年%m月%d日")
+        p.drawString(30*mm, y_pos, f'発行日: {current_date}')
+        p.drawString(30*mm, y_pos - 6*mm, f'予約番号: {reservation.id}')
+        
+        payment_display = '現金'
+        if hasattr(reservation, 'get_payment_method_display'):
+            payment_display = reservation.get_payment_method_display()
+        p.drawString(30*mm, y_pos - 12*mm, f'支払方法: {payment_display}')
+        
+        # ===== 会社情報 =====
+        p.drawRightString(width - 30*mm, y_pos, 'HAL CINEMA 株式会社')
+        p.drawRightString(width - 30*mm, y_pos - 6*mm, '〒123-4567')
+        p.drawRightString(width - 30*mm, y_pos - 12*mm, '愛知県名古屋市中村区名駅南1丁目10-1')
+        p.drawRightString(width - 30*mm, y_pos - 18*mm, 'HAL名古屋')
+        p.drawRightString(width - 30*mm, y_pos - 24*mm, 'TEL: 052-123-4567')
+        
+        # ===== 注意事項 =====
+        p.setFont(font_name, 7)
+        p.drawString(30*mm, 30*mm, '※本領収書は再発行できません。大切に保管してください。')
+        p.drawString(30*mm, 25*mm, '※領収書の内容に誤りがある場合は、お早めにお問い合わせください。')
+        
+        # ===== 社印 =====
+        try:
+            p.setStrokeColor(colors.red)
+            p.setLineWidth(2)
+            p.circle(width - 45*mm, height - 75*mm, 12*mm, stroke=1, fill=0)
+            
+            p.setFillColor(colors.red)
+            p.setFont(font_bold, 9)
+            p.drawCentredString(width - 45*mm, height - 73*mm, 'HAL CINEMA')
+            p.drawCentredString(width - 45*mm, height - 79*mm, '株式会社')
+        except Exception as e:
+            print(f"社印描画エラー: {str(e)}")
+        
+        p.showPage()
+        p.save()
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="HAL_CINEMA_Receipt_{reservation.id}.pdf"'
+        
+        return response
+        
+    except Exception as e:
+        return JsonResponse({'error': f'エラー: {str(e)}'}, status=500)
 
 @login_required
 def home_page(request):

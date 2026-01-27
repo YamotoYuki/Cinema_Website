@@ -7,6 +7,7 @@ from django.contrib.admin import SimpleListFilter
 from pages.models import Contact
 from django.conf import settings
 import requests
+from .models import Ticket
 import json
 
 from .models import (
@@ -649,3 +650,10 @@ class ContactAdmin(admin.ModelAdmin):
             'fields': ('is_read', 'created_at')
         }),
     )
+
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ('ticket_number', 'reservation', 'ticket_type', 'price', 'issued_at', 'is_used')
+    list_filter = ('ticket_type', 'is_used', 'issued_at')
+    search_fields = ('ticket_number', 'reservation__user__username', 'reservation__movie__title')
+    readonly_fields = ('ticket_number', 'issued_at')

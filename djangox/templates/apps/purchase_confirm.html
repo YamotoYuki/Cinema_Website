@@ -5,65 +5,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
-<style>
-  .coupon-section {
-    background-color: #1350348e; 
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 25px;
-    color: white;
-  }
-  
-  .coupon-select {
-    background: white;
-    border: 2px solid #ffcc00;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 1rem;
-    width: 100%;
-    color: #333;
-  }
-  
-  .discount-info {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 15px;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-  
-  .discount-info i {
-    font-size: 1.3rem;
-    margin-right: 8px;
-  }
-  
-  .price-breakdown {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 15px;
-  }
-  
-  .price-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .price-row:last-child {
-    border-bottom: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #28a745;
-  }
-  
-  .original-price {
-    text-decoration: line-through;
-    color: #999;
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -80,7 +21,73 @@
 
     <p><strong>選択された座席:</strong> {{ selected_seat_numbers|join:", " }}</p>
     <p><strong>座席数:</strong> {{ selected_seat_count }} 席</p>
-    <p><strong>単価:</strong> ¥{{ movie.price|floatformat:"0" }}</p>
+
+    <!-- 料金区分選択セクション -->
+    <div class="ticket-type-section">
+      <h5 class="mb-3">
+        <i class="bi bi-ticket-detailed-fill me-2"></i>
+        チケット種別を選択してください
+      </h5>
+      
+      <div class="ticket-type-row">
+        <span class="ticket-type-label">一般</span>
+        <span class="ticket-type-price">¥1,900</span>
+        <div class="ticket-quantity">
+          <button type="button" class="quantity-btn" data-type="general" data-action="minus">-</button>
+          <span class="quantity-display" id="qty-general">0</span>
+          <button type="button" class="quantity-btn" data-type="general" data-action="plus">+</button>
+        </div>
+      </div>
+      
+      <div class="ticket-type-row">
+        <span class="ticket-type-label">大学生・専門学生</span>
+        <span class="ticket-type-price">¥1,500</span>
+        <div class="ticket-quantity">
+          <button type="button" class="quantity-btn" data-type="student" data-action="minus">-</button>
+          <span class="quantity-display" id="qty-student">0</span>
+          <button type="button" class="quantity-btn" data-type="student" data-action="plus">+</button>
+        </div>
+      </div>
+      
+      <div class="ticket-type-row">
+        <span class="ticket-type-label">高校生以下</span>
+        <span class="ticket-type-price">¥1,000</span>
+        <div class="ticket-quantity">
+          <button type="button" class="quantity-btn" data-type="youth" data-action="minus">-</button>
+          <span class="quantity-display" id="qty-youth">0</span>
+          <button type="button" class="quantity-btn" data-type="youth" data-action="plus">+</button>
+        </div>
+      </div>
+      
+      <div class="ticket-type-row">
+        <span class="ticket-type-label">シニア（60歳以上）</span>
+        <span class="ticket-type-price">¥1,200</span>
+        <div class="ticket-quantity">
+          <button type="button" class="quantity-btn" data-type="senior" data-action="minus">-</button>
+          <span class="quantity-display" id="qty-senior">0</span>
+          <button type="button" class="quantity-btn" data-type="senior" data-action="plus">+</button>
+        </div>
+      </div>
+      
+      <div class="ticket-type-row">
+        <span class="ticket-type-label">障がい者割引</span>
+        <span class="ticket-type-price">¥1,000</span>
+        <div class="ticket-quantity">
+          <button type="button" class="quantity-btn" data-type="disability" data-action="minus">-</button>
+          <span class="quantity-display" id="qty-disability">0</span>
+          <button type="button" class="quantity-btn" data-type="disability" data-action="plus">+</button>
+        </div>
+      </div>
+      
+      <div id="seatMismatchWarning" class="seat-mismatch-warning" style="display: none;">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>注意:</strong> 選択された座席数とチケット枚数が一致していません。
+        <div class="mt-2">
+          <strong>座席数:</strong> <span id="warningSeatsCount">0</span>席 / 
+          <strong>チケット:</strong> <span id="warningTicketsCount">0</span>枚
+        </div>
+      </div>
+    </div>
 
     <!-- クーポン選択セクション -->
     {% if available_coupons %}
@@ -116,9 +123,10 @@
 
     <!-- 金額表示 -->
     <div class="price-breakdown">
+      <div class="price-row" id="priceDetailRow"></div>
       <div class="price-row">
         <span>小計:</span>
-        <span id="subtotal">¥{{ total_price|floatformat:"0" }}</span>
+        <span id="subtotal">¥0</span>
       </div>
       <div class="price-row" id="discountRow" style="display: none;">
         <span style="color: #dc3545;">
@@ -129,16 +137,17 @@
       </div>
       <div class="price-row">
         <span>合計金額:</span>
-        <span id="finalTotal">¥{{ total_price|floatformat:"0" }}</span>
+        <span id="finalTotal">¥0</span>
       </div>
     </div>
 
     <hr>
 
-    <form method="post" action="{% url 'purchase_complete' %}">
+    <form method="post" action="{% url 'purchase_complete' %}" id="purchaseForm">
       {% csrf_token %}
       <input type="hidden" name="movie_id" value="{{ movie.id }}">
       <input type="hidden" name="coupon_id" id="selectedCouponId" value="">
+      <input type="hidden" name="ticket_types" id="ticketTypesInput" value="">
       {% for seat_id in selected_seat_ids %}
         <input type="hidden" name="seats" value="{{ seat_id }}">
       {% endfor %}
@@ -204,7 +213,7 @@
         </label>
       </div>
 
-      <button type="submit" class="btn btn-success mt-3">購入を確定する</button>
+      <button type="submit" class="btn btn-success mt-3" id="submitBtn" disabled>購入を確定する</button>
     </form>
 
     <div class="mt-3">
@@ -215,6 +224,153 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // 料金設定
+  const ticketPrices = {
+    general: 1900,
+    student: 1500,
+    youth: 1000,
+    senior: 1200,
+    disability: 1000
+  };
+  
+  const ticketLabels = {
+    general: '一般',
+    student: '大学生・専門学生',
+    youth: '高校生以下',
+    senior: 'シニア',
+    disability: '障がい者割引'
+  };
+  
+  const ticketQuantities = {
+    general: 0,
+    student: 0,
+    youth: 0,
+    senior: 0,
+    disability: 0
+  };
+  
+  const selectedSeatsCount = {{ selected_seat_count }};
+  
+  // 数量ボタンの処理
+  document.querySelectorAll('.quantity-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const type = this.dataset.type;
+      const action = this.dataset.action;
+      const display = document.getElementById(`qty-${type}`);
+      
+      if (action === 'plus') {
+        const total = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
+        if (total < selectedSeatsCount) {
+          ticketQuantities[type]++;
+        }
+      } else if (action === 'minus' && ticketQuantities[type] > 0) {
+        ticketQuantities[type]--;
+      }
+      
+      display.textContent = ticketQuantities[type];
+      updatePriceDisplay();
+      checkSeatMatch();
+    });
+  });
+  
+  function updatePriceDisplay() {
+    let subtotal = 0;
+    let detailHTML = '';
+    
+    for (const [type, qty] of Object.entries(ticketQuantities)) {
+      if (qty > 0) {
+        const price = ticketPrices[type] * qty;
+        subtotal += price;
+        detailHTML += `<div style="display: flex; justify-content: space-between; padding: 4px 0;">
+          <span>${ticketLabels[type]} × ${qty}</span>
+          <span>¥${price.toLocaleString()}</span>
+        </div>`;
+      }
+    }
+    
+    document.getElementById('priceDetailRow').innerHTML = detailHTML;
+    document.getElementById('subtotal').textContent = `¥${subtotal.toLocaleString()}`;
+    
+    // クーポン適用を再計算
+    applyCouponDiscount(subtotal);
+    
+    // Hidden inputに保存
+    document.getElementById('ticketTypesInput').value = JSON.stringify(ticketQuantities);
+  }
+  
+  function checkSeatMatch() {
+    const totalTickets = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
+    const warning = document.getElementById('seatMismatchWarning');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    document.getElementById('warningSeatsCount').textContent = selectedSeatsCount;
+    document.getElementById('warningTicketsCount').textContent = totalTickets;
+    
+    if (totalTickets !== selectedSeatsCount) {
+      warning.style.display = 'block';
+      submitBtn.disabled = true;
+    } else {
+      warning.style.display = 'none';
+      submitBtn.disabled = false;
+    }
+  }
+  
+  // クーポン処理
+  const couponSelect = document.getElementById('couponSelect');
+  if (couponSelect) {
+    couponSelect.addEventListener('change', function() {
+      const subtotalText = document.getElementById('subtotal').textContent.replace(/[¥,]/g, '');
+      const subtotal = parseFloat(subtotalText);
+      applyCouponDiscount(subtotal);
+    });
+  }
+  
+  function applyCouponDiscount(subtotal) {
+    const couponSelect = document.getElementById('couponSelect');
+    if (!couponSelect) return;
+    
+    const selected = couponSelect.options[couponSelect.selectedIndex];
+    const discountInfo = document.getElementById('discountInfo');
+    const discountText = document.getElementById('discountText');
+    const discountRow = document.getElementById('discountRow');
+    const discountAmount = document.getElementById('discountAmount');
+    const finalTotal = document.getElementById('finalTotal');
+    const selectedCouponId = document.getElementById('selectedCouponId');
+    
+    if (couponSelect.value && subtotal > 0) {
+      const type = selected.dataset.type;
+      const value = parseFloat(selected.dataset.value);
+      let discount = 0;
+      let finalPrice = subtotal;
+      
+      if (type === 'percentage') {
+        discount = Math.floor((subtotal * value) / 100);
+        finalPrice = subtotal - discount;
+        discountText.textContent = `${value}%割引が適用されました！ ¥${discount.toLocaleString()}お得！`;
+      } else if (type === 'fixed') {
+        discount = value;
+        finalPrice = Math.max(0, subtotal - discount);
+        discountText.textContent = `¥${discount.toLocaleString()}割引が適用されました！`;
+      } else if (type === 'free') {
+        discount = subtotal;
+        finalPrice = 0;
+        discountText.textContent = '無料クーポンが適用されました！';
+      }
+      
+      discountInfo.style.display = 'block';
+      discountRow.style.display = 'flex';
+      discountAmount.textContent = `-¥${discount.toLocaleString()}`;
+      finalTotal.textContent = `¥${finalPrice.toLocaleString()}`;
+      selectedCouponId.value = couponSelect.value;
+    } else {
+      discountInfo.style.display = 'none';
+      discountRow.style.display = 'none';
+      finalTotal.textContent = `¥${subtotal.toLocaleString()}`;
+      selectedCouponId.value = '';
+    }
+  }
+  
+  // 支払い方法の処理
   const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
   const convenienceOptionsContainer = document.getElementById('convenienceOptions');
   const convenienceOptionsInputs = convenienceOptionsContainer.querySelectorAll('input[name="convenience_type"]');
@@ -241,56 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   toggleConvenienceOptions();
-
-  // クーポン選択処理
-  const couponSelect = document.getElementById('couponSelect');
-  if (couponSelect) {
-    const totalPrice = {{ total_price }};
-    
-    couponSelect.addEventListener('change', function() {
-      const selected = this.options[this.selectedIndex];
-      const discountInfo = document.getElementById('discountInfo');
-      const discountText = document.getElementById('discountText');
-      const discountRow = document.getElementById('discountRow');
-      const discountAmount = document.getElementById('discountAmount');
-      const finalTotal = document.getElementById('finalTotal');
-      const selectedCouponId = document.getElementById('selectedCouponId');
-      
-      if (this.value) {
-        const type = selected.dataset.type;
-        const value = parseFloat(selected.dataset.value);
-        let discount = 0;
-        let finalPrice = totalPrice;
-        
-        if (type === 'percentage') {
-          discount = Math.floor((totalPrice * value) / 100);
-          finalPrice = totalPrice - discount;
-          discountText.textContent = `${value}%割引が適用されました！ ¥${discount.toLocaleString()}お得！`;
-        } else if (type === 'fixed') {
-          discount = value;
-          finalPrice = Math.max(0, totalPrice - discount);
-          discountText.textContent = `¥${discount.toLocaleString()}割引が適用されました！`;
-        } else if (type === 'free') {
-          discount = totalPrice;
-          finalPrice = 0;
-          discountText.textContent = '無料クーポンが適用されました！';
-        }
-        
-        // 表示を更新
-        discountInfo.style.display = 'block';
-        discountRow.style.display = 'flex';
-        discountAmount.textContent = `-¥${discount.toLocaleString()}`;
-        finalTotal.textContent = `¥${finalPrice.toLocaleString()}`;
-        selectedCouponId.value = this.value;
-      } else {
-        // クーポン未選択
-        discountInfo.style.display = 'none';
-        discountRow.style.display = 'none';
-        finalTotal.textContent = `¥${totalPrice.toLocaleString()}`;
-        selectedCouponId.value = '';
-      }
-    });
-  }
+  checkSeatMatch();
 });
 </script>
 

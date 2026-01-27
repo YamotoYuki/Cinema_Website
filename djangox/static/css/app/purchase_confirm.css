@@ -208,6 +208,143 @@ nav {
   filter: drop-shadow(0 0 3px #28a745);
 }
 
+  .coupon-section {
+    background-color: #1350349c; 
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    color: white;
+  }
+  
+  .ticket-type-section {
+    background-color: #135034ec; 
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    color: white;
+  }
+  
+.ticket-type-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 160px;
+  align-items: center;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  background-color: #3f6b55;
+  border-radius: 12px;
+}
+
+.ticket-type-label {
+  color: #fff;
+  font-weight: 600;
+}
+  
+  .ticket-type-price {
+    color: #ffd700;
+    font-weight: bold;
+    margin: 0 15px;
+  }
+  
+  .ticket-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .quantity-btn {
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    color: #667eea;
+    transition: all 0.2s;
+  }
+  
+  .quantity-btn:hover {
+    background: #ffd700;
+    color: #333;
+  }
+  
+  .quantity-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  .quantity-display {
+    background: white;
+    color: #333;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+  }
+  
+  .coupon-select {
+    background: white;
+    border: 2px solid #ffcc00;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    width: 100%;
+    color: #333;
+  }
+  
+  .discount-info {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .discount-info i {
+    font-size: 1.3rem;
+    margin-right: 8px;
+  }
+  
+  .price-breakdown {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .price-row:last-child {
+    border-bottom: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+  }
+  
+  .seat-mismatch-warning {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    color: #856404;
+  }
+
 @media (max-width: 600px) {
   .payment-option, .convenience-option {
     flex-wrap: wrap;

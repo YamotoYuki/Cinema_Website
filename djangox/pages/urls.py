@@ -45,7 +45,10 @@ urlpatterns = [
     path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history'),
     path('my_profile/', views.my_profile, name='my_profile'),
     path('point-history/', views.point_history, name='point_history'),
-    path('my-coupons/', views.my_coupons, name='my_coupons')
+    path('my-coupons/', views.my_coupons, name='my_coupons'),
+    path('complete/', views.purchase_complete, name='purchase_complete'),
+    path('ticket-pdf/<int:reservation_id>/', views.download_ticket_pdf, name='download_ticket_pdf'),
+    path('receipt-pdf/<int:reservation_id>/', views.download_receipt_pdf, name='download_receipt_pdf'),
 ]
 
 if settings.DEBUG:
