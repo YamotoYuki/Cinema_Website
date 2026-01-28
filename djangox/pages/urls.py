@@ -22,8 +22,8 @@ urlpatterns = [
     path('movielist/', views.movie_list, name='movie_list'),
     path('movie/<int:movie_id>/', views.movie_detail, name='movie_detail'),
     path('movie/<int:movie_id>/seats/', views.seat_select, name='seat_select'),
-    path('confirm/', views.purchase_confirm, name='purchase_confirm'),
-    path('complete/', views.purchase_complete, name='purchase_complete'),
+    path('purchase/confirm/', views.purchase_confirm, name='purchase_confirm'),  # ← 修正
+    path('purchase/complete/', views.purchase_complete, name='purchase_complete'),  # ← 1つに統一
     path('my_reservations/', views.my_reservations, name='my_reservations'),
     path('reservation/<int:reservation_id>/cancel/', views.cancel_reservation, name='cancel_reservation'),
     path('account/edit/', views.account_edit, name='account_edit'),
@@ -46,9 +46,8 @@ urlpatterns = [
     path('my_profile/', views.my_profile, name='my_profile'),
     path('point-history/', views.point_history, name='point_history'),
     path('my-coupons/', views.my_coupons, name='my_coupons'),
-    path('complete/', views.purchase_complete, name='purchase_complete'),
-    path('ticket-pdf/<int:reservation_id>/', views.download_ticket_pdf, name='download_ticket_pdf'),
-    path('receipt-pdf/<int:reservation_id>/', views.download_receipt_pdf, name='download_receipt_pdf'),
+    path('download-ticket/<int:reservation_id>/', views.download_ticket_pdf, name='download_ticket_pdf'),
+    path('download-receipt/<int:reservation_id>/', views.download_receipt_pdf, name='download_receipt_pdf'),
 ]
 
 if settings.DEBUG:

@@ -143,7 +143,7 @@
 
     <hr>
 
-    <form method="post" action="{% url 'purchase_complete' %}" id="purchaseForm">
+    <form method="post" id="purchaseForm">
       {% csrf_token %}
       <input type="hidden" name="movie_id" value="{{ movie.id }}">
       <input type="hidden" name="coupon_id" id="selectedCouponId" value="">
