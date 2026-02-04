@@ -1,0 +1,819 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}マイプロフィール - HALCinema{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Cinzel', serif;
+}
+
+.container {
+  max-width: 960px;
+  margin: 50px auto;
+  padding: 30px 15px;;
+  color: #fff;
+  background: rgba(12, 12, 12, 0.781);
+  border-radius: 12px;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+h2 {
+  text-align: center;
+  color: #ffcc00;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+.profile-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.fade-in-text {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-img.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.fade-in-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s;
+}
+
+
+.ticket-info {
+  background: rgba(0, 50, 0, 0.7);
+  border-left: 5px solid #f0c471;
+  padding: 1.5rem 1.5rem 1.5rem 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  color: #fff;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.ticket-info p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.ticket-info p strong {
+  color: #ffcc00;
+  font-weight: 700;
+}
+
+.ticket-info p + p {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 767px) {
+  .ticket-info {
+    padding: 1rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  animation: slideIn 1s ease-out forwards;
+}
+
+.custom-navbar {
+  background-color: #135034; 
+  color: #fff;
+}
+
+.nav-item,
+.nav-link{
+  display: flex;
+}
+
+.nav-item {
+  position: relative;
+  text-decoration: none;
+  font-weight: 500;
+}
+ 
+.custom-navbar .navbar-brand {
+  color: #fff !important;
+  text-shadow: 0 0 10px #ffffff88; 
+}
+
+.custom-navbar .navbar-brand:hover {
+  color: #b7b7b7; 
+}
+
+.nav-link {
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 2px 5px 0 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 3px;
+  width: 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+  transition: width 0.4s ease;
+}
+
+.nav-link:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+
+.roboto-slab-nav {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.logo-img {
+  height: 30px;
+  width: auto;
+  margin: 0 80px 2px 0;
+  transform: scale(2);
+  transform-origin: left center;
+}
+
+.footer {
+  margin-top: 100px;
+  padding: 5px 0 5px;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  background-color: rgba(8, 96, 33, 0.533);
+  color: #ffffff;
+  box-sizing: border-box;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+  .profile-container {
+    max-width: 1400px;
+    margin: 80px auto 50px;
+    padding: 0 20px;
+  }
+
+  /* プロフィールヘッダー - モダンなデザイン */
+  .profile-header {
+    background: linear-gradient(135deg, #135034 0%, #1a7a50 100%);
+    border-radius: 20px;
+    padding: 40px;
+    color: white;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(19, 80, 52, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 204, 0, 0.15) 0%, transparent 70%);
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #ffcc00;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+  }
+
+  .membership-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: #ffcc00;
+    color: #135034;
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+  }
+
+  /* カードデザイン */
+  .info-card {
+    background: rgba(30, 30, 30, 0.9) !important;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 204, 0, 0.1);
+    transition: all 0.3s ease;
+    color: #fff;
+  }
+
+  .info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255, 204, 0, 0.2);
+    border-color: rgba(255, 204, 0, 0.3);
+  }
+
+  .info-card h5 {
+    color: #ffcc00;
+    margin-bottom: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+  }
+
+  /* ポイント表示 */
+  .points-display {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 15px;
+    color: #135034;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(255, 204, 0, 0.3);
+  }
+
+  .points-number {
+    font-size: 3rem;
+    font-weight: bold;
+    display: block;
+  }
+
+  /* 統計ボックス */
+  .stat-box {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #135034 0%, #1a7a50 100%);
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(19, 80, 52, 0.3);
+  }
+
+  .stat-box:hover {
+    transform: scale(1.05);
+  }
+
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: bold;
+    display: block;
+    color: #ffcc00;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+
+  /* プログレスバー */
+  .progress {
+    height: 25px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 12px;
+    transition: width 1s ease;
+    font-weight: 600;
+    color: #135034;
+  }
+
+  /* お気に入り映画カード */
+  .favorites-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding-bottom: 15px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ffcc00 rgba(0,0,0,0.3);
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar {
+    height: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #ffcc00 0%, #ff9500 100%);
+    border-radius: 10px;
+  }
+
+  .favorites-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #ff9500 0%, #ffcc00 100%);
+  }
+
+  .favorite-movie-wrapper {
+    display: inline-block;
+    width: 280px;
+    margin-right: 20px;
+    vertical-align: top;
+    white-space: normal;
+  }
+
+  .favorite-movie-wrapper:last-child {
+    margin-right: 0;
+  }
+
+  .favorite-movie-card {
+    background: rgba(40, 40, 40, 0.95);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+    position: relative;
+  }
+
+  .favorite-movie-card:hover {
+    transform: translateY(-8px);
+    border-color: #ffcc00;
+    box-shadow: 0 15px 40px rgba(255, 204, 0, 0.4);
+  }
+
+  .favorite-movie-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .favorite-movie-card:hover .favorite-movie-img {
+    transform: scale(1.05);
+  }
+
+  .favorite-movie-body {
+    padding: 20px;
+    background: linear-gradient(to bottom, rgba(40, 40, 40, 0.98), rgba(20, 20, 20, 0.98));
+  }
+
+  .favorite-movie-title {
+    color: #ffcc00;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    min-height: 2.8em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .favorite-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .remove-favorite-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(220, 53, 69, 0.95);
+    border: 2px solid white;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    font-size: 1.1rem;
+  }
+
+  .remove-favorite-btn:hover {
+    background: #dc3545;
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
+  }
+
+  /* アクティビティ */
+  .activity-item {
+    display: flex;
+    align-items: start;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: rgba(40, 40, 40, 0.5);
+    border-radius: 10px;
+    border-left: 3px solid #ffcc00;
+    transition: all 0.3s ease;
+  }
+
+  .activity-item:hover {
+    background: rgba(40, 40, 40, 0.8);
+    transform: translateX(5px);
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    background: #ffcc00;
+    color: #135034;
+  }
+
+  /* ジャンル統計 */
+  .genre-item {
+    padding: 15px;
+    background: rgba(40, 40, 40, 0.5);
+    border-left: 4px solid #ffcc00;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+
+  .genre-bar {
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .genre-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffcc00 0%, #ff9500 100%);
+    transition: width 0.5s ease;
+  }
+
+  /* 空の状態 */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .empty-state i {
+    font-size: 3.5rem;
+    color: rgba(255, 204, 0, 0.3);
+    margin-bottom: 15px;
+  }
+
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    .profile-header {
+      padding: 25px;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .stat-number {
+      font-size: 1.8rem;
+    }
+    
+    .points-number {
+      font-size: 2.5rem;
+    }
+
+    .favorite-movie-img {
+      height: 300px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <!-- プロフィールヘッダー -->
+  <div class="profile-header">
+    <div class="row align-items-center">
+      <div class="col-md-3 text-center mb-3 mb-md-0">
+        {% if user.userprofile.profile_image %}
+          <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-avatar">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-avatar">
+        {% endif %}
+        <h2 class="mt-3 mb-0" style="position: relative; z-index: 1; color: #ffcc00;">{{ user.username }}</h2>
+      </div>
+      <div class="col-md-6">
+        <p class="mb-2" style="position: relative; z-index: 1;">
+          <i class="bi bi-envelope-fill me-2"></i>{{ user.email }}
+        </p>
+        {% if user.userprofile.phone_number %}
+        <p class="mb-2" style="position: relative; z-index: 1;">
+          <i class="bi bi-telephone-fill me-2"></i>{{ user.userprofile.phone_number }}
+        </p>
+        {% endif %}
+        <p class="mb-3" style="position: relative; z-index: 1;">
+          <i class="bi bi-clock-fill me-2"></i>会員歴: {{ membership_days }}日
+        </p>
+        <span class="membership-badge">
+          <i class="bi bi-star-fill"></i>
+          {% if membership_level == 'standard' %}スタンダード会員
+          {% elif membership_level == 'gold' %}ゴールド会員
+          {% elif membership_level == 'platinum' %}プラチナ会員
+          {% endif %}
+        </span>
+      </div>
+      <div class="col-md-3 text-center">
+        <a href="{% url 'account_edit' %}" class="btn btn-warning btn-lg" style="position: relative; z-index: 1; font-weight: 600;">
+          <i class="bi bi-pencil-square me-2"></i>編集
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- 左カラム -->
+    <div class="col-lg-4">
+      <!-- ポイント表示 -->
+      <div class="info-card">
+        <h5><i class="bi bi-coin"></i>保有ポイント</h5>
+        <div class="points-display">
+          <span class="points-number">{{ user_points }}</span>
+          <span style="font-size: 1.1rem; font-weight: 600;">ポイント</span>
+        </div>
+        
+        {% if membership_level != 'platinum' %}
+        <div style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+          <div class="d-flex justify-content-between mb-2">
+            <span><strong>次のレベルまで</strong></span>
+            <span><strong style="color: #ffcc00;">{{ points_to_next_level }}</strong> ポイント</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" 
+                 style="width: {{ progress_percentage }}%;" 
+                 aria-valuenow="{{ progress_percentage }}" 
+                 aria-valuemin="0" aria-valuemax="100">
+              {{ progress_percentage|floatformat:0 }}%
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="text-center mt-3">
+          <div class="badge" style="background: #ffcc00; color: #135034; font-size: 1rem; padding: 10px 20px;">
+            <i class="bi bi-trophy-fill me-2"></i>最高ランク達成！
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- 統計情報 -->
+      <div class="info-card">
+        <h5><i class="bi bi-graph-up"></i>利用統計</h5>
+        <div class="stat-box">
+          <span class="stat-number">{{ total_reservations }}</span>
+          <span class="stat-label">総予約数</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number">{{ watched_movies }}</span>
+          <span class="stat-label">視聴済み作品</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number">{{ upcoming_reservations }}</span>
+          <span class="stat-label">予定中の予約</span>
+        </div>
+      </div>
+
+      <!-- お気に入りジャンル -->
+      <div class="info-card">
+        <h5><i class="bi bi-heart-fill"></i>お気に入りジャンル</h5>
+        <div class="text-center py-3">
+          <div class="badge" style="background: linear-gradient(135deg, #135034 0%, #1a7a50 100%); color: #ffcc00; font-size: 1.2rem; padding: 12px 25px; border-radius: 25px;">
+            {{ favorite_genre }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右カラム -->
+    <div class="col-lg-8">
+      <!-- お気に入り映画 -->
+      <div class="info-card">
+        <h5><i class="bi bi-star-fill"></i>お気に入り映画</h5>
+        <div id="favorite-movies-container" class="favorites-scroll-container">
+          <!-- JavaScriptで動的に読み込み -->
+        </div>
+      </div>
+
+      <!-- 最近のアクティビティ -->
+      <div class="info-card">
+        <h5><i class="bi bi-clock-history"></i>最近のアクティビティ</h5>
+        {% if recent_activities %}
+          {% for activity in recent_activities %}
+          <div class="activity-item">
+            <div class="activity-icon">
+              {% if activity.type == 'reservation' %}
+                <i class="bi bi-ticket-perforated-fill"></i>
+              {% else %}
+                <i class="bi bi-film"></i>
+              {% endif %}
+            </div>
+            <div class="flex-grow-1">
+              <div><strong>{{ activity.title }}</strong></div>
+              <small style="color: rgba(255,255,255,0.6);">{{ activity.date|date:"Y年n月j日 H:i" }}</small>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-hourglass-split"></i>
+            <p>まだアクティビティがありません</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- ジャンル統計 -->
+      <div class="info-card">
+        <h5><i class="bi bi-bar-chart-fill"></i>ジャンル別視聴統計</h5>
+        {% if genre_stats %}
+          {% for stat in genre_stats %}
+          <div class="genre-item">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>{{ stat.name }}</strong>
+              <span class="badge" style="background: #ffcc00; color: #135034;">{{ stat.count }}作品 ({{ stat.percentage }}%)</span>
+            </div>
+            <div class="genre-bar">
+              <div class="genre-bar-fill" style="width: {{ stat.percentage }}%;"></div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-pie-chart"></i>
+            <p>まだ視聴統計がありません</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  loadFavoriteMovies();
+});
+
+async function loadFavoriteMovies() {
+  const container = document.getElementById('favorite-movies-container');
+  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  
+  if (favorites.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.5);">
+        <i class="bi bi-star" style="font-size: 3.5rem; color: rgba(255, 204, 0, 0.3); margin-bottom: 15px; display: block;"></i>
+        <p>お気に入りの映画がまだありません</p>
+        <small style="color: rgba(255,255,255,0.5);">映画ページでハートボタンを押してお気に入りに追加しましょう</small>
+      </div>
+    `;
+    return;
+  }
+  
+  // ローディング表示
+  container.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner-border text-warning" role="status"></div></div>';
+  
+  try {
+    // 各お気に入り映画の情報をlocalStorageから取得
+    const moviePromises = favorites.map(async (movieId) => {
+      const movieDataKey = `movie_${movieId}`;
+      const movieData = localStorage.getItem(movieDataKey);
+      
+      if (movieData) {
+        return JSON.parse(movieData);
+      } else {
+        // データがない場合はデフォルト情報を返す
+        return {
+          id: movieId,
+          title: `映画 #${movieId}`,
+          image_url: '/static/images/noimage.jpg'
+        };
+      }
+    });
+    
+    const movies = await Promise.all(moviePromises);
+    
+    // 映画カードを横スクロール用に表示
+    container.innerHTML = movies.map(movie => `
+      <div class="favorite-movie-wrapper">
+        <div class="favorite-movie-card position-relative">
+          <button class="remove-favorite-btn" onclick="removeFavorite('${movie.id}'); event.stopPropagation();" title="お気に入りから削除">
+            <i class="bi bi-x-lg"></i>
+          </button>
+          <a href="/movie/${movie.id}/" style="text-decoration: none; color: inherit; display: block;">
+            <img src="${movie.image_url || '/static/images/noimage.jpg'}" 
+                 class="favorite-movie-img" 
+                 alt="${movie.title}"
+                 onerror="this.src='/static/images/noimage.jpg'">
+            <div class="favorite-movie-body">
+              <div class="favorite-movie-title" title="${movie.title}">${movie.title}</div>
+              <div class="mt-2">
+                <span class="favorite-badge">
+                  <i class="bi bi-heart-fill"></i>
+                  お気に入り
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error('お気に入り映画の読み込みエラー:', error);
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: rgba(255, 255, 255, 0.5);">
+        <i class="bi bi-exclamation-triangle" style="font-size: 3.5rem; color: rgba(255, 204, 0, 0.3); margin-bottom: 15px; display: block;"></i>
+        <p>お気に入り映画の読み込みに失敗しました</p>
+      </div>
+    `;
+  }
+}
+
+function removeFavorite(movieId) {
+  if (confirm('この映画をお気に入りから削除しますか？')) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const newFavorites = favorites.filter(id => id !== movieId);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+    loadFavoriteMovies();
+    
+    // お気に入りボタンの状態を更新するイベントを発火
+    window.dispatchEvent(new CustomEvent('favoriteChanged', { detail: { movieId } }));
+  }
+}
+</script>
+{% endblock %}

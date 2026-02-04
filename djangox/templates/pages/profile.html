@@ -1,0 +1,502 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}マイプロフィール - HALCinema{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .profile-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 50px;
+    color: white;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .profile-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 8s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.3; }
+  }
+  
+  .profile-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 5px solid white;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .membership-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .membership-standard {
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    color: #1a1a2e;
+  }
+  
+  .membership-gold {
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    color: #1a1a2e;
+  }
+  
+  .membership-platinum {
+    background: linear-gradient(135deg, #834d9b 0%, #d04ed6 100%);
+    color: white;
+  }
+  
+  .info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+  }
+  
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  }
+  
+  .info-card h5 {
+    color: #667eea;
+    margin-bottom: 25px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.3rem;
+  }
+  
+  .stat-box {
+    text-align: center;
+    padding: 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+  }
+  
+  .stat-box:hover {
+    transform: scale(1.05);
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .stat-label {
+    font-size: 1rem;
+    opacity: 0.95;
+  }
+  
+  .points-display {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 15px;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .points-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    display: block;
+  }
+  
+  .progress-section {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-top: 15px;
+  }
+  
+  .progress {
+    height: 30px;
+    border-radius: 15px;
+    background: #e9ecef;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .progress-bar {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    transition: width 1s ease;
+    font-weight: bold;
+  }
+  
+  .genre-item {
+    padding: 15px;
+    background: white;
+    border-left: 4px solid #667eea;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .genre-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  
+  .genre-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.5s ease;
+  }
+  
+  .activity-item {
+    display: flex;
+    align-items: start;
+    padding: 15px;
+    margin-bottom: 12px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .activity-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+  }
+  
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  
+  .activity-reservation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .activity-watched {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  
+  .coupon-card {
+    border: 2px dashed #667eea;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .coupon-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .coupon-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .coupon-card:hover {
+    border-color: #764ba2;
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+  }
+  
+  .coupon-discount {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #dc3545;
+    text-align: center;
+  }
+  
+  .badge-custom {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: #6c757d;
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <!-- プロフィールヘッダー -->
+  <div class="profile-header">
+    <div class="row align-items-center">
+      <div class="col-md-2 text-center mb-3 mb-md-0">
+        {% if user.userprofile.profile_image %}
+          <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-avatar">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-avatar">
+        {% endif %}
+      </div>
+      <div class="col-md-7">
+        <h2 class="mb-3" style="position: relative; z-index: 1;">{{ user.username }}</h2>
+        <p class="mb-2" style="position: relative; z-index: 1;">
+          <i class="bi bi-envelope-fill me-2"></i>{{ user.email }}
+        </p>
+        {% if user.userprofile.phone_number %}
+        <p class="mb-2" style="position: relative; z-index: 1;">
+          <i class="bi bi-telephone-fill me-2"></i>{{ user.userprofile.phone_number }}
+        </p>
+        {% endif %}
+        {% if user.userprofile.birth_date %}
+        <p class="mb-3" style="position: relative; z-index: 1;">
+          <i class="bi bi-calendar-fill me-2"></i>{{ user.userprofile.birth_date|date:"Y年n月j日" }}
+        </p>
+        {% endif %}
+        <p class="mb-3" style="position: relative; z-index: 1;">
+          <i class="bi bi-clock-fill me-2"></i>会員歴: {{ membership_days }}日
+        </p>
+        <span class="membership-badge membership-{{ membership_level }}">
+          <i class="bi bi-star-fill"></i>
+          {% if membership_level == 'standard' %}スタンダード会員
+          {% elif membership_level == 'gold' %}ゴールド会員
+          {% elif membership_level == 'platinum' %}プラチナ会員
+          {% endif %}
+        </span>
+      </div>
+      <div class="col-md-3 text-center">
+        <a href="{% url 'account_edit' %}" class="btn btn-light btn-lg" style="position: relative; z-index: 1;">
+          <i class="bi bi-pencil-square me-2"></i>編集
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- 左カラム -->
+    <div class="col-lg-4">
+      <!-- ポイント表示 -->
+      <div class="info-card">
+        <h5><i class="bi bi-coin"></i>保有ポイント</h5>
+        <div class="points-display">
+          <span class="points-number">{{ user_points }}</span>
+          <span style="font-size: 1.2rem;">ポイント</span>
+        </div>
+        
+        <!-- レベルアップ進捗 -->
+        {% if membership_level != 'platinum' %}
+        <div class="progress-section">
+          <div class="d-flex justify-content-between mb-2">
+            <span><strong>次のレベルまで</strong></span>
+            <span><strong>{{ points_to_next_level }}</strong> ポイント</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" 
+                 style="width: {{ progress_percentage }}%;" 
+                 aria-valuenow="{{ progress_percentage }}" 
+                 aria-valuemin="0" aria-valuemax="100">
+              {{ progress_percentage|floatformat:0 }}%
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="text-center mt-3">
+          <div class="badge bg-warning text-dark" style="font-size: 1rem; padding: 10px 20px;">
+            <i class="bi bi-trophy-fill me-2"></i>最高ランク達成！
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- 統計情報 -->
+      <div class="info-card">
+        <h5><i class="bi bi-graph-up"></i>利用統計</h5>
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="stat-box">
+              <span class="stat-number">{{ total_reservations }}</span>
+              <span class="stat-label">総予約数</span>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="stat-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+              <span class="stat-number">{{ watched_movies }}</span>
+              <span class="stat-label">視聴済み作品</span>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="stat-box" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+              <span class="stat-number">{{ upcoming_reservations }}</span>
+              <span class="stat-label">予定中の予約</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- お気に入りジャンル -->
+      <div class="info-card">
+        <h5><i class="bi bi-heart-fill"></i>お気に入りジャンル</h5>
+        <div class="text-center py-3">
+          <div class="badge badge-custom" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 1.2rem;">
+            {{ favorite_genre }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右カラム -->
+    <div class="col-lg-8">
+      <!-- 最近のアクティビティ -->
+      <div class="info-card">
+        <h5><i class="bi bi-clock-history"></i>最近のアクティビティ</h5>
+        {% if recent_activities %}
+          {% for activity in recent_activities %}
+          <div class="activity-item">
+            <div class="activity-icon activity-{{ activity.type }}">
+              {% if activity.type == 'reservation' %}
+                <i class="bi bi-ticket-perforated-fill"></i>
+              {% else %}
+                <i class="bi bi-film"></i>
+              {% endif %}
+            </div>
+            <div class="flex-grow-1">
+              <div><strong>{{ activity.title }}</strong></div>
+              <small class="text-muted">{{ activity.date|date:"Y年n月j日 H:i" }}</small>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-hourglass-split"></i>
+            <p>まだアクティビティがありません</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- ジャンル統計 -->
+      <div class="info-card">
+        <h5><i class="bi bi-bar-chart-fill"></i>ジャンル別視聴統計</h5>
+        {% if genre_stats %}
+          {% for stat in genre_stats %}
+          <div class="genre-item">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>{{ stat.name }}</strong>
+              <span class="badge bg-primary">{{ stat.count }}作品 ({{ stat.percentage }}%)</span>
+            </div>
+            <div class="genre-bar">
+              <div class="genre-bar-fill" style="width: {{ stat.percentage }}%;"></div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-pie-chart"></i>
+            <p>まだ視聴統計がありません</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- 利用可能なクーポン -->
+      <div class="info-card">
+        <h5><i class="bi bi-ticket-perforated"></i>利用可能なクーポン</h5>
+        {% if available_coupons %}
+          {% for coupon in available_coupons %}
+          <div class="coupon-card">
+            <div class="row align-items-center">
+              <div class="col-md-3 text-center">
+                <div class="coupon-discount">{{ coupon.description }}</div>
+              </div>
+              <div class="col-md-6">
+                <h6 class="mb-1"><strong>{{ coupon.title }}</strong></h6>
+                <small class="text-muted">
+                  <i class="bi bi-calendar-event me-1"></i>
+                  有効期限: {{ coupon.expiry_date|date:"Y年n月j日" }}
+                </small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a href="{% url 'movie_list' %}" class="btn btn-primary btn-sm">
+                  <i class="bi bi-arrow-right-circle me-1"></i>使用する
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-ticket"></i>
+            <p>現在、利用可能なクーポンはありません</p>
+            <small class="text-muted">映画を視聴してクーポンをゲットしよう！</small>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

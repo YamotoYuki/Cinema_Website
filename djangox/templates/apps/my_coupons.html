@@ -1,0 +1,475 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}マイクーポン - HALCinema{% endblock %}
+
+{% block extra_css %}
+<style>
+body {
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Cinzel', serif;
+}
+
+.fade-in-text {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-img.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.fade-in-text.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s;
+}
+
+.container2 {
+  max-width: 960px;
+  margin: 50px auto;
+  padding: 30px 15px;;
+  color: #fff;
+  background: rgba(12, 12, 12, 0.781);
+}
+
+h2 {
+  text-align: center;
+  color: #ffcc00;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+h4 {
+  color: #ffcc00;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-left: 15px;
+  border-left: 4px solid #ffcc00;
+}
+
+/* クーポンカード */
+.coupon-card {
+  background: linear-gradient(135deg, rgba(19, 80, 52, 0.95) 0%, rgba(26, 122, 80, 0.95) 100%);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 204, 0, 0.3);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.coupon-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 204, 0, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.coupon-card:hover {
+  transform: translateY(-5px);
+  border-color: #ffcc00;
+  box-shadow: 0 10px 30px rgba(255, 204, 0, 0.3);
+}
+
+.coupon-card .card-body {
+  padding: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.coupon-card .card-title {
+  color: #ffcc00;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+}
+
+.coupon-card .card-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.discount-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+  color: #135034;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
+}
+
+.coupon-info {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.coupon-info p {
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.coupon-info strong {
+  color: #ffcc00;
+}
+
+/* 使用済みクーポン */
+.used-coupon-item {
+  background: rgba(40, 40, 40, 0.9);
+  border-left: 4px solid #999;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.used-coupon-item:hover {
+  background: rgba(50, 50, 50, 0.95);
+  transform: translateX(5px);
+}
+
+.used-coupon-item h6 {
+  color: #ccc;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.used-coupon-item small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+/* 空の状態 */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(30, 30, 30, 0.7);
+  border-radius: 15px;
+  margin-top: 20px;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  color: rgba(255, 204, 0, 0.3);
+  margin-bottom: 20px;
+}
+
+.empty-state p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* セクション区切り */
+.section-divider {
+  margin: 50px 0 30px;
+  position: relative;
+}
+
+/* アニメーション */
+@keyframes fadeZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h4 {
+    font-size: 1.3rem;
+  }
+  
+  .coupon-card .card-body {
+    padding: 20px;
+  }
+  
+  .discount-badge {
+    font-size: 1rem;
+    padding: 6px 15px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ticket-info {
+    padding: 1rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  animation: slideIn 1s ease-out forwards;
+}
+
+.custom-navbar {
+  background-color: #135034; 
+  color: #fff;
+}
+
+.nav-item,
+.nav-link{
+  display: flex;
+}
+
+.nav-item {
+  position: relative;
+  text-decoration: none;
+  font-weight: 500;
+}
+ 
+.custom-navbar .navbar-brand {
+  color: #fff !important;
+  text-shadow: 0 0 10px #ffffff88; 
+}
+
+.custom-navbar .navbar-brand:hover {
+  color: #b7b7b7; 
+}
+
+.nav-link {
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 2px 5px 0 0;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 3px;
+  width: 0;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+  transition: width 0.4s ease;
+}
+
+.nav-link:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+
+.roboto-slab-nav {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.logo-img {
+  height: 30px;
+  width: auto;
+  margin: 0 80px 2px 0;
+  transform: scale(2);
+  transform-origin: left center;
+}
+
+.footer {
+  margin-top: 100px;
+  padding: 5px 0 5px;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  background-color: rgba(8, 96, 33, 0.533);
+  color: #ffffff;
+  box-sizing: border-box;
+  animation: fadeZoomIn 0.9s ease-out both;
+}
+
+.footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container2 py-5">
+  <h2>
+    <i class="bi bi-ticket-perforated-fill me-3"></i>
+    マイクーポン
+  </h2>
+  
+  <!-- 利用可能なクーポン -->
+  <div class="section-divider">
+    <h4>
+      <i class="bi bi-star-fill me-2"></i>
+      利用可能なクーポン
+    </h4>
+  </div>
+  
+  {% if available_coupons %}
+    <div class="row">
+      {% for coupon in available_coupons %}
+      <div class="col-md-6 mb-4">
+        <div class="card coupon-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-gift-fill me-2"></i>
+              {{ coupon.title }}
+            </h5>
+            <p class="card-text">{{ coupon.description }}</p>
+            
+            <div class="discount-badge">
+              {% if coupon.discount_type == 'percentage' %}
+                <i class="bi bi-percent me-1"></i>{{ coupon.discount_value }}%OFF
+              {% elif coupon.discount_type == 'fixed' %}
+                <i class="bi bi-cash-coin me-1"></i>¥{{ coupon.discount_value }}OFF
+              {% else %}
+                <i class="bi bi-award-fill me-1"></i>無料
+              {% endif %}
+            </div>
+            
+            <div class="coupon-info">
+              <p>
+                <i class="bi bi-calendar-event me-2"></i>
+                <strong>有効期限:</strong> {{ coupon.expiry_date|date:"Y年m月d日" }}
+              </p>
+              <p>
+                <i class="bi bi-cart-check me-2"></i>
+                <strong>最小購入金額:</strong> ¥{{ coupon.min_purchase|floatformat:0 }}
+              </p>
+              <p>
+                <i class="bi bi-hash me-2"></i>
+                <strong>残り使用回数:</strong> {{ coupon.max_uses|add:"-"|add:coupon.used_count }} / {{ coupon.max_uses }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-inbox"></i>
+      <p>利用可能なクーポンがありません</p>
+      <small style="color: rgba(255,255,255,0.5);">新しいクーポンが発行されるとここに表示されます</small>
+    </div>
+  {% endif %}
+  
+  <!-- 使用済みクーポン -->
+  <div class="section-divider">
+    <h4>
+      <i class="bi bi-clock-history me-2"></i>
+      使用済みクーポン
+    </h4>
+  </div>
+  
+  {% if used_coupons %}
+    <div class="list-group">
+      {% for user_coupon in used_coupons %}
+      <div class="used-coupon-item">
+        <h6>
+          <i class="bi bi-check-circle-fill me-2" style="color: #999;"></i>
+          {{ user_coupon.coupon.title }}
+        </h6>
+        <small>
+          <i class="bi bi-calendar-check me-1"></i>
+          使用日: {{ user_coupon.used_at|date:"Y年m月d日 H:i" }}
+        </small>
+        {% if user_coupon.reservation %}
+        <br>
+        <small>
+          <i class="bi bi-film me-1"></i>
+          使用映画: {{ user_coupon.reservation.movie.title }}
+        </small>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-hourglass-split"></i>
+      <p>使用済みクーポンがありません</p>
+      <small style="color: rgba(255,255,255,0.5);">クーポンを使用すると履歴がここに表示されます</small>
+    </div>
+  {% endif %}
+  
+  <!-- 戻るボタン -->
+  <div class="text-center mt-5">
+    <a href="{% url 'my_profile' %}" class="btn btn-lg" 
+       style="background: linear-gradient(135deg, #135034 0%, #1a7a50 100%); 
+              color: #ffcc00; 
+              border: none; 
+              font-weight: 600;
+              padding: 12px 40px;
+              border-radius: 10px;
+              box-shadow: 0 5px 20px rgba(19, 80, 52, 0.3);">
+      <i class="bi bi-arrow-left me-2"></i>
+      プロフィールに戻る
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,14 +1,14 @@
 body {
-    background-image: url('/static/images/wallpaper.jpg'); 
-    background-size: cover;          
-    background-position: center;    
-    background-repeat: no-repeat;    
-    background-attachment: fixed;  
-    color: #fff;                    
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    font-family: 'Cinzel', serif;
+  background-image: url('/static/images/wallpaper.jpg'); 
+  background-size: cover;          
+  background-position: center;    
+  background-repeat: no-repeat;    
+  background-attachment: fixed;  
+  color: #fff;                    
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Cinzel', serif;
 }
 
 .container {

@@ -4,35 +4,50 @@
 {% block title %}アカウント削除{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/app/account.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app/account_delete.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="account-delete-container d-flex gap-2">
-  <h2 style="color: #f0c471;">アカウント削除</h2>
-  <p>本当にアカウントを削除しますか？この垢は元に戻せません</p>
+<div class="account-delete-container">
+  <h2>アカウント削除</h2>
+  <p>
+    本当にアカウントを削除しますか？<br>
+    <strong>この操作は元に戻せません。</strong><br>
+    全てのデータが完全に削除されます。
+  </p>
 
-  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
-    削除する
-  </button>
-  <a href="{% url 'home' %}" class="btn btn-secondary ms-2">キャンセル</a>
+  <div class="d-flex">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+      削除する
+    </button>
+    <a href="{% url 'home' %}" class="btn btn-secondary">キャンセル</a>
+  </div>
 </div>
 
+<!-- 確認モーダル -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteConfirmModalLabel">アカウント削除</h5>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          最終確認
+        </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
       </div>
-      <div class="modal-body text-center text-dark fw-bold">
-        本当にアカウントを削除しますか？<br>このアカウントは元に戻せません。
+      <div class="modal-body">
+        本当にアカウントを削除しますか？<br>
+        <strong>このアカウントは元に戻せません。</strong>
       </div>
       <div class="modal-footer justify-content-center">
         <form method="post">
           {% csrf_token %}
-          <button type="submit" class="btn custom-OK-btn">OK</button>
-          <button type="button" class="btn custom-cancel-btn" data-bs-dismiss="modal">戻る</button>
+          <button type="submit" class="btn custom-OK-btn">
+            <i class="bi bi-trash-fill me-2"></i>削除実行
+          </button>
+          <button type="button" class="btn custom-cancel-btn" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-2"></i>キャンセル
+          </button>
         </form>
       </div>
     </div>

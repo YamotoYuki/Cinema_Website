@@ -35,10 +35,29 @@
       border-radius: 50%;
       border: 2px solid white;
       display: block;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .profile-link:hover .profile-image {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
     }
     .notification-badge {
       font-size: 0.65rem;
     }
+<<<<<<< HEAD
+=======
+    .dropdown-item {
+      transition: all 0.2s ease;
+    }
+    .dropdown-item:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      padding-left: 20px;
+    }
+    .dropdown-item i {
+      width: 20px;
+      margin-right: 8px;
+    }
+>>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
   </style>
   {% endblock %}
   {% block extra_css %}{% endblock %}
@@ -70,14 +89,16 @@
 
         <div class="ms-auto d-flex align-items-center gap-2">
 
-          <div class="icon-wrapper">
+          <!-- プロフィール画像（クリック可能） -->
+          <a href="{% url 'my_profile' %}" class="icon-wrapper profile-link text-decoration-none" title="マイプロフィール">
             {% if user.userprofile.profile_image %}
               <img src="{{ user.userprofile.profile_image.url }}" alt="プロフィール画像" class="profile-image">
             {% else %}
               <img src="{% static 'images/default_profile.png' %}" alt="デフォルト画像" class="profile-image">
             {% endif %}
-          </div>
+          </a>
 
+          <!-- 通知ドロップダウン -->
           <div class="dropdown icon-wrapper">
             <a class="nav-link position-relative d-flex align-items-center justify-content-center p-0"
                href="#" role="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false"
@@ -107,6 +128,7 @@
             </ul>
           </div>
 
+          <!-- 設定ドロップダウン -->
           <ul class="navbar-nav icon-wrapper">
             <li class="nav-item dropdown w-100 h-100 d-flex align-items-center justify-content-center">
               <a class="nav-link dropdown-toggle p-0 d-flex align-items-center justify-content-center w-100 h-100"
@@ -114,7 +136,8 @@
                  style="color: white; font-size: 1.3rem;">
                 <i class="bi bi-gear-fill"></i>
               </a>
-              <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu p-3" aria-labelledby="settingsDropdown" style="min-width: 260px;">
+              <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu p-3" aria-labelledby="settingsDropdown" style="min-width: 280px;">
+                <!-- 検索フォーム -->
                 <li class="dropdown-item p-0 mb-2">
                   <form action="{% url 'movie_list' %}" method="get" class="d-flex">
                     <input
@@ -136,19 +159,61 @@
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 
-                <!-- AIサポート -->
+                <!-- プロフィール・ポイント -->
                 <li>
-                  <a class="dropdown-item" href="{% url 'ai_support' %}">
-                    <i class="bi bi-robot"></i> AIサポート
+                  <a class="dropdown-item" href="{% url 'my_profile' %}">
+                    <i class="bi bi-person-circle"></i> マイプロフィール
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'point_history' %}">
+                    <i class="bi bi-coin"></i> ポイント履歴
+                  </a>
+                </li>
+                
+                <!-- クーポンメニュー追加 -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'my_coupons' %}">
+                    <i class="bi bi-ticket-perforated-fill"></i> マイクーポン
                   </a>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 
-                <li><a class="dropdown-item" href="{% url 'my_reservations' %}">予約一覧</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_edit' %}">アカウント編集</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_change_password' %}">パスワード変更</a></li>
-                <li><a class="dropdown-item" href="{% url 'account_delete' %}">アカウント削除</a></li>                
-                <li><a class="dropdown-item" href="{% url 'account_logout' %}">ログアウト</a></li>
+                <!-- AIサポート -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'ai_support' %}">
+                    <i class="bi bi-robot"></i> HALCINEMA サポート
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                
+                <!-- その他のメニュー -->
+                <li>
+                  <a class="dropdown-item" href="{% url 'my_reservations' %}">
+                    <i class="bi bi-ticket-perforated"></i> 予約一覧
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_edit' %}">
+                    <i class="bi bi-pencil-square"></i> アカウント編集
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_change_password' %}">
+                    <i class="bi bi-key"></i> パスワード変更
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_delete' %}">
+                    <i class="bi bi-trash"></i> アカウント削除
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'account_logout' %}">
+                    <i class="bi bi-box-arrow-right"></i> ログアウト
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -189,9 +254,16 @@
     </ul>
   </div>
 
+<<<<<<< HEAD
   {% if user.is_authenticated %}
     {% include 'floating_chat.html' %}
   {% endif %}
+=======
+{% if user.is_authenticated and request.path != '/ai-support/' %}
+    {% include 'floating_chat.html' %}
+{% endif %}
+
+>>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
 
   {% block javascript %}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

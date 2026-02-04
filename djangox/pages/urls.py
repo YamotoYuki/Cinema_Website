@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import RulePageView, PolicyPageView, InquiryPageView, GuidePageView
+from .views import RulePageView, PolicyPageView, GuidePageView
 
 
 urlpatterns = [
@@ -12,7 +12,7 @@ urlpatterns = [
     path("Service/", views.service_page, name="service"),
     path("rule/", RulePageView.as_view(), name="rule"),
     path("policy/", PolicyPageView.as_view(), name="policy"),   
-    path("inquiry/", InquiryPageView.as_view(), name="inquiry"),
+    path('inquiry/', views.inquiry_page, name='inquiry'),
     path("guide/", GuidePageView.as_view(), name="guide"),
     path("Access/", views.access_page, name="access"),
     path("FAQ/", views.faq_page, name="faq"),
@@ -42,7 +42,10 @@ urlpatterns = [
     path("phone/", views.notice_phone, name="notice_phone"),
     path('ai-support/', views.ai_support, name='ai_support'),
     path('ai-chat/', views.ai_chat, name='ai_chat'),
-    path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history')
+    path('clear-chat-history/', views.clear_chat_history, name='clear_chat_history'),
+    path('my_profile/', views.my_profile, name='my_profile'),
+    path('point-history/', views.point_history, name='point_history'),
+    path('my-coupons/', views.my_coupons, name='my_coupons')
 ]
 
 if settings.DEBUG:

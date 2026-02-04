@@ -9,7 +9,6 @@ body {
   padding: 0;
   min-height: 100vh;
   font-family: 'Noto Sans JP', sans-serif;
-  animation: fadeZoomIn 0.9s ease-out both;
   font-family: 'Cinzel', serif;
 }
 
@@ -98,7 +97,7 @@ body {
 }
 
 input[type="radio"].btn-check:checked + .btn-date {
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #246c0c, #00350b);
   color: #fff;
   border-color: transparent;
   box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
@@ -128,7 +127,7 @@ input[type="radio"].btn-check:checked + .btn-date {
 }
 
 input[type="radio"].btn-check:checked + .btn-timeslot {
-  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  background: linear-gradient(135deg, #246c0c, #00350b);
   color: #fff;
   border-color: transparent;
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);

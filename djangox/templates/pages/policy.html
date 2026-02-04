@@ -8,13 +8,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="policy-wrapper">
-  <div class="policy-header">
+<div class="terms-wrapper">
+  <div class="terms-header">
     <h1>プライバシーポリシー</h1>
     <p>本サイトの個人情報の取り扱いについて</p>
   </div>
 
-  <div class="policy-content">
+  <div class="terms-content">
     <section>
       <h2>第1条（個人情報の定義）</h2>
       <p>「個人情報」とは、氏名、メールアドレス、電話番号、その他特定の個人を識別できる情報を指します。</p>
@@ -65,6 +65,10 @@
       <h2>第8条（改定）</h2>
       <p>本ポリシーは必要に応じて改定されます。変更内容は当サイト上で告知いたします。</p>
     </section>
+    
+    <div class="back-button">
+      <a href="{% url 'home' %}">ホームに戻る</a>
+    </div>
   </div>
 </div>
 {% endblock content %}
