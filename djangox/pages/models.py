@@ -60,6 +60,103 @@ class Seat(models.Model):
         return self.seat_number
 
 
+class Coupon(models.Model):
+    """クーポン"""
+    code = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name='クーポンコード'
+    )
+    title = models.CharField(
+        max_length=100,
+        verbose_name='タイトル'
+    )
+    description = models.TextField(
+        verbose_name='説明'
+    )
+    discount_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('percentage', 'パーセント割引'),
+            ('fixed', '定額割引'),
+            ('free', '無料'),
+        ],
+        default='fixed',
+        verbose_name='割引タイプ'
+    )
+    discount_value = models.IntegerField(
+        verbose_name='割引値'
+    )
+    min_purchase = models.IntegerField(
+        default=0,
+        verbose_name='最小購入金額'
+    )
+    max_uses = models.IntegerField(
+        default=1,
+        verbose_name='最大使用回数'
+    )
+    used_count = models.IntegerField(
+        default=0,
+        verbose_name='使用回数'
+    )
+    start_date = models.DateTimeField(
+        verbose_name='開始日時'
+    )
+    expiry_date = models.DateTimeField(
+        verbose_name='終了日時'
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name='有効'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='作成日時'
+    )
+
+    class Meta:
+        verbose_name = 'クーポン'
+        verbose_name_plural = 'クーポン'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.code} - {self.title}"
+
+    def is_valid(self):
+        """クーポンが有効かチェック"""
+        now = timezone.now()
+        return (
+            self.is_active and
+            self.start_date <= now <= self.expiry_date and
+            self.used_count < self.max_uses
+        )
+
+    def can_use(self, user):
+        """ユーザーが使用できるかチェック"""
+        if not self.is_valid():
+            return False
+        
+        used = UserCoupon.objects.filter(
+            user=user,
+            coupon=self
+        ).exists()
+        
+        return not used
+
+    def use(self, user):
+        """クーポンを使用"""
+        if self.can_use(user):
+            self.used_count += 1
+            self.save()
+            
+            UserCoupon.objects.create(
+                user=user,
+                coupon=self
+            )
+            return True
+        return False
+
+
 class Reservation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='ユーザー')
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name='映画')
@@ -97,6 +194,34 @@ class Reservation(models.Model):
         null=True,
         verbose_name='コンビニ種類'
     )
+    
+    # クーポン関連フィールド
+    applied_coupon = models.ForeignKey(
+        Coupon,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='used_in_reservations',
+        verbose_name='適用クーポン'
+    )
+    original_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name='元の金額'
+    )
+    discount_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name='割引金額'
+    )
+    final_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name='最終支払金額'
+    )
 
     class Meta:
         unique_together = ('movie', 'seat', 'show_time')
@@ -106,6 +231,42 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.movie.title}"
+
+
+class UserCoupon(models.Model):
+    """ユーザーのクーポン使用履歴"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='used_coupons',
+        verbose_name='ユーザー'
+    )
+    coupon = models.ForeignKey(
+        Coupon,
+        on_delete=models.CASCADE,
+        related_name='users',
+        verbose_name='クーポン'
+    )
+    used_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='使用日時'
+    )
+    reservation = models.ForeignKey(
+        Reservation,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='予約'
+    )
+
+    class Meta:
+        verbose_name = 'ユーザークーポン'
+        verbose_name_plural = 'ユーザークーポン'
+        ordering = ['-used_at']
+        unique_together = ['user', 'coupon']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.coupon.code}"
 
 
 class Notification(models.Model):
@@ -219,7 +380,6 @@ class UserProfile(models.Model):
         self.points += points
         self.save()
         
-        # ポイント履歴を作成
         PointHistory.objects.create(
             user=self.user,
             points=points,
@@ -227,7 +387,6 @@ class UserProfile(models.Model):
             balance_after=self.points
         )
         
-        # 会員レベルを更新
         self.update_membership_level()
 
     def use_points(self, points, reason=""):
@@ -236,7 +395,6 @@ class UserProfile(models.Model):
             self.points -= points
             self.save()
             
-            # ポイント履歴を作成
             PointHistory.objects.create(
                 user=self.user,
                 points=-points,
@@ -288,139 +446,109 @@ class PointHistory(models.Model):
         return f"{self.user.username}: {sign}{self.points}pt - {self.reason}"
 
 
-class Coupon(models.Model):
-    """クーポン"""
-    code = models.CharField(
-        max_length=20,
-        unique=True,
-        verbose_name='クーポンコード'
-    )
-    title = models.CharField(
-        max_length=100,
-        verbose_name='タイトル'
-    )
-    description = models.TextField(
-        verbose_name='説明'
-    )
-    discount_type = models.CharField(
-        max_length=20,
-        choices=[
-            ('percentage', 'パーセント割引'),
-            ('fixed', '定額割引'),
-            ('free', '無料'),
-        ],
-        default='fixed',
-        verbose_name='割引タイプ'
-    )
-    discount_value = models.IntegerField(
-        verbose_name='割引値'
-    )
-    min_purchase = models.IntegerField(
-        default=0,
-        verbose_name='最小購入金額'
-    )
-    max_uses = models.IntegerField(
-        default=1,
-        verbose_name='最大使用回数'
-    )
-    used_count = models.IntegerField(
-        default=0,
-        verbose_name='使用回数'
-    )
-    start_date = models.DateTimeField(
-        verbose_name='開始日時'
-    )
-    expiry_date = models.DateTimeField(
-        verbose_name='終了日時'
-    )
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name='有効'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='作成日時'
-    )
-
-    class Meta:
-        verbose_name = 'クーポン'
-        verbose_name_plural = 'クーポン'
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.code} - {self.title}"
-
-    def is_valid(self):
-        """クーポンが有効かチェック"""
-        now = timezone.now()
-        return (
-            self.is_active and
-            self.start_date <= now <= self.expiry_date and
-            self.used_count < self.max_uses
-        )
-
-    def can_use(self, user):
-        """ユーザーが使用できるかチェック"""
-        if not self.is_valid():
-            return False
-        
-        # すでに使用しているかチェック
-        used = UserCoupon.objects.filter(
-            user=user,
-            coupon=self
-        ).exists()
-        
-        return not used
-
-    def use(self, user):
-        """クーポンを使用"""
-        if self.can_use(user):
-            self.used_count += 1
-            self.save()
-            
-            # 使用履歴を作成
-            UserCoupon.objects.create(
-                user=user,
-                coupon=self
-            )
-            return True
-        return False
-
-
-class UserCoupon(models.Model):
-    """ユーザーのクーポン使用履歴"""
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='used_coupons',
-        verbose_name='ユーザー'
-    )
-    coupon = models.ForeignKey(
-        Coupon,
-        on_delete=models.CASCADE,
-        related_name='users',
-        verbose_name='クーポン'
-    )
-    used_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='使用日時'
-    )
+class Ticket(models.Model):
+    """チケットモデル - 料金区分管理"""
+    TICKET_TYPE_CHOICES = [
+        ('general', '一般'),
+        ('student', '大学生・専門学生'),
+        ('youth', '高校生以下'),
+        ('senior', 'シニア（60歳以上）'),
+        ('disability', '障がい者割引'),
+    ]
+    
+    TICKET_PRICES = {
+        'general': 1900,
+        'student': 1500,
+        'youth': 1000,
+        'senior': 1200,
+        'disability': 1000,
+    }
+    
     reservation = models.ForeignKey(
         Reservation,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
+        related_name='tickets',
         verbose_name='予約'
     )
-
+    ticket_type = models.CharField(
+        max_length=20,
+        choices=TICKET_TYPE_CHOICES,
+        default='general',
+        verbose_name='チケット種別'
+    )
+    price = models.IntegerField(
+        verbose_name='料金',
+        default=1900
+    )
+    ticket_number = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name='チケット番号',
+        blank=True
+    )
+    issued_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='発券日時'
+    )
+    is_used = models.BooleanField(
+        default=False,
+        verbose_name='使用済み'
+    )
+    used_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='使用日時'
+    )
+    
     class Meta:
-        verbose_name = 'ユーザークーポン'
-        verbose_name_plural = 'ユーザークーポン'
-        ordering = ['-used_at']
-        unique_together = ['user', 'coupon']
-
+        verbose_name = 'チケット'
+        verbose_name_plural = 'チケット'
+        ordering = ['-issued_at']
+    
+    def save(self, *args, **kwargs):
+        if not self.ticket_number:
+            date_str = timezone.now().strftime('%Y%m%d')
+            last_ticket = Ticket.objects.filter(
+                ticket_number__startswith=f'TKT-{date_str}'
+            ).order_by('-ticket_number').first()
+            
+            if last_ticket:
+                last_num = int(last_ticket.ticket_number.split('-')[-1])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+            
+            self.ticket_number = f'TKT-{date_str}-{new_num:06d}'
+        
+        if not self.price:
+            self.price = self.TICKET_PRICES.get(self.ticket_type, 1900)
+        
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return f"{self.user.username} - {self.coupon.code}"
+        return f"{self.ticket_number} - {self.get_ticket_type_display()}"
+    
+    @classmethod
+    def get_price(cls, ticket_type):
+        """チケット種別から料金を取得"""
+        return cls.TICKET_PRICES.get(ticket_type, 1900)
+
+
+class Contact(models.Model):
+    """お問い合わせ"""
+    name = models.CharField(max_length=100, verbose_name='お名前')
+    email = models.EmailField(verbose_name='メールアドレス')
+    message = models.TextField(verbose_name='お問い合わせ内容')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='送信日時')
+    is_read = models.BooleanField(default=False, verbose_name='既読')
+    
+    class Meta:
+        verbose_name = 'お問い合わせ'
+        verbose_name_plural = 'お問い合わせ'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} - {self.created_at.strftime('%Y/%m/%d %H:%M')}"
 
 
 # シグナルの設定
@@ -450,19 +578,3 @@ def add_points_on_reservation(sender, instance, created, **kwargs):
             profile.add_points(100, f'予約: {instance.movie.title}')
         except Exception as e:
             print(f"ポイント付与エラー: {str(e)}")
-            
-class Contact(models.Model):
-    """お問い合わせ"""
-    name = models.CharField(max_length=100, verbose_name='お名前')
-    email = models.EmailField(verbose_name='メールアドレス')
-    message = models.TextField(verbose_name='お問い合わせ内容')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='送信日時')
-    is_read = models.BooleanField(default=False, verbose_name='既読')
-    
-    class Meta:
-        verbose_name = 'お問い合わせ'
-        verbose_name_plural = 'お問い合わせ'
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"{self.name} - {self.created_at.strftime('%Y/%m/%d %H:%M')}"
