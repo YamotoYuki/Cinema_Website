@@ -1,10 +1,7 @@
 {% load static %}
 
 <style>
-<<<<<<< HEAD
   /* 親要素を固定 */
-=======
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
   #floatingChatWidget {
     position: fixed;
     bottom: 0;
@@ -184,13 +181,8 @@
   }
 
   .quick-btn:hover {
-<<<<<<< HEAD
     background: #086021;
     color: white;
-=======
-    background: #04621eff;
-    color: #fff;
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(8, 96, 33, 0.3);
   }
@@ -357,29 +349,18 @@
   }
 </style>
 
-<<<<<<< HEAD
 <!-- フローティングチャットウィジェット -->
 <div id="floatingChatWidget">
   <!-- チャットボタン -->
-=======
-<div id="floatingChatWidget">
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
   <button id="chatToggleBtn" class="chat-toggle-btn" title="AIサポート">
     <i class="bi bi-robot"></i>
   </button>
 
-<<<<<<< HEAD
   <!-- チャットウィンドウ -->
   <div id="chatWindow" class="chat-window">
     <div class="chat-window-header">
       <div>
         <h3>AIサポート</h3>
-=======
-  <div id="chatWindow" class="chat-window">
-    <div class="chat-window-header">
-      <div>
-        <h3>HALCINEMA サポート</h3>
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
         <p>ご質問にお答えします</p>
       </div>
       <div class="chat-header-actions">
@@ -432,28 +413,8 @@
 
 <script>
 (function() {
-<<<<<<< HEAD
     // URL設定（Djangoテンプレートから取得）
     const aiChatUrl = '{{ ai_chat_url|default:"/ai/chat/" }}';
-=======
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    const csrftoken = getCookie('csrftoken');
-    const aiChatUrl = '{% url "ai_chat" %}';
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
     
     const toggleBtn = document.getElementById('chatToggleBtn');
     const chatWindow = document.getElementById('chatWindow');
@@ -496,23 +457,13 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-<<<<<<< HEAD
     // クイック質問送信
     window.sendQuickQuestion = function(question) {
-=======
-    window.sendQuickQuestion = function(question) {
-        if (!chatWindow.classList.contains('show')) {
-            chatWindow.classList.add('show');
-        }
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
         messageInput.value = question;
         chatForm.dispatchEvent(new Event('submit'));
     };
 
-<<<<<<< HEAD
     // タイピングインジケーター追加
-=======
->>>>>>> 11894b4970097e3d4dc02c432b04fff05dfe1022
     const typingDiv = document.createElement('div');
     typingDiv.className = 'floating-message ai';
     typingDiv.innerHTML = `
