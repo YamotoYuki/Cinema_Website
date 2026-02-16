@@ -654,7 +654,7 @@
                   AI
                 {% endif %}
               </div>
-              <div class="message-content">{{ message.message }}</div>
+              <div class="message-content">{{ message.message|safe }}</div>
             </div>
           {% endfor %}
         {% else %}
@@ -852,3 +852,4 @@
   </script>
 </body>
 </html>
+

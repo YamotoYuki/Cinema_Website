@@ -278,54 +278,147 @@ def my_reservations(request):
 
 @login_required
 def cancel_reservation(request, reservation_id):
+    """
+    予約キャンセル処理（ポイント返還対応 - モーダル版）
+    
+    POST リクエストのみ受け付け（my_reservations.htmlのモーダルから呼ばれる）
+    
+    処理内容:
+    1. 使用したポイントを返還
+    2. 獲得したポイントを取り消し
+    3. クーポン使用記録を削除
+    4. 予約を削除
+    5. 通知を作成
+    """
     reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
+    
     if request.method == 'POST':
         movie_title = reservation.movie.title
         seat_number = reservation.seat.seat_number
         show_time = reservation.show_time
         
-        # ポイント減算処理
-        points_to_deduct = 100
+        # ========================================
+        # ポイント処理
+        # ========================================
+        points_returned = 0
+        points_deducted = 0
         
         try:
-            if hasattr(request.user, 'userprofile') and hasattr(request.user.userprofile, 'points'):
-                current_points = request.user.userprofile.points
-                if current_points >= points_to_deduct:
-                    use_points(request.user, points_to_deduct, f"予約キャンセル: 映画「{movie_title}」（座席: {seat_number}）")
-                else:
-                    if current_points > 0:
-                        use_points(request.user, current_points, f"予約キャンセル: 映画「{movie_title}」（座席: {seat_number}）")
+            # この予約に関連するポイント履歴を取得（最近10件）
+            point_histories = PointHistory.objects.filter(
+                user=request.user,
+                reason__icontains=f'{movie_title}'
+            ).order_by('-created_at')[:10]
+            
+            # -----------------------------------------
+            # 1. 使用ポイントを返還
+            # -----------------------------------------
+            for history in point_histories:
+                # マイナスのポイント = 使用したポイント
+                if history.points < 0 and 'チケット購入' in history.reason and seat_number in history.reason:
+                    used_points = abs(history.points)  # 絶対値を取得
+                    
+                    # ポイントを返還（add_points_to_user関数を使用）
+                    add_points_to_user(
+                        request.user, 
+                        used_points, 
+                        f"予約キャンセル返還: {movie_title}（{seat_number}）"
+                    )
+                    points_returned = used_points
+                    break
+            
+            # -----------------------------------------
+            # 2. 獲得ポイントを取り消し
+            # -----------------------------------------
+            for history in point_histories:
+                # プラスのポイント = 獲得したポイント
+                if history.points > 0 and 'チケット購入' in history.reason and seat_number in history.reason:
+                    earned_points = history.points
+                    current_points = calculate_user_points(request.user)
+                    
+                    # 保有ポイントから獲得分を減算
+                    if current_points >= earned_points:
+                        # 保有ポイントが十分にある場合
+                        use_points(
+                            request.user, 
+                            earned_points, 
+                            f"予約キャンセル取り消し: {movie_title}（{seat_number}）"
+                        )
+                        points_deducted = earned_points
+                    elif current_points > 0:
+                        # 保有ポイントが不足している場合は、保有分だけ減算
+                        use_points(
+                            request.user, 
+                            current_points, 
+                            f"予約キャンセル取り消し（一部）: {movie_title}（{seat_number}）"
+                        )
+                        points_deducted = current_points
+                    break
+                    
         except Exception as e:
-            print(f"ポイント減算エラー: {str(e)}")
+            print(f"ポイント処理エラー: {str(e)}")
+            import traceback
+            traceback.print_exc()
         
-        # クーポンの使用記録も削除
+        # ========================================
+        # クーポン使用記録削除
+        # ========================================
         try:
             UserCoupon.objects.filter(reservation=reservation).delete()
         except Exception as e:
             print(f"クーポン削除エラー: {str(e)}")
         
+        # ========================================
         # チケット削除（テーブルが存在する場合のみ）
+        # ========================================
         try:
             from django.db import connection
             with connection.cursor() as cursor:
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pages_ticket'")
                 if cursor.fetchone():
-                    # Ticketテーブルが存在する場合は削除
                     if hasattr(reservation, 'tickets'):
                         reservation.tickets.all().delete()
         except Exception as e:
             print(f"チケット削除エラー: {str(e)}")
         
+        # ========================================
+        # 予約削除
+        # ========================================
         reservation.delete()
 
-        Notification.objects.create(
-            user=request.user,
-            message=f"映画「{movie_title}」の予約をキャンセルしました。座席: {seat_number}、上映日時: {show_time}、{points_to_deduct}ポイント減算"
+        # ========================================
+        # 通知作成
+        # ========================================
+        notification_msg = (
+            f"映画「{movie_title}」の予約をキャンセルしました。\n"
+            f"座席: {seat_number}\n"
+            f"上映日時: {show_time}"
         )
+        
+        if points_returned > 0:
+            notification_msg += f"\n✓ 使用ポイント返還: +{points_returned}pt"
+        
+        if points_deducted > 0:
+            notification_msg += f"\n✓ 獲得ポイント取り消し: -{points_deducted}pt"
+        
+        Notification.objects.create(user=request.user, message=notification_msg)
 
-        messages.success(request, '予約をキャンセルし、ポイントを減算しました。')
+        # ========================================
+        # 成功メッセージ
+        # ========================================
+        success_msg = '予約をキャンセルしました。'
+        
+        if points_returned > 0:
+            success_msg += f' 使用ポイント {points_returned}pt を返還しました。'
+        
+        if points_deducted > 0:
+            success_msg += f' 獲得ポイント {points_deducted}pt を取り消しました。'
+        
+        messages.success(request, success_msg)
         return redirect('my_reservations')
-    return render(request, 'apps/cancel_reservation_confirm.html', {'reservation': reservation})
+    
+    # GET リクエストの場合は予約一覧にリダイレクト
+    return redirect('my_reservations')
 
 
 @login_required
@@ -507,6 +600,7 @@ def ai_chat(request):
 
 
 def generate_ai_response(message, user):
+    """AIレスポンス生成（Bootstrap Icons使用版）"""
     message_lower = message.lower()
     response = ""
     
@@ -536,6 +630,7 @@ def generate_ai_response(message, user):
     return response
 
 def handle_reservation_inquiry(user):
+    """予約状況の確認（Bootstrap Icons版）"""
     try:
         now = timezone.now()
         
@@ -545,104 +640,118 @@ def handle_reservation_inquiry(user):
         ).select_related('movie', 'seat').order_by('show_time')[:5]
         
         if future_reservations:
-            response = "📋 ご予約状況\n\n"
+            response = "<i class='bi bi-clipboard-check'></i> <strong>ご予約状況</strong>\n\n"
             for r in future_reservations:
-                response += f"🎬 {r.movie.title}\n"
-                response += f"📅 {r.show_time}\n"
-                response += f"💺 座席: {r.seat.seat_number}\n\n"
+                response += f"<i class='bi bi-film'></i> {r.movie.title}\n"
+                response += f"<i class='bi bi-calendar-event'></i> {r.show_time}\n"
+                response += f"<i class='bi bi-ticket-perforated'></i> 座席: {r.seat.seat_number}\n\n"
             return response
         else:
-            return "現在、ご予約はございません。"
+            return "<i class='bi bi-info-circle'></i> 現在、ご予約はございません。"
     except Exception as e:
-        return f"予約情報の取得中にエラーが発生しました。"
+        return "<i class='bi bi-exclamation-triangle'></i> 予約情報の取得中にエラーが発生しました。"
 
 def handle_seat_availability(message, message_lower):
-    return "空席情報については映画一覧ページからご確認ください。"
+    """空席情報（Bootstrap Icons版）"""
+    return "<i class='bi bi-search'></i> 空席情報については映画一覧ページからご確認ください。"
 
 def handle_movie_info():
-    return "上映中の映画は映画一覧ページでご確認いただけます。"
+    """映画情報（Bootstrap Icons版）"""
+    return "<i class='bi bi-film'></i> 上映中の映画は映画一覧ページでご確認いただけます。"
 
 def handle_payment_info():
-    response = "お支払い方法・料金案内\n\n"
-    response += "【お支払い方法】\n"
-    response += "・現金\n"
-    response += "・クレジットカード\n"
-    response += "・電子マネー（PayPay、メルペイ）\n"
-    response += "・コンビニ払い\n"
-    response += "・ポイント払い 🆕\n\n"
-    response += "【料金】\n"
-    response += "一般: ¥1,900\n"
-    response += "大学生・専門学生: ¥1,500\n"
-    response += "高校生以下: ¥1,000\n"
-    response += "シニア（60歳以上）: ¥1,200\n"
-    response += "障がい者割引: ¥1,000\n\n"
-    response += "【ポイント払いについて】\n"
-    response += "・保有ポイントで直接お支払い可能\n"
-    response += "・1pt = ¥1として利用\n"
-    response += "・ポイント払いの場合、新たなポイント獲得はありません\n"
+    """料金・支払い情報（Bootstrap Icons版）"""
+    response = "<i class='bi bi-credit-card'></i> <strong>お支払い方法・料金案内</strong>\n\n"
+    response += "<strong>【お支払い方法】</strong>\n"
+    response += "<i class='bi bi-cash-coin'></i> 現金\n"
+    response += "<i class='bi bi-credit-card-2-front'></i> クレジットカード\n"
+    response += "<i class='bi bi-phone'></i> 電子マネー（PayPay、メルペイ）\n"
+    response += "<i class='bi bi-shop'></i> コンビニ払い\n"
+    response += "<i class='bi bi-coin'></i> ポイント払い <span style='color: #22c55e;'>NEW</span>\n\n"
+    response += "<strong>【料金】</strong>\n"
+    response += "一般: <strong>¥1,900</strong>\n"
+    response += "大学生・専門学生: <strong>¥1,500</strong>\n"
+    response += "高校生以下: <strong>¥1,000</strong>\n"
+    response += "シニア（60歳以上）: <strong>¥1,200</strong>\n"
+    response += "障がい者割引: <strong>¥1,000</strong>\n\n"
+    response += "<strong>【ポイント払いについて】</strong>\n"
+    response += "<i class='bi bi-check-circle'></i> 保有ポイントで直接お支払い可能\n"
+    response += "<i class='bi bi-check-circle'></i> 1pt = ¥1として利用\n"
+    response += "<i class='bi bi-info-circle'></i> ポイント払いの場合、新たなポイント獲得はありません\n"
     return response
 
 def handle_cancellation_info():
-    response = "予約キャンセルについて\n\n"
-    response += "【キャンセル方法】\n"
-    response += "マイページ → 予約一覧 → キャンセルボタン\n\n"
-    response += "【注意】\n"
-    response += "・キャンセル時、獲得ポイントが減算されます\n"
-    response += "・上映開始1時間前までキャンセル可能\n"
+    """キャンセル情報（Bootstrap Icons版）"""
+    response = "<i class='bi bi-x-circle'></i> <strong>予約キャンセルについて</strong>\n\n"
+    response += "<strong>【キャンセル方法】</strong>\n"
+    response += "マイページ <i class='bi bi-arrow-right'></i> 予約一覧 <i class='bi bi-arrow-right'></i> キャンセルボタン\n\n"
+    response += "<strong>【注意事項】</strong>\n"
+    response += "<i class='bi bi-exclamation-triangle'></i> 使用したポイントは返還されます\n"
+    response += "<i class='bi bi-exclamation-triangle'></i> 獲得したポイントは取り消されます\n"
+    response += "<i class='bi bi-clock'></i> 上映開始1時間前までキャンセル可能\n"
     return response
 
 def handle_theater_info():
-    response = "HAL CINEMA アクセス情報\n\n"
-    response += "【所在地】\n"
-    response += "愛知県名古屋市中村区名駅4丁目27-1\n"
+    """劇場情報（Bootstrap Icons版）"""
+    response = "<i class='bi bi-building'></i> <strong>HAL CINEMA アクセス情報</strong>\n\n"
+    response += "<strong>【所在地】</strong>\n"
+    response += "<i class='bi bi-geo-alt-fill'></i> 愛知県名古屋市中村区名駅4丁目27-1\n"
     response += "HAL名古屋内\n\n"
-    response += "【アクセス】\n"
-    response += "JR名古屋駅から徒歩3分\n"
+    response += "<strong>【アクセス】</strong>\n"
+    response += "<i class='bi bi-train-front'></i> JR名古屋駅から徒歩3分\n"
     return response
 
 def handle_business_hours():
-    response = "営業時間\n\n"
-    response += "平日: 9:00 ~ 23:00\n"
-    response += "土日祝: 8:30 ~ 23:30\n\n"
-    response += "年中無休\n"
+    """営業時間（Bootstrap Icons版）"""
+    response = "<i class='bi bi-clock-history'></i> <strong>営業時間</strong>\n\n"
+    response += "<i class='bi bi-calendar-week'></i> 平日: 9:00 ~ 23:00\n"
+    response += "<i class='bi bi-calendar-day'></i> 土日祝: 8:30 ~ 23:30\n\n"
+    response += "<i class='bi bi-check-circle'></i> 年中無休\n"
     return response
 
 def handle_membership_info(user):
+    """会員情報（Bootstrap Icons版）"""
     points = calculate_user_points(user)
-    response = f"{user.username}様の会員情報\n\n"
-    response += f"現在のポイント: {points}pt\n\n"
-    response += "【特典】\n"
-    response += "・予約ごとに100pt獲得\n"
-    response += "・1,000ptで無料鑑賞\n"
+    response = f"<i class='bi bi-person-circle'></i> <strong>{user.username}様の会員情報</strong>\n\n"
+    response += f"<i class='bi bi-coin'></i> 現在のポイント: <strong style='color: #667eea;'>{points}pt</strong>\n\n"
+    response += "<strong>【特典】</strong>\n"
+    response += "<i class='bi bi-gift'></i> 予約ごとに100pt獲得\n"
+    response += "<i class='bi bi-ticket-perforated'></i> 1,000ptで無料鑑賞\n"
     return response
 
 def handle_greeting(user):
+    """挨拶（Bootstrap Icons版）"""
     from datetime import datetime
     hour = datetime.now().hour
     
     if 5 <= hour < 11:
         greeting = "おはようございます"
+        icon = "<i class='bi bi-sunrise'></i>"
     elif 11 <= hour < 18:
         greeting = "こんにちは"
+        icon = "<i class='bi bi-sun'></i>"
     else:
         greeting = "こんばんは"
+        icon = "<i class='bi bi-moon-stars'></i>"
     
-    response = f"{greeting}、{user.username}様！\n"
-    response += "HAL CINEMA サポートAIです。\n\n"
-    response += "ご質問をお気軽にどうぞ！"
+    response = f"{icon} {greeting}、{user.username}様！\n"
+    response += "<i class='bi bi-robot'></i> HAL CINEMA サポートAIです。\n\n"
+    response += "<i class='bi bi-chat-dots'></i> ご質問をお気軽にどうぞ！"
     return response
 
 def handle_thanks():
-    return "どういたしまして！\n素敵な映画体験をお楽しみください。"
+    """お礼の返答（Bootstrap Icons版）"""
+    return "<i class='bi bi-emoji-smile'></i> どういたしまして！\n<i class='bi bi-film'></i> 素敵な映画体験をお楽しみください。"
 
 def handle_default_response(user):
-    response = f"{user.username}様、ご質問ありがとうございます。\n\n"
-    response += "以下のご質問にお答えできます：\n"
-    response += "・予約確認\n"
-    response += "・上映情報\n"
-    response += "・料金案内\n"
-    response += "・劇場案内\n"
-    response += "・ポイント確認\n"
+    """デフォルトレスポンス（Bootstrap Icons版）"""
+    response = f"<i class='bi bi-person-circle'></i> {user.username}様、ご質問ありがとうございます。\n\n"
+    response += "<strong>以下のご質問にお答えできます：</strong>\n"
+    response += "<i class='bi bi-calendar-check'></i> 予約確認\n"
+    response += "<i class='bi bi-film'></i> 上映情報\n"
+    response += "<i class='bi bi-credit-card'></i> 料金案内\n"
+    response += "<i class='bi bi-building'></i> 劇場案内\n"
+    response += "<i class='bi bi-coin'></i> ポイント確認\n"
     return response
 
 @login_required
@@ -889,9 +998,6 @@ def my_coupons(request):
         'used_coupons': used_coupons
     })
 
-# views.pyのpurchase_confirm関数 - ポイント併用払い対応版
-# 既存のpurchase_confirm関数を以下に置き換えてください
-
 @login_required
 def purchase_confirm(request):
     """購入確認画面（クーポン・ポイント併用払い完全対応）"""
@@ -925,7 +1031,9 @@ def purchase_confirm(request):
         payment_method = request.POST.get('payment_method', 'cash')
         convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
         coupon_id = request.POST.get('coupon_id')
-        points_to_use = int(request.POST.get('points_to_use', 0)) if payment_method == 'points' else 0
+        
+        # ★★★ 修正ポイント：payment_methodに関わらずpoints_to_useを取得 ★★★
+        points_to_use = int(request.POST.get('points_to_use', 0))
         
         # 元の金額
         original_price = float(total_price)
@@ -966,10 +1074,10 @@ def purchase_confirm(request):
             except Coupon.DoesNotExist:
                 messages.warning(request, "無効なクーポンです。")
         
-        # ポイント払いの処理
+        # ★★★ ポイント使用処理（ポイント併用払い対応） ★★★
         cash_amount = final_price  # 初期値は全額現金払い
         
-        if payment_method == 'points' and points_to_use > 0:
+        if points_to_use > 0:
             user_points = calculate_user_points(request.user)
             
             # ポイント使用量のバリデーション
@@ -981,7 +1089,7 @@ def purchase_confirm(request):
                 messages.error(request, f"使用ポイント数が支払い金額を超えています。")
                 return redirect('purchase_confirm')
             
-            # ポイントを消費
+            # ★★★ ポイントを消費（use_points関数を呼び出す） ★★★
             if not use_points(request.user, points_to_use, f"映画「{movie.title}」のチケット購入（座席: {', '.join(seat_numbers)}）"):
                 messages.error(request, "ポイントの使用に失敗しました。")
                 return redirect('purchase_confirm')
@@ -995,7 +1103,7 @@ def purchase_confirm(request):
         for seat in seats:
             if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
                 # ポイント併用払いの場合
-                if payment_method == 'points' and points_to_use > 0:
+                if points_to_use > 0:
                     actual_payment = cash_amount / len(seats) if cash_amount > 0 else 0
                     points_per_seat = points_to_use / len(seats)
                 else:
@@ -1017,8 +1125,9 @@ def purchase_confirm(request):
                 generate_qr_code(reservation)
                 created_reservations.append(reservation)
                 
-                # ポイント付与（全額ポイント払い以外の場合）
-                if not (payment_method == 'points' and points_to_use > 0 and cash_amount == 0):
+                # ★★★ ポイント付与（全額ポイント払い以外の場合） ★★★
+                # 現金支払いがある場合のみポイント付与
+                if cash_amount > 0:
                     points_earned = 100
                     add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
                 
@@ -1030,13 +1139,13 @@ def purchase_confirm(request):
                         f"上映日時: {selected_datetime}\n"
                     )
                     
-                    if payment_method == 'points' and points_to_use > 0:
+                    if points_to_use > 0:
                         if cash_amount > 0:
                             notification_msg += f"支払方法: ポイント併用払い\n"
                             notification_msg += f"使用ポイント: {points_to_use}pt\n"
                             notification_msg += f"現金支払い: ¥{int(cash_amount):,}"
                         else:
-                            notification_msg += f"支払方法: ポイント払い\n"
+                            notification_msg += f"支払方法: 全額ポイント払い\n"
                             notification_msg += f"使用ポイント: {points_to_use}pt"
                     else:
                         notification_msg += f"支払方法: {payment_method}\n"
@@ -1044,12 +1153,13 @@ def purchase_confirm(request):
                     if used_coupon:
                         notification_msg += f"\nクーポン適用: {used_coupon.title} (-¥{int(discount_amount):,})"
                     
-                    if payment_method == 'points' and points_to_use > 0 and cash_amount > 0:
+                    if points_to_use > 0 and cash_amount > 0:
                         notification_msg += f"\n合計: ¥{int(cash_amount):,}"
                     else:
                         notification_msg += f"\n合計: ¥{int(final_price):,}"
                     
-                    if not (payment_method == 'points' and points_to_use > 0 and cash_amount == 0):
+                    # 現金支払いがある場合のみポイント獲得を通知
+                    if cash_amount > 0:
                         notification_msg += f"\n{100 * len(seats)}ポイント獲得！"
                     
                     Notification.objects.create(
@@ -1074,20 +1184,20 @@ def purchase_confirm(request):
         if created_reservations:
             request.session['last_reservation_id'] = created_reservations[0].id
             request.session['seat_numbers'] = seat_numbers
-            request.session['total_price'] = float(cash_amount) if payment_method == 'points' and points_to_use > 0 else float(final_price)
+            request.session['total_price'] = float(cash_amount) if points_to_use > 0 else float(final_price)
             request.session['payment_method'] = payment_method
-            request.session['points_used'] = points_to_use if payment_method == 'points' else 0
+            request.session['points_used'] = points_to_use
         
         # セッションの座席情報をクリア
         request.session.pop('selected_seats', None)
         request.session.pop('selected_datetime', None)
         request.session.pop('movie_id', None)
         
-        if payment_method == 'points' and points_to_use > 0:
+        if points_to_use > 0:
             if cash_amount > 0:
                 messages.success(request, f'ポイントと現金でチケットを購入しました！（{points_to_use}pt使用 + ¥{int(cash_amount):,}）')
             else:
-                messages.success(request, f'ポイントでチケットを購入しました！（{points_to_use}pt使用）')
+                messages.success(request, f'全額ポイントでチケットを購入しました！（{points_to_use}pt使用）')
         else:
             messages.success(request, 'チケットの購入が完了しました！')
         
@@ -1955,3 +2065,4 @@ def inquiry_page(request):
     
 class GuidePageView(TemplateView):
     template_name = "pages/guide.html"
+

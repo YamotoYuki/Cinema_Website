@@ -11,14 +11,6 @@
 <div class="contact-container">
   <h1>お問い合わせ</h1>
 
-  {% if messages %}
-    <ul class="message-list">
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
   <form method="post" novalidate>
     {% csrf_token %}
     <p>
