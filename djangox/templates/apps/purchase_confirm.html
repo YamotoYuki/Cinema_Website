@@ -5,6 +5,63 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_confirm.css' %}">
+<style>
+.points-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.points-display-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.points-display-value {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.payment-option {
+  position: relative;
+}
+
+.payment-option.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.price-breakdown {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.price-breakdown .price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 1rem;
+}
+
+.price-breakdown .price-row:last-child {
+  border-top: 2px solid #dee2e6;
+  margin-top: 10px;
+  padding-top: 15px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -21,6 +78,8 @@
 
     <p><strong>選択された座席:</strong> {{ selected_seat_numbers|join:", " }}</p>
     <p><strong>座席数:</strong> {{ selected_seat_count }} 席</p>
+
+
 
     <!-- 料金区分選択セクション -->
     <div class="ticket-type-section">
@@ -135,9 +194,76 @@
         </span>
         <span id="discountAmount" style="color: #dc3545;">-¥0</span>
       </div>
+      <div class="price-row" id="pointsPaymentRow" style="display: none;">
+        <span style="color: #667eea;">
+          <i class="bi bi-coin me-1"></i>
+          ポイント使用:
+        </span>
+        <span id="pointsPaymentAmount" style="color: #667eea;">0 pt</span>
+      </div>
       <div class="price-row">
-        <span>合計金額:</span>
+        <span id="totalLabel">合計金額:</span>
         <span id="finalTotal">¥0</span>
+      </div>
+    </div>
+
+    <!-- ポイント使用セクション（チケット選択後に表示） -->
+    <div id="pointsUsageSection" style="display: none; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 2px solid #667eea;">
+      <h6 style="color: #667eea; font-weight: 600; margin-bottom: 15px;">
+        <i class="bi bi-wallet2 me-2"></i>
+        ポイントを使用する（任意）
+      </h6>
+      
+      <!-- 保有ポイント表示 -->
+      <div style="background: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #666; font-size: 0.95rem;">
+          <i class="bi bi-coin me-1"></i>
+          保有ポイント
+        </span>
+        <span style="color: #667eea; font-weight: 700; font-size: 1.1rem;">{{ user_points|default:0 }} pt</span>
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 8px; color: #666; font-size: 0.9rem;">
+          使用するポイント数を入力してください
+        </label>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <input type="number" 
+                 id="pointsToUse" 
+                 name="points_to_use"
+                 min="0" 
+                 max="{{ user_points|default:0 }}" 
+                 value="0"
+                 style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                 placeholder="0">
+          <span style="color: #666; font-weight: 600;">pt</span>
+          <button type="button" 
+                  id="useMaxPointsBtn" 
+                  style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; white-space: nowrap; font-size: 0.9rem;">
+            最大使用
+          </button>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.85rem; color: #999;">
+          <span id="maxPointsText">最大: 0pt まで使用可能</span>
+        </div>
+      </div>
+
+      <div id="pointsBreakdown" style="background: white; padding: 15px; border-radius: 8px; display: none;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+          <span style="color: #666;">支払い金額:</span>
+          <span id="partialTotalAmount" style="font-weight: 600;">¥0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+          <span style="color: #667eea;">
+            <i class="bi bi-coin me-1"></i>
+            ポイント使用:
+          </span>
+          <span id="partialPointsUsed" style="color: #667eea; font-weight: 600;">0 pt (-¥0)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 1.1rem;">残りのお支払い:</span>
+          <span id="partialCashAmount" style="font-weight: 700; font-size: 1.2rem; color: #22c55e;">¥0</span>
+        </div>
       </div>
     </div>
 
@@ -182,6 +308,15 @@
         <input type="radio" name="payment_method" id="payment_paypay" value="paypay">
         <img src="{% static 'logo/paypay.png' %}" alt="PayPayアイコン">
         PayPay
+      </label>
+
+      <label class="payment-option" for="payment_points" id="pointsPaymentOption">
+        <input type="radio" name="payment_method" id="payment_points" value="points">
+        <i class="bi bi-coin" style="font-size: 2rem; color: #667eea;"></i>
+        <span style="margin-left: 10px;">ポイント払い</span>
+        <span style="font-size: 0.85rem; color: #666; margin-left: 10px;">
+          (保有: {{ user_points|default:0 }}pt)
+        </span>
       </label>
 
       <label class="payment-option" for="payment_convenience">
@@ -250,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   
   const selectedSeatsCount = {{ selected_seat_count }};
+  const userPoints = {{ user_points|default:0 }};
   
   // 数量ボタンの処理
   document.querySelectorAll('.quantity-btn').forEach(btn => {
@@ -270,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
       display.textContent = ticketQuantities[type];
       updatePriceDisplay();
       checkSeatMatch();
+      updatePointsUsageSection();
     });
   });
   
@@ -306,12 +443,86 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('warningSeatsCount').textContent = selectedSeatsCount;
     document.getElementById('warningTicketsCount').textContent = totalTickets;
     
-    if (totalTickets !== selectedSeatsCount) {
-      warning.style.display = 'block';
+    // チケット未選択または不一致の場合
+    if (totalTickets === 0 || totalTickets !== selectedSeatsCount) {
+      if (totalTickets > 0) {
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
       submitBtn.disabled = true;
+      return;
+    }
+    
+    // チケット数と座席数が一致している場合
+    warning.style.display = 'none';
+    submitBtn.disabled = false;
+  }
+  
+  function updatePointsUsageSection() {
+    const totalTickets = Object.values(ticketQuantities).reduce((a, b) => a + b, 0);
+    const pointsUsageSection = document.getElementById('pointsUsageSection');
+    const pointsPaymentOption = document.getElementById('pointsPaymentOption');
+    const pointsPaymentRadio = document.getElementById('payment_points');
+    
+    // チケットが選択され、座席数と一致している場合のみポイント使用セクションを表示
+    if (totalTickets > 0 && totalTickets === selectedSeatsCount) {
+      pointsUsageSection.style.display = 'block';
+      
+      // ポイント払いオプションを有効化
+      if (pointsPaymentOption && pointsPaymentRadio) {
+        pointsPaymentOption.classList.remove('disabled');
+        pointsPaymentRadio.disabled = false;
+      }
+      
+      // 現在の合計金額を取得
+      const subtotalText = document.getElementById('subtotal').textContent.replace(/[¥,]/g, '');
+      const subtotal = parseFloat(subtotalText) || 0;
+      
+      const discountRow = document.getElementById('discountRow');
+      const isDiscountApplied = discountRow.style.display === 'flex';
+      
+      let currentTotal = subtotal;
+      if (isDiscountApplied) {
+        const discountText = document.getElementById('discountAmount').textContent.replace(/[-¥,]/g, '');
+        const discount = parseFloat(discountText) || 0;
+        currentTotal = subtotal - discount;
+      }
+      
+      // 使用可能な最大ポイントを計算
+      const maxUsablePoints = Math.min(Math.floor(currentTotal), userPoints);
+      
+      // 最大ポイントテキストを更新
+      document.getElementById('maxPointsText').textContent = `最大: ${maxUsablePoints}pt まで使用可能`;
+      
+      // ポイント入力フィールドのmaxを更新
+      const pointsToUseInput = document.getElementById('pointsToUse');
+      pointsToUseInput.max = maxUsablePoints;
+      
+      // 現在の入力値が最大値を超えている場合は調整
+      if (parseInt(pointsToUseInput.value) > maxUsablePoints) {
+        pointsToUseInput.value = maxUsablePoints;
+        updatePartialPaymentDisplay();
+      }
     } else {
-      warning.style.display = 'none';
-      submitBtn.disabled = false;
+      pointsUsageSection.style.display = 'none';
+      
+      // ポイント払いオプションを無効化
+      if (pointsPaymentOption && pointsPaymentRadio) {
+        pointsPaymentOption.classList.add('disabled');
+        pointsPaymentRadio.disabled = true;
+        
+        // もしポイント払いが選択されていたら現金に戻す
+        if (pointsPaymentRadio.checked) {
+          pointsPaymentRadio.checked = false;
+          document.getElementById('payment_cash').checked = true;
+          toggleConvenienceOptions();
+        }
+      }
+      
+      // ポイント入力をリセット
+      document.getElementById('pointsToUse').value = 0;
+      updatePartialPaymentDisplay();
     }
   }
   
@@ -322,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const subtotalText = document.getElementById('subtotal').textContent.replace(/[¥,]/g, '');
       const subtotal = parseFloat(subtotalText);
       applyCouponDiscount(subtotal);
+      updatePointsUsageSection();
     });
   }
   
@@ -337,11 +549,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalTotal = document.getElementById('finalTotal');
     const selectedCouponId = document.getElementById('selectedCouponId');
     
+    let finalPrice = subtotal;
+    
     if (couponSelect.value && subtotal > 0) {
       const type = selected.dataset.type;
       const value = parseFloat(selected.dataset.value);
       let discount = 0;
-      let finalPrice = subtotal;
       
       if (type === 'percentage') {
         discount = Math.floor((subtotal * value) / 100);
@@ -360,16 +573,112 @@ document.addEventListener('DOMContentLoaded', () => {
       discountInfo.style.display = 'block';
       discountRow.style.display = 'flex';
       discountAmount.textContent = `-¥${discount.toLocaleString()}`;
-      finalTotal.textContent = `¥${finalPrice.toLocaleString()}`;
       selectedCouponId.value = couponSelect.value;
     } else {
       discountInfo.style.display = 'none';
       discountRow.style.display = 'none';
-      finalTotal.textContent = `¥${subtotal.toLocaleString()}`;
       selectedCouponId.value = '';
+    }
+    
+    // ポイント使用を反映
+    updateFinalTotalDisplay(finalPrice);
+  }
+  
+  function updateFinalTotalDisplay(basePrice) {
+    const pointsUsed = parseInt(document.getElementById('pointsToUse').value) || 0;
+    const finalTotal = document.getElementById('finalTotal');
+    const totalLabel = document.getElementById('totalLabel');
+    const pointsPaymentRow = document.getElementById('pointsPaymentRow');
+    const pointsPaymentAmount = document.getElementById('pointsPaymentAmount');
+    
+    if (pointsUsed > 0) {
+      const cashAmount = Math.max(0, basePrice - pointsUsed);
+      
+      pointsPaymentRow.style.display = 'flex';
+      pointsPaymentAmount.textContent = `${pointsUsed} pt`;
+      
+      if (cashAmount > 0) {
+        totalLabel.textContent = 'お支払い金額:';
+        finalTotal.textContent = `¥${Math.floor(cashAmount).toLocaleString()}`;
+        finalTotal.style.color = '#22c55e';
+      } else {
+        totalLabel.textContent = 'お支払い金額:';
+        finalTotal.textContent = '¥0';
+        finalTotal.style.color = '#22c55e';
+      }
+    } else {
+      pointsPaymentRow.style.display = 'none';
+      totalLabel.textContent = '合計金額:';
+      finalTotal.textContent = `¥${Math.floor(basePrice).toLocaleString()}`;
+      finalTotal.style.color = '';
     }
   }
   
+  // ポイント入力の処理
+  const pointsToUseInput = document.getElementById('pointsToUse');
+  if (pointsToUseInput) {
+    pointsToUseInput.addEventListener('input', function() {
+      const pointsUsed = parseInt(this.value) || 0;
+      const maxPoints = parseInt(this.max);
+      
+      // 最大値を超えないように制限
+      if (pointsUsed > maxPoints) {
+        this.value = maxPoints;
+      }
+      
+      // 負の値を許可しない
+      if (pointsUsed < 0) {
+        this.value = 0;
+      }
+      
+      updatePartialPaymentDisplay();
+    });
+  }
+
+  // 最大使用ボタンの処理
+  const useMaxPointsBtn = document.getElementById('useMaxPointsBtn');
+  if (useMaxPointsBtn) {
+    useMaxPointsBtn.addEventListener('click', function() {
+      const maxUsable = parseInt(pointsToUseInput.max) || 0;
+      pointsToUseInput.value = maxUsable;
+      updatePartialPaymentDisplay();
+    });
+  }
+
+  function updatePartialPaymentDisplay() {
+    const pointsUsed = parseInt(pointsToUseInput.value) || 0;
+    
+    // 現在の合計金額を取得
+    const subtotalText = document.getElementById('subtotal').textContent.replace(/[¥,]/g, '');
+    const subtotal = parseFloat(subtotalText) || 0;
+    
+    const discountRow = document.getElementById('discountRow');
+    const isDiscountApplied = discountRow.style.display === 'flex';
+    
+    let currentTotal = subtotal;
+    if (isDiscountApplied) {
+      const discountText = document.getElementById('discountAmount').textContent.replace(/[-¥,]/g, '');
+      const discount = parseFloat(discountText) || 0;
+      currentTotal = subtotal - discount;
+    }
+    
+    const cashAmount = Math.max(0, currentTotal - pointsUsed);
+    const pointsBreakdown = document.getElementById('pointsBreakdown');
+    
+    // 内訳を表示
+    if (pointsUsed > 0) {
+      pointsBreakdown.style.display = 'block';
+      document.getElementById('partialTotalAmount').textContent = `¥${Math.floor(currentTotal).toLocaleString()}`;
+      document.getElementById('partialPointsUsed').textContent = `${pointsUsed} pt (-¥${pointsUsed.toLocaleString()})`;
+      document.getElementById('partialCashAmount').textContent = `¥${Math.floor(cashAmount).toLocaleString()}`;
+    } else {
+      pointsBreakdown.style.display = 'none';
+    }
+    
+    // 合計金額表示を更新
+    updateFinalTotalDisplay(currentTotal);
+  }
+
   // 支払い方法の処理
   const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
   const convenienceOptionsContainer = document.getElementById('convenienceOptions');
@@ -379,6 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const selected = document.querySelector('input[name="payment_method"]:checked');
     if (!selected) return;
     const isConvenience = (selected.value === 'convenience_store');
+    const isPoints = (selected.value === 'points');
 
     convenienceOptionsContainer.style.display = isConvenience ? 'block' : 'none';
 
@@ -390,11 +700,30 @@ document.addEventListener('DOMContentLoaded', () => {
         input.disabled = true;
       }
     });
+    
+    // ポイント払い選択時の処理
+    if (isPoints) {
+      // ポイント使用セクションが表示されている場合、最大ポイントを自動設定
+      const pointsUsageSection = document.getElementById('pointsUsageSection');
+      if (pointsUsageSection.style.display === 'block') {
+        const maxUsable = parseInt(pointsToUseInput.max) || 0;
+        pointsToUseInput.value = maxUsable;
+        updatePartialPaymentDisplay();
+      }
+    }
   }
 
   paymentRadios.forEach(radio => {
     radio.addEventListener('change', toggleConvenienceOptions);
   });
+
+  // 初期状態でポイント払いを無効化
+  const pointsPaymentOption = document.getElementById('pointsPaymentOption');
+  const pointsPaymentRadio = document.getElementById('payment_points');
+  if (pointsPaymentOption && pointsPaymentRadio) {
+    pointsPaymentOption.classList.add('disabled');
+    pointsPaymentRadio.disabled = true;
+  }
 
   toggleConvenienceOptions();
   checkSeatMatch();

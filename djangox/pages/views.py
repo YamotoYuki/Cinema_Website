@@ -563,19 +563,27 @@ def handle_movie_info():
     return "上映中の映画は映画一覧ページでご確認いただけます。"
 
 def handle_payment_info():
-    response = "💳 お支払い方法・料金案内\n\n"
+    response = "お支払い方法・料金案内\n\n"
     response += "【お支払い方法】\n"
     response += "・現金\n"
     response += "・クレジットカード\n"
-    response += "・電子マネー\n"
-    response += "・コンビニ払い\n\n"
+    response += "・電子マネー（PayPay、メルペイ）\n"
+    response += "・コンビニ払い\n"
+    response += "・ポイント払い 🆕\n\n"
     response += "【料金】\n"
     response += "一般: ¥1,900\n"
-    response += "学生: ¥1,500\n"
+    response += "大学生・専門学生: ¥1,500\n"
+    response += "高校生以下: ¥1,000\n"
+    response += "シニア（60歳以上）: ¥1,200\n"
+    response += "障がい者割引: ¥1,000\n\n"
+    response += "【ポイント払いについて】\n"
+    response += "・保有ポイントで直接お支払い可能\n"
+    response += "・1pt = ¥1として利用\n"
+    response += "・ポイント払いの場合、新たなポイント獲得はありません\n"
     return response
 
 def handle_cancellation_info():
-    response = "🔄 予約キャンセルについて\n\n"
+    response = "予約キャンセルについて\n\n"
     response += "【キャンセル方法】\n"
     response += "マイページ → 予約一覧 → キャンセルボタン\n\n"
     response += "【注意】\n"
@@ -584,7 +592,7 @@ def handle_cancellation_info():
     return response
 
 def handle_theater_info():
-    response = "🏢 HAL CINEMA アクセス情報\n\n"
+    response = "HAL CINEMA アクセス情報\n\n"
     response += "【所在地】\n"
     response += "愛知県名古屋市中村区名駅4丁目27-1\n"
     response += "HAL名古屋内\n\n"
@@ -593,7 +601,7 @@ def handle_theater_info():
     return response
 
 def handle_business_hours():
-    response = "⏰ 営業時間\n\n"
+    response = "営業時間\n\n"
     response += "平日: 9:00 ~ 23:00\n"
     response += "土日祝: 8:30 ~ 23:30\n\n"
     response += "年中無休\n"
@@ -601,8 +609,8 @@ def handle_business_hours():
 
 def handle_membership_info(user):
     points = calculate_user_points(user)
-    response = f"👤 {user.username}様の会員情報\n\n"
-    response += f"💰 現在のポイント: {points}pt\n\n"
+    response = f"{user.username}様の会員情報\n\n"
+    response += f"現在のポイント: {points}pt\n\n"
     response += "【特典】\n"
     response += "・予約ごとに100pt獲得\n"
     response += "・1,000ptで無料鑑賞\n"
@@ -881,9 +889,12 @@ def my_coupons(request):
         'used_coupons': used_coupons
     })
 
+# views.pyのpurchase_confirm関数 - ポイント併用払い対応版
+# 既存のpurchase_confirm関数を以下に置き換えてください
+
 @login_required
 def purchase_confirm(request):
-    """購入確認画面（クーポン完全対応）"""
+    """購入確認画面（クーポン・ポイント併用払い完全対応）"""
     selected_seat_ids = request.session.get('selected_seats', [])
     selected_datetime = request.session.get('selected_datetime')
     movie_id = request.session.get('movie_id')
@@ -896,6 +907,9 @@ def purchase_confirm(request):
     seat_numbers = [seat.seat_number for seat in seats]
     movie = get_object_or_404(Movie, id=movie_id)
     total_price = movie.price * len(seats)
+    
+    # ユーザーの現在のポイントを取得
+    user_points = calculate_user_points(request.user)
     
     now = timezone.now()
     available_coupons = Coupon.objects.filter(
@@ -911,6 +925,7 @@ def purchase_confirm(request):
         payment_method = request.POST.get('payment_method', 'cash')
         convenience_type = request.POST.get('convenience_type') if payment_method == 'convenience_store' else None
         coupon_id = request.POST.get('coupon_id')
+        points_to_use = int(request.POST.get('points_to_use', 0)) if payment_method == 'points' else 0
         
         # 元の金額
         original_price = float(total_price)
@@ -923,12 +938,10 @@ def purchase_confirm(request):
             try:
                 coupon = Coupon.objects.get(id=coupon_id)
                 
-                # クーポンが既に使用されているかチェック
                 if UserCoupon.objects.filter(user=request.user, coupon=coupon).exists():
                     messages.error(request, "このクーポンは既に使用済みです。")
                     return redirect('purchase_confirm')
                 
-                # クーポンが利用可能かチェック
                 now = timezone.now()
                 if not coupon.is_active or coupon.start_date > now or coupon.expiry_date < now:
                     messages.error(request, "このクーポンは現在利用できません。")
@@ -952,12 +965,43 @@ def purchase_confirm(request):
                 used_coupon = coupon
             except Coupon.DoesNotExist:
                 messages.warning(request, "無効なクーポンです。")
+        
+        # ポイント払いの処理
+        cash_amount = final_price  # 初期値は全額現金払い
+        
+        if payment_method == 'points' and points_to_use > 0:
+            user_points = calculate_user_points(request.user)
+            
+            # ポイント使用量のバリデーション
+            if points_to_use > user_points:
+                messages.error(request, f"ポイントが不足しています。使用指定: {points_to_use}pt / 所持: {user_points}pt")
+                return redirect('purchase_confirm')
+            
+            if points_to_use > int(final_price):
+                messages.error(request, f"使用ポイント数が支払い金額を超えています。")
+                return redirect('purchase_confirm')
+            
+            # ポイントを消費
+            if not use_points(request.user, points_to_use, f"映画「{movie.title}」のチケット購入（座席: {', '.join(seat_numbers)}）"):
+                messages.error(request, "ポイントの使用に失敗しました。")
+                return redirect('purchase_confirm')
+            
+            # ポイント使用後の支払い金額
+            cash_amount = final_price - points_to_use
 
         # 予約作成（各座席ごと）
         created_reservations = []
         
         for seat in seats:
             if not Reservation.objects.filter(movie=movie, seat=seat, show_time=selected_datetime).exists():
+                # ポイント併用払いの場合
+                if payment_method == 'points' and points_to_use > 0:
+                    actual_payment = cash_amount / len(seats) if cash_amount > 0 else 0
+                    points_per_seat = points_to_use / len(seats)
+                else:
+                    actual_payment = final_price / len(seats) if final_price > 0 else 0
+                    points_per_seat = 0
+                
                 reservation = Reservation.objects.create(
                     user=request.user,
                     movie=movie,
@@ -967,15 +1011,16 @@ def purchase_confirm(request):
                     convenience_type=convenience_type,
                     original_price=float(movie.price),
                     discount_amount=discount_amount / len(seats) if discount_amount > 0 else 0,
-                    final_price=final_price / len(seats) if final_price > 0 else 0,
+                    final_price=actual_payment,
                     applied_coupon=used_coupon
                 )
                 generate_qr_code(reservation)
                 created_reservations.append(reservation)
                 
-                # ポイント付与
-                points_earned = 100
-                add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
+                # ポイント付与（全額ポイント払い以外の場合）
+                if not (payment_method == 'points' and points_to_use > 0 and cash_amount == 0):
+                    points_earned = 100
+                    add_points_to_user(request.user, points_earned, f"映画「{movie.title}」のチケット購入（座席: {seat.seat_number}）")
                 
                 # 通知作成（最初の予約のみ）
                 if len(created_reservations) == 1:
@@ -983,14 +1028,29 @@ def purchase_confirm(request):
                         f"映画「{movie.title}」のチケットを購入しました。\n"
                         f"座席: {', '.join(seat_numbers)}\n"
                         f"上映日時: {selected_datetime}\n"
-                        f"支払方法: {payment_method}"
                     )
+                    
+                    if payment_method == 'points' and points_to_use > 0:
+                        if cash_amount > 0:
+                            notification_msg += f"支払方法: ポイント併用払い\n"
+                            notification_msg += f"使用ポイント: {points_to_use}pt\n"
+                            notification_msg += f"現金支払い: ¥{int(cash_amount):,}"
+                        else:
+                            notification_msg += f"支払方法: ポイント払い\n"
+                            notification_msg += f"使用ポイント: {points_to_use}pt"
+                    else:
+                        notification_msg += f"支払方法: {payment_method}\n"
                     
                     if used_coupon:
                         notification_msg += f"\nクーポン適用: {used_coupon.title} (-¥{int(discount_amount):,})"
                     
-                    notification_msg += f"\n合計: ¥{int(final_price):,}"
-                    notification_msg += f"\n{points_earned * len(seats)}ポイント獲得！"
+                    if payment_method == 'points' and points_to_use > 0 and cash_amount > 0:
+                        notification_msg += f"\n合計: ¥{int(cash_amount):,}"
+                    else:
+                        notification_msg += f"\n合計: ¥{int(final_price):,}"
+                    
+                    if not (payment_method == 'points' and points_to_use > 0 and cash_amount == 0):
+                        notification_msg += f"\n{100 * len(seats)}ポイント獲得！"
                     
                     Notification.objects.create(
                         user=request.user,
@@ -1014,14 +1074,23 @@ def purchase_confirm(request):
         if created_reservations:
             request.session['last_reservation_id'] = created_reservations[0].id
             request.session['seat_numbers'] = seat_numbers
-            request.session['total_price'] = float(final_price)
+            request.session['total_price'] = float(cash_amount) if payment_method == 'points' and points_to_use > 0 else float(final_price)
+            request.session['payment_method'] = payment_method
+            request.session['points_used'] = points_to_use if payment_method == 'points' else 0
         
         # セッションの座席情報をクリア
         request.session.pop('selected_seats', None)
         request.session.pop('selected_datetime', None)
         request.session.pop('movie_id', None)
         
-        messages.success(request, 'チケットの購入が完了しました！')
+        if payment_method == 'points' and points_to_use > 0:
+            if cash_amount > 0:
+                messages.success(request, f'ポイントと現金でチケットを購入しました！（{points_to_use}pt使用 + ¥{int(cash_amount):,}）')
+            else:
+                messages.success(request, f'ポイントでチケットを購入しました！（{points_to_use}pt使用）')
+        else:
+            messages.success(request, 'チケットの購入が完了しました！')
+        
         return redirect('purchase_complete')
 
     return render(request, 'apps/purchase_confirm.html', {
@@ -1032,6 +1101,7 @@ def purchase_confirm(request):
         'selected_seat_ids': selected_seat_ids,
         'selected_datetime': selected_datetime,
         'available_coupons': available_coupons,
+        'user_points': user_points,
     })
 
 @login_required

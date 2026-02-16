@@ -4,6 +4,58 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/app/purchase_complete.css' %}">
+<style>
+.payment-method-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.payment-method-badge i {
+  font-size: 1.2rem;
+}
+
+.payment-breakdown {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.payment-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 0.95rem;
+}
+
+.payment-breakdown-row.highlight {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.points-used-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #667eea;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -55,6 +107,34 @@
         <span class="summary-value">{{ selected_seat_numbers|join:", " }}</span>
       </div>
       
+      <!-- 支払方法表示 -->
+      {% if request.session.points_used %}
+        {% if total_price == 0 %}
+          <!-- 全額ポイント払い -->
+          <div class="text-center">
+            <div class="payment-method-badge">
+              <i class="bi bi-coin"></i>
+              <span>全額ポイント払いで購入しました</span>
+            </div>
+          </div>
+        {% else %}
+          <!-- ポイント併用払い -->
+          <div class="text-center">
+            <div class="payment-method-badge">
+              <i class="bi bi-wallet2"></i>
+              <span>ポイント併用払いで購入しました</span>
+            </div>
+          </div>
+        {% endif %}
+      {% elif reservation.payment_method == 'points' %}
+        <div class="text-center">
+          <div class="payment-method-badge">
+            <i class="bi bi-coin"></i>
+            <span>ポイント払いで購入しました</span>
+          </div>
+        </div>
+      {% endif %}
+      
       <!-- 料金詳細 -->
       <div class="price-detail">
         {% if reservation.applied_coupon and reservation.discount_amount > 0 %}
@@ -71,21 +151,132 @@
             <span>-¥{{ reservation.discount_amount|floatformat:"0" }}</span>
           </div>
           
-          <div class="price-row final-price-row">
-            <span>お支払い金額:</span>
-            <span>¥{{ reservation.final_price|floatformat:"0" }}</span>
-          </div>
+          <!-- ポイント使用がある場合 -->
+          {% if request.session.points_used %}
+            <div class="payment-breakdown">
+              <div class="payment-breakdown-row">
+                <span>割引後金額:</span>
+                <span>¥{{ reservation.final_price|floatformat:"0" }}</span>
+              </div>
+              
+              <div class="payment-breakdown-row" style="color: #667eea;">
+                <span>
+                  <i class="bi bi-coin me-1"></i>
+                  ポイント使用:
+                </span>
+                <span>{{ request.session.points_used }} pt</span>
+              </div>
+              
+              <div class="payment-breakdown-row highlight">
+                <span style="color: #22c55e;">お支払い金額:</span>
+                <span style="color: #22c55e; font-size: 1.2rem;">
+                  {% if total_price == 0 %}
+                    ¥0
+                  {% else %}
+                    ¥{{ total_price|floatformat:"0" }}
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          {% else %}
+            <div class="price-row final-price-row">
+              <span>お支払い金額:</span>
+              <span>¥{{ reservation.final_price|floatformat:"0" }}</span>
+            </div>
+          {% endif %}
           
           <div class="text-center mt-3">
             <span class="coupon-badge">
               <i class="bi bi-check-circle-fill me-1"></i>
               クーポンが適用されました
             </span>
+            {% if request.session.points_used %}
+              <span class="points-used-badge ms-2">
+                <i class="bi bi-coin"></i>
+                {{ request.session.points_used }}pt 使用
+              </span>
+            {% endif %}
           </div>
         {% else %}
-          <div class="price-row final-price-row">
-            <span>合計金額:</span>
-            <span>¥{{ total_price|floatformat:"0" }}</span>
+          <!-- クーポンなしの場合 -->
+          {% if request.session.points_used %}
+            <div class="payment-breakdown">
+              <div class="payment-breakdown-row">
+                <span>合計金額:</span>
+                <span>¥{{ reservation.original_price|floatformat:"0" }}</span>
+              </div>
+              
+              <div class="payment-breakdown-row" style="color: #667eea;">
+                <span>
+                  <i class="bi bi-coin me-1"></i>
+                  ポイント使用:
+                </span>
+                <span>{{ request.session.points_used }} pt</span>
+              </div>
+              
+              <div class="payment-breakdown-row highlight">
+                <span style="color: #22c55e;">お支払い金額:</span>
+                <span style="color: #22c55e; font-size: 1.2rem;">
+                  {% if total_price == 0 %}
+                    ¥0
+                  {% else %}
+                    ¥{{ total_price|floatformat:"0" }}
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            
+            <div class="text-center mt-3">
+              <span class="points-used-badge">
+                <i class="bi bi-coin"></i>
+                {{ request.session.points_used }}pt 使用
+              </span>
+            </div>
+          {% else %}
+            <div class="price-row final-price-row">
+              <span>
+                {% if reservation.payment_method == 'points' %}
+                  使用ポイント:
+                {% else %}
+                  合計金額:
+                {% endif %}
+              </span>
+              <span>
+                {% if reservation.payment_method == 'points' %}
+                  {{ total_price|floatformat:"0" }} pt
+                {% else %}
+                  ¥{{ total_price|floatformat:"0" }}
+                {% endif %}
+              </span>
+            </div>
+          {% endif %}
+        {% endif %}
+        
+        <!-- ポイント獲得情報 -->
+        {% if request.session.points_used %}
+          {% if total_price > 0 %}
+            <!-- ポイント併用払いの場合はポイント獲得あり -->
+            <div class="text-center mt-3" style="padding: 12px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 10px;">
+              <i class="bi bi-gift-fill" style="color: #667eea; font-size: 1.5rem;"></i>
+              <div style="margin-top: 8px; font-weight: 600; color: #667eea;">
+                100ポイント獲得しました！
+              </div>
+            </div>
+          {% else %}
+            <!-- 全額ポイント払いの場合はポイント獲得なし -->
+            <div class="text-center mt-3" style="padding: 12px; background: #f0f0f0; border-radius: 10px;">
+              <i class="bi bi-info-circle-fill" style="color: #666; font-size: 1.2rem;"></i>
+              <div style="margin-top: 8px; font-weight: 500; color: #666; font-size: 0.9rem;">
+                全額ポイント払いのため、ポイント獲得はありません
+              </div>
+            </div>
+          {% endif %}
+        {% elif reservation.payment_method != 'points' %}
+          <div class="text-center mt-3" style="padding: 12px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 10px;">
+            <i class="bi bi-gift-fill" style="color: #667eea; font-size: 1.5rem;"></i>
+            <div style="margin-top: 8px; font-weight: 600; color: #667eea;">
+              100ポイント獲得しました！
+            </div>
           </div>
         {% endif %}
       </div>
@@ -137,6 +328,15 @@
         <li>チケットはPDF形式でダウンロードできます</li>
         <li>入場時にチケットのQRコードをご提示ください</li>
         <li>上映開始の15分前までにご来場ください</li>
+        {% if request.session.points_used %}
+          {% if total_price == 0 %}
+            <li>全額ポイント払いの場合、ポイント獲得はありません</li>
+          {% else %}
+            <li>ポイント併用払いでも通常通りポイントが獲得できます</li>
+          {% endif %}
+        {% elif reservation.payment_method == 'points' %}
+          <li>ポイント払いの場合、ポイント獲得はありません</li>
+        {% endif %}
       </ul>
     </div>
   </div>
