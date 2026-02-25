@@ -273,7 +273,6 @@
       <input type="hidden" name="movie_id" value="{{ movie.id }}">
       <input type="hidden" name="coupon_id" id="selectedCouponId" value="">
       <input type="hidden" name="ticket_types" id="ticketTypesInput" value="">
-      <!-- ★★★ 追加: ポイント使用のhidden input ★★★ -->
       <input type="hidden" name="points_to_use" id="pointsToUseHidden" value="0">
       {% for seat_id in selected_seat_ids %}
         <input type="hidden" name="seats" value="{{ seat_id }}">
@@ -615,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // ★★★ ポイント入力の処理（hidden inputも更新） ★★★
+  // ポイント入力の処理（hidden inputも更新）
   const pointsToUseInput = document.getElementById('pointsToUse');
   const pointsToUseHidden = document.getElementById('pointsToUseHidden');
   
@@ -634,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
         this.value = 0;
       }
       
-      // ★★★ hidden inputも更新 ★★★
+      // hidden inputも更新
       pointsToUseHidden.value = this.value;
       
       updatePartialPaymentDisplay();
@@ -647,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     useMaxPointsBtn.addEventListener('click', function() {
       const maxUsable = parseInt(pointsToUseInput.max) || 0;
       pointsToUseInput.value = maxUsable;
-      // ★★★ hidden inputも更新 ★★★
+      // hidden inputも更新
       pointsToUseHidden.value = maxUsable;
       updatePartialPaymentDisplay();
     });
@@ -716,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pointsUsageSection.style.display === 'block') {
         const maxUsable = parseInt(pointsToUseInput.max) || 0;
         pointsToUseInput.value = maxUsable;
-        // ★★★ hidden inputも更新 ★★★
+        // hidden inputも更新
         pointsToUseHidden.value = maxUsable;
         updatePartialPaymentDisplay();
       }
@@ -737,6 +736,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   toggleConvenienceOptions();
   checkSeatMatch();
+
+  // ===================================================
+  // ★★★ 追加: フォーム送信直前にcoupon_idを確実にセット ★★★
+  // ===================================================
+  document.getElementById('purchaseForm').addEventListener('submit', function() {
+    const couponSelect = document.getElementById('couponSelect');
+    if (couponSelect) {
+      document.getElementById('selectedCouponId').value = couponSelect.value;
+    }
+    document.getElementById('pointsToUseHidden').value =
+      document.getElementById('pointsToUse').value || 0;
+  });
+
 });
 </script>
 
